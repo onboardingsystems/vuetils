@@ -1,2 +1,2 @@
-export {default as Vuetils} from './Vuetils';
-export {default as ObsTextField} from './ObsTextField';
+export {default as Vuetils} from './vuetils';
+export {default as ObsTextField} from './obs-text-input';

@@ -1,12 +1,12 @@
 <template>
   <div>
-    Joe was here
+    Joe was here!!
   </div>
 </template>
 
 <script>
 export default {
-  name: "ObsTextField"
+  name: "ObsTextInput"
 }
 </script>
 
