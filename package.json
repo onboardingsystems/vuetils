@@ -1,31 +1,33 @@
 {
-  "name": "vue-utils",
-  "version": "1.0.0",
+  "name": "vuetils",
+  "version": "0.1.0",
   "repository": {},
   "license": "MIT",
+  "main": "dist/vuetils.js",
+  "unpkg": "dist/vuetils.js",
   "scripts": {
-    "build": "brunch b",
     "start": "brunch watch --server",
     "test": "karma start"
   },
-  "dependencies": {
-    "lodash": "^4.17.4",
-    "vue": "^2.4.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "auto-reload-brunch": "^2.7.1",
     "babel-brunch": "6.1.1",
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-es2015": "^6.24.1",
     "brunch": "2.10.10",
     "clean-css-brunch": "2.10.0",
+    "css-brunch": "^2.10.0",
     "jasmine-core": "^2.8.0",
     "karma": "^1.7.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "sass-brunch": "^2.10.4",
     "uglify-js-brunch": "2.10.0",
-    "vue-brunch": "^2.0.1"
+    "vue-brunch": "^2.0.1",
+    "lodash": "^4.17.4",
+    "vue": "^2.4.2"
   }
 }

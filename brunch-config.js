@@ -2,7 +2,10 @@ exports.config = {
   // See http://brunch.io/#documentation for docs.
   files: {
     javascripts: {
-      joinTo: "js/vue-utils.js"
+      joinTo: {
+        "vuetils.js": /^src/,
+        "vendor.js": /(?!src)/
+      },
 
       // To use a separate vendor.js bundle, specify two files path
       // http://brunch.io/docs/config#-files-
@@ -20,10 +23,10 @@ exports.config = {
       // }
     },
     stylesheets: {
-      joinTo: "css/vue-utils.css"
+      joinTo: "vuetils.css"
     },
     templates: {
-      joinTo: "js/vue-utils..js"
+      joinTo: "vuetils.js"
     }
   },
 
@@ -37,7 +40,7 @@ exports.config = {
   // Phoenix paths configuration
   paths: {
     // Dependencies and current project directories to watch
-    watched: ["src"],
+    watched: ["src", "sample"],
     // Where to compile files to
     public: "dist"
   },
@@ -46,13 +49,7 @@ exports.config = {
   plugins: {
     vue: {
       extractCSS: true,
-      out: 'dist/css/vue-utils.css'
-    }
-  },
-
-  modules: {
-    autoRequire: {
-      "js/vue-utils.js": ["src/index.js"]
+      out: 'dist/vuetils.css'
     }
   },
 

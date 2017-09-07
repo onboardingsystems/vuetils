@@ -1,6 +1,6 @@
 <template>
   <div>
-    Hello
+    Joe was here
   </div>
 </template>
 
