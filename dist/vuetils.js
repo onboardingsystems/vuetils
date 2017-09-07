@@ -79,27 +79,136 @@ return /******/ (function(modules) { // webpackBootstrap
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_text_vue__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components_text_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__components_text_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components__ = __webpack_require__(1);
 
 
-/* harmony default export */ __webpack_exports__["default"] = ({
-  Text: __WEBPACK_IMPORTED_MODULE_0__components_text_vue___default.a
-});
+function Vuetils(Vue) {
+  var Vuetils = __WEBPACK_IMPORTED_MODULE_0__components__["Vuetils"];
+
+  Vue.use(Vuetils, {
+    components: __WEBPACK_IMPORTED_MODULE_0__components__
+  });
+}
+
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(Vuetils);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Vuetils);
 
 /***/ }),
 /* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Vuetils__ = __webpack_require__(2);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "Vuetils", function() { return __WEBPACK_IMPORTED_MODULE_0__Vuetils__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ObsTextField__ = __webpack_require__(4);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "ObsTextField", function() { return __WEBPACK_IMPORTED_MODULE_1__ObsTextField__["a"]; });
+
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_load__ = __webpack_require__(3);
+
+
+var Vuetils = {
+  install: function install(Vue) {
+    var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var $vuetils = {
+      load: __WEBPACK_IMPORTED_MODULE_0__utils_load__["a" /* default */],
+      breakpoint: {}
+    };
+
+    Vue.util.defineReactive({}, 'breakpoint', $vuetils);
+
+    Vue.prototype.$vuetils = $vuetils;
+
+    if (opts.transitions) {
+      Object.keys(opts.transitions).forEach(function (key) {
+        var t = opts.transitions[key];
+        if (t.name !== undefined && t.name.startsWith('v-')) {
+          Vue.component(t.name, t);
+        }
+      });
+    }
+
+    if (opts.directives) {
+      Object.keys(opts.directives).forEach(function (key) {
+        var d = opts.directives[key];
+        Vue.directive(d.name, d);
+      });
+    }
+
+    if (opts.components) {
+      Object.keys(opts.components).forEach(function (key) {
+        var c = opts.components[key];
+        Vue.use(c);
+      });
+    }
+  }
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Vuetils);
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+function load(cb) {
+  var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+  if (document.readyState === 'complete') {
+    return setTimeout(cb, 0);
+  }
+
+  if (document.readyState === 'interactive' && i <= 10) {
+    return setTimeout(function () {
+      return load(cb, i + 1);
+    }, 200);
+  }
+
+  window.addEventListener('load', cb);
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (load);
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ObsTextField__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ObsTextField___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__ObsTextField__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__ObsTextField___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__ObsTextField___default.a.name, __WEBPACK_IMPORTED_MODULE_0__ObsTextField___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__ObsTextField___default.a);
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(2)
+__webpack_require__(6)
 
-var Component = __webpack_require__(7)(
+var Component = __webpack_require__(11)(
   /* script */
-  __webpack_require__(8),
+  __webpack_require__(12),
   /* template */
-  __webpack_require__(9),
+  __webpack_require__(13),
   /* scopeId */
   null,
   /* cssModules */
@@ -110,23 +219,23 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 2 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(3);
+var content = __webpack_require__(7);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("15afe9dd", content, true);
+var update = __webpack_require__(9)("763c703c", content, true);
 
 /***/ }),
-/* 3 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(4)();
+exports = module.exports = __webpack_require__(8)();
 // imports
 
 
@@ -137,7 +246,7 @@ exports.push([module.i, "", ""]);
 
 
 /***/ }),
-/* 4 */
+/* 8 */
 /***/ (function(module, exports) {
 
 /*
@@ -193,7 +302,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 5 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -212,7 +321,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(6)
+var listToStyles = __webpack_require__(10)
 
 /*
 type StyleObject = {
@@ -414,7 +523,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 6 */
+/* 10 */
 /***/ (function(module, exports) {
 
 /**
@@ -447,7 +556,7 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 7 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = function normalizeComponent (
@@ -500,7 +609,7 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 8 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -512,10 +621,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 
-/* harmony default export */ __webpack_exports__["default"] = ({});
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "ObsTextField"
+});
 
 /***/ }),
-/* 9 */
+/* 13 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;

@@ -1,5 +1,15 @@
-import Text from './components/text.vue';
+import * as components from './components';
 
-export default {
-  Text
-};
+function Vuetils(Vue) {
+  const Vuetils = components.Vuetils;
+
+  Vue.use(Vuetils, {
+    components
+  });
+}
+
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(Vuetils);
+}
+
+export default Vuetils;

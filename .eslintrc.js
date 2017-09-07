@@ -39,6 +39,8 @@ module.exports = {
     'object-curly-spacing': [2, 'always'],
     'max-statements': [2, 24],
     "no-extra-semi": "off",
-    "semi": "off"
+    "semi": "off",
+    "space-before-function-paren": "off",
+    "object-curly-spacing": "off"
   }
 }
