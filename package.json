@@ -12,9 +12,7 @@
     "debug-build": "node --inspect --debug-brk build/config.js",
     "test": "cross-env NODE_ENV=test jest --no-cache --verbose",
     "test-coverage": "cross-env NODE_ENV=test jest --no-cache --coverage --verbose",
-    "lint": "eslint --ext .js,.vue src",
-    "precommit": "yarn run lint && yarn test",
-    "prepush": "yarn run lint && yarn test"
+    "lint": "eslint --ext .js,.vue src"
   },
   "description": "Vue.js 2 Semantic Component Framework",
   "devDependencies": {
