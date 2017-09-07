@@ -28,12 +28,29 @@
     <div>
       <obs-error :errors="null" />
     </div>
+    <h2>Text Input</h2>
+    <div>
+      <obs-text-input label="Username:" placeholder="example: joe, notjoe" :autofocus="true" />
+    </div>
   </div>
 </template>
 
 <script>
+function onChange(e) {
+  console.log('On change:');
+  console.log(e);
+}
+
+function onBlur(e) {
+  console.log('On Blur:');
+  console.log(e);
+}
+
 export default {
-  name: 'Playground'
+  name: 'Playground',
+  methods: {
+    onChange, onBlur
+  }
 }
 </script>
 
