@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="root">
     <h2>Label</h2>
     <div>
       <obs-label text="Hello World!" />
@@ -16,6 +16,18 @@
     <div>
       <obs-label />
     </div>
+    <h2>Single Error</h2>
+    <div>
+      <obs-error :errors="['Error 1']" />
+    </div>
+    <h2>Mutliple Errors</h2>
+    <div>
+      <obs-error :errors="['Error 1', 'Error 2']" />
+    </div>
+    <h2>No Errors</h2>
+    <div>
+      <obs-error :errors="null" />
+    </div>
   </div>
 </template>
 
@@ -25,6 +37,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  #root {
+    margin-left: 15px;
+  }
 </style>
