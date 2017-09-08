@@ -9,7 +9,7 @@ export default {
     errors: {
       required: false,
       type: Array,
-      default: []
+      default: function() {return []}
     }
   },
   computed: {

@@ -1,11 +1,11 @@
 <template>
   <div :class="classes">
-    <ObsLabel :text="label" :hint="hint" :htmlFor="id" :required="required" />
+    <obs-label :text="label" :hint="hint" :htmlFor="id" :required="required" />
     <input :id="id" class="form-control obs-text-input" :type="type" :value="value"
       :placeholder="placeholder"
       @change="handleChange" @blur="handleBlur"
       :autofocus="autofocus" />
-    <ObsError :errors="errors" />
+    <obs-error :errors="errors" />
   </div>
 </template>
 
@@ -106,6 +106,11 @@ function mounted() {
   }
 }
 
+function beforeDestroy() {
+  if (_.isFunction(this.willUnmount))
+    this.willUnmount(this);
+}
+
 function isValid() {
   return true;
 }
@@ -113,6 +118,7 @@ function isValid() {
 export default {
   name: "ObsTextInput",
   mounted,
+  beforeDestroy,
   methods: {
     handleBlur, handleChange, isValid, formatAndValidate, format
   },
