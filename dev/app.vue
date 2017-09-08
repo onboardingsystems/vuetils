@@ -16,6 +16,7 @@
     <div>
       <obs-label />
     </div>
+
     <h2>Single Error</h2>
     <div>
       <obs-error :errors="['Error 1']" />
@@ -28,14 +29,34 @@
     <div>
       <obs-error :errors="null" />
     </div>
+
     <h2>Text Input</h2>
     <div>
       <obs-text-input label="Username" placeholder="example: joe, notjoe" :autofocus="true" />
     </div>
     <h2>Text Input Required</h2>
     <div>
-      <obs-text-input label="Username" placeholder="example: joe, notjoe" :required="true" default-value="Hello World"/>
+      <obs-text-input label="Username" placeholder="example: joe, notjoe" :required="true" />
     </div>
+    <h2>Text Input Default</h2>
+    <div>
+      <obs-text-input label="Username" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textRequired"/>
+    </div>
+
+    <h2>Text Area</h2>
+    <div>
+      <obs-text-area label="Content" placeholder="example: joe, notjoe" />
+    </div>
+    <h2>Text Area Required</h2>
+    <div>
+      <obs-text-area label="Content" placeholder="example: joe, notjoe" :required="true"/>
+    </div>
+    <h2>Text Area Default</h2>
+    <div>
+      <obs-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired"/>
+    </div>
+
+
 
     <h2>Form Builder</h2>
     <div>
@@ -57,7 +78,9 @@
 function data() {
   return {
     age: 0,
-    color: 'red'
+    color: 'red',
+    textRequired: null,
+    textAreaRequired: null
   };
 }
 

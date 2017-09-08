@@ -5,4 +5,5 @@ export {default as ObsError} from './obs-error';
 export {default as ObsLabel} from './obs-label';
 export {default as ObsFormBuilder} from './obs-form-builder';
 export {default as ObsTextField} from './obs-text-input';
+export {default as ObsTextArea} from './obs-text-area';
 export {default as ObsSubmit} from './obs-submit';

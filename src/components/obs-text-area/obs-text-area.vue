@@ -1,10 +1,8 @@
 <template>
   <div :class="classes">
     <obs-label :text="label" :hint="hint" :htmlFor="id" :required="required" />
-    <input :id="id" class="form-control obs-text-input" :type="type" :value="value"
-      :placeholder="placeholder"
-      @change="handleChange" @blur="handleBlur"
-      :autofocus="autofocus" />
+    <textarea :id="id" class="form-control obs-text-area" :rows="rows" :value="value"
+      :placeholder="placeholder" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
     <obs-error :errors="errors" />
   </div>
 </template>
@@ -95,7 +93,7 @@ function mounted() {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
     if(valid && _.isFunction(this.onChange)) {
-      this.onChange({formatted, parsed});
+      this.handleChange({formatted, parsed});
     } else {
       this.$emit('update:value', formatted);
     }
@@ -103,7 +101,7 @@ function mounted() {
     let {valid, formatted} = this.formatAndValidate(this.value);
 
     if (valid && _.isFunction(this.onChange)) {
-      this.onChange({formatted});
+      this.handleChange({formatted});
     } else {
       this.$emit('update:value', formatted);
     }
@@ -120,7 +118,7 @@ function isValid() {
 }
 
 export default {
-  name: "ObsTextInput",
+  name: "ObsTextArea",
   mounted,
   beforeDestroy,
   methods: {
@@ -132,11 +130,11 @@ export default {
   props: {
     value: {
       required: false,
-      type: [String, Number]
+      type: String
     },
     defaultValue: {
       required: false,
-      type: [String, Number],
+      type: String,
       default: ''
     },
     errors: {
@@ -184,10 +182,10 @@ export default {
       type: Boolean,
       default: false
     },
-    type: {
+    rows: {
       required: false,
-      type: String,
-      default: 'text'
+      type: Number,
+      default: 3
     },
     customValidator: {
       required: false,
