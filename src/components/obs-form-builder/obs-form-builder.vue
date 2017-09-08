@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent>
+  <form @submit.prevent="onSubmit" >
     <slot />
   </form>
 </template>
@@ -37,12 +37,28 @@ function processChildren(children) {
   return validatableComponents;
 }
 
+function onSubmit() {
+  // Check all components to validate, if everything is good then pass to the onsubmit action.
+  let results = _.map(this.validatableComponents, (comp) => comp.isValid());
+
+  if (results.indexOf(false) === -1) {
+    this.onsubmit();
+  }
+}
 
 export default {
   name: 'ObsFormBuilder',
   data,
   mounted,
+  methods: {
+    onSubmit
+  },
   props: {
+    onsubmit: {
+      required: false,
+      type: Function,
+      default: () => false
+    }
   },
   computed: {
   }

@@ -30,39 +30,44 @@
     </div>
     <h2>Text Input</h2>
     <div>
-      <obs-text-input label="Username:" placeholder="example: joe, notjoe" :autofocus="true" />
+      <obs-text-input label="Username" placeholder="example: joe, notjoe" :autofocus="true" />
     </div>
 
     <h2>Form Builder</h2>
     <div>
-      <obs-form-builder>
-        <div>
-          Normal Content
-          <obs-text-input label="Username:" placeholder="example: joe, notjoe" :autofocus="true" />
+      <obs-form-builder :onsubmit="onSubmit" >
+        <div class="col-xs-6">
+          <obs-text-input label="Age" :value.sync="age" />
         </div>
-        <div>
-          <obs-text-input label="Username:" placeholder="example: joe, notjoe" :autofocus="true" />
+        <div class="col-xs-6">
+          <obs-text-input label="Color" :value.sync="color" />
         </div>
+
+        <obs-submit />
       </obs-form-builder>
     </div>
   </div>
 </template>
 
 <script>
-function onChange(e) {
-  console.log('On change:');
-  console.log(e);
+function data() {
+  return {
+    age: 0,
+    color: 'red'
+  };
 }
 
-function onBlur(e) {
-  console.log('On Blur:');
-  console.log(e);
+function onSubmit(e) {
+  console.log('On change:');
+  console.log(this.age);
+  console.log(this.color);
 }
 
 export default {
   name: 'Playground',
+  data,
   methods: {
-    onChange, onBlur
+    onSubmit
   }
 }
 </script>

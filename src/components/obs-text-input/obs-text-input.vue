@@ -60,23 +60,23 @@ function formatAndValidate(value) {
 }
 
 function handleChange(e) {
-  if (_.isFunction(this.onChange)) {
-    this.onChange(e.target.value);
+  if (_.isFunction(this.onchange)) {
+    this.onchange(e.target.value);
   } else {
     this.$emit('update:value', e.target.value);
   }
 }
 
 function handleBlur() {
-  if (_.isFunction(this.onBlur)) {
+  if (_.isFunction(this.onblur)) {
     var result = formatAndValidate.apply(this, this.value);
-    this.onBlur(result);
+    this.onblur(result);
     return result.errors;
   }
 }
 
 function isValid() {
-  return false;
+  return true;
 }
 
 export default {
@@ -151,11 +151,11 @@ export default {
       required: false,
       type: Function
     },
-    onChange: {
+    onchange: {
       required: false,
       type: Function
     },
-    onBlur: {
+    onblur: {
       required: false,
       type: Function
     },
