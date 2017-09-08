@@ -56,6 +56,13 @@
       <obs-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired"/>
     </div>
 
+    <h2>Compound Layout</h2>
+    <div>
+      <obs-compound-layout>
+        <obs-text-input label="First Name" />
+        <obs-text-input label="Last Name" />
+      </obs-compound-layout>
+    </div>
 
 
     <h2>Form Builder</h2>

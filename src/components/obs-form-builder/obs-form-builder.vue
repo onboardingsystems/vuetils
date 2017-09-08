@@ -6,12 +6,21 @@
 
 <script>
 import _ from 'lodash';
+import cx from 'classnames';
 
 function data() {
   return {
     validatableComponents: []
   }
 }
+
+function classes() {
+  return cx({
+    "form": true,
+    [ this.className ]: _.isString(this.className)
+  });
+}
+
 
 function mounted() {
   let holder = _.flattenDeep(processChildren(this.$children));
@@ -53,20 +62,23 @@ export default {
   methods: {
     onSubmit
   },
+  computed: {
+    classes
+  },
   props: {
     onsubmit: {
       required: false,
       type: Function,
       default: () => false
+    },
+    className: {
+      required: false,
+      type: String
     }
-  },
-  computed: {
   }
 }
 </script>
 
-<style scoped>
-  .error {
-    color: #c0392b;
-  }
+<style>
+
 </style>

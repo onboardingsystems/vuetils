@@ -7,3 +7,4 @@ export {default as ObsFormBuilder} from './obs-form-builder';
 export {default as ObsTextField} from './obs-text-input';
 export {default as ObsTextArea} from './obs-text-area';
 export {default as ObsSubmit} from './obs-submit';
+export {default as ObsCompoundLayout} from './obs-compound-layout';

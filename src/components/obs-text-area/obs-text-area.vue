@@ -154,8 +154,7 @@ export default {
     },
     className: {
       required: false,
-      type: String,
-      default: ''
+      type: String
     },
     autofocus: {
       required: false,
