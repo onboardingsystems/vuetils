@@ -64,6 +64,11 @@
       </obs-compound-layout>
     </div>
 
+    <h2>Name</h2>
+    <div>
+      <obs-name :value.sync="name" />
+    </div>
+
 
     <h2>Form Builder</h2>
     <div>
@@ -87,7 +92,11 @@ function data() {
     age: 0,
     color: 'red',
     textRequired: null,
-    textAreaRequired: null
+    textAreaRequired: null,
+    name: {
+      first_name: 'Joe',
+      last_name: 'Lindley'
+    }
   };
 }
 
