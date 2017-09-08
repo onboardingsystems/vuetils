@@ -32,9 +32,10 @@ function format(value) {
 function initialValue() {
   let currentValue = document.getElementById(this.id).value;
   if (newProps.value !== currentValue && _.isFunction(this.props.onChange)) {
-    var result = this.formatAndValidate(newProps.value)
-    if (result.valid)
-      this.props.onChange(result.formatted)
+    var result = this.formatAndValidate(newProps.value);
+    if (result.valid) {
+      this.onChange(result.formatted);
+    }
   }
 
   if (_.isNil(this.value)) {
@@ -45,7 +46,7 @@ function initialValue() {
 }
 
 function formatAndValidate(value) {
-  let formatResult = format.apply(this, value);
+  let formatResult = this.format(value);
   // run the customValidator if there is one.  Modify the formatResults if
   // there are errors.
   if (_.isFunction(this.customValidator)) {
@@ -56,22 +57,52 @@ function formatAndValidate(value) {
       formatResult.errors = _.concat(formatResult.errors, customErrors);
     }
   }
+
   return formatResult;
 }
 
 function handleChange(e) {
-  if (_.isFunction(this.onchange)) {
-    this.onchange(e.target.value);
+  if (_.isFunction(this.onChange)) {
+    this.onChange(e.target.value);
   } else {
-    this.$emit('update:value', e.target.value);
+    var result = this.formatAndValidate(e.target.value);
+    this.$emit('update:value', result.formatted);
   }
 }
 
 function handleBlur() {
-  if (_.isFunction(this.onblur)) {
-    var result = formatAndValidate.apply(this, this.value);
+  if (_.isFunction(this.onBlur)) {
+    var result = this.formatAndValidate(this.value);
     this.onblur(result);
     return result.errors;
+  }
+}
+
+function mounted() {
+  if (_.isFunction(this.didMount)) {
+    this.didMount(this);
+  }
+
+  // If props.value is nil (undefined or null), fall back to
+  // props.defaultValue and submit the formatted and parsed defaultValue back
+  // to the formBuilder so we can be rendered again with a valid value in our
+  // props.
+  //
+  // A defaultValue that responds to _.isNil will result in an infinate loop.
+  // So check that the defaultValue will not respond to isNil before
+  // submitting a new value for props.value.
+  if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
+    let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
+
+    if(valid && _.isFunction(this.onChange)) {
+      this.handleChange({formatted, parsed});
+    }
+  } else {
+    let {valid, formatted} = this.formatAndValidate(this.value);
+
+    if (valid && _.isFunction(this.onChange)) {
+      this.handleChange({formatted});
+    }
   }
 }
 
@@ -81,8 +112,9 @@ function isValid() {
 
 export default {
   name: "ObsTextInput",
+  mounted,
   methods: {
-    handleBlur, handleChange, isValid
+    handleBlur, handleChange, isValid, formatAndValidate, format
   },
   computed: {
     classes, initialValue
@@ -151,11 +183,11 @@ export default {
       required: false,
       type: Function
     },
-    onchange: {
+    onChange: {
       required: false,
       type: Function
     },
-    onblur: {
+    onBlur: {
       required: false,
       type: Function
     },

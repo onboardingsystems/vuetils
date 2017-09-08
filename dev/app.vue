@@ -32,6 +32,10 @@
     <div>
       <obs-text-input label="Username" placeholder="example: joe, notjoe" :autofocus="true" />
     </div>
+    <h2>Text Input Required</h2>
+    <div>
+      <obs-text-input label="Username" placeholder="example: joe, notjoe" :required="true" default-value="Hello World"/>
+    </div>
 
     <h2>Form Builder</h2>
     <div>
