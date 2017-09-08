@@ -75,10 +75,14 @@ function handleBlur() {
   }
 }
 
+function isValid() {
+  return false;
+}
+
 export default {
   name: "ObsTextInput",
   methods: {
-    handleBlur, handleChange
+    handleBlur, handleChange, isValid
   },
   computed: {
     classes, initialValue

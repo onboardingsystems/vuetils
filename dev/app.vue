@@ -32,6 +32,19 @@
     <div>
       <obs-text-input label="Username:" placeholder="example: joe, notjoe" :autofocus="true" />
     </div>
+
+    <h2>Form Builder</h2>
+    <div>
+      <obs-form-builder>
+        <div>
+          Normal Content
+          <obs-text-input label="Username:" placeholder="example: joe, notjoe" :autofocus="true" />
+        </div>
+        <div>
+          <obs-text-input label="Username:" placeholder="example: joe, notjoe" :autofocus="true" />
+        </div>
+      </obs-form-builder>
+    </div>
   </div>
 </template>
 
