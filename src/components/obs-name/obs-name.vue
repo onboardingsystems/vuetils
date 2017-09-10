@@ -5,6 +5,7 @@
       <div class="flex-grow-shrink">
         <obs-text-input :id="id"
           :value="valueFor(firstNameAttr)"
+          @update:value="onFirstNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
           placeholder="First"
           :class="classesFor(firstNameAttr, 'name-first')"
@@ -17,6 +18,7 @@
       <div class="flex-grow-shrink">
         <obs-text-input
           :value="valueFor(lastNameAttr)"
+          @update:value="onLastNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
           placeholder="Last"
           :className="classesFor(lastNameAttr, 'name-last')"
@@ -27,6 +29,7 @@
       </div>
     </obs-compound-layout >
     <obs-error :errors="errorsWithLabelNames()" />
+    <obs-error :errors="internalErrors" />
   </div>
 </template>
 
@@ -37,7 +40,8 @@ import cx from 'classnames';
 
 function data() {
   return {
-    inputs: []
+    inputs: [],
+    internalErrors: []
   };
 }
 
@@ -82,9 +86,28 @@ function onChangeEvent(attribute) {
 }
 
 function onBlurEvent(attribute) {
+  let _this = this;
   if (_.isFunction(this.onBlur)) {
     return _.bind(this.onBlur, this, attribute);
+  } else {
+    return function({errors}) {
+      _this.internalErrors = errors;
+    };
   }
+}
+
+function onFirstNameChanged(value) {
+  this.$emit('update:value', {
+    [this.firstNameAttr]: value,
+    [this.lastNameAttr]: this.valueFor(this.lastNameAttr)
+  });
+}
+
+function onLastNameChanged(value) {
+  this.$emit('update:value', {
+    [this.firstNameAttr]: this.valueFor(this.firstNameAttr),
+    [this.lastNameAttr]: value
+  });
 }
 
 export default {
@@ -92,11 +115,12 @@ export default {
   data,
   methods:{
     classesFor, nameErrors, errorsWithLabelNames,
+    onFirstNameChanged, onLastNameChanged,
     onChangeEvent, onBlurEvent,
     formatter: (type) => Formatters[type],
-    valueFor: (attr) => _.get((this.value || {}), attr),
-    register: (input) => _.concat(this.inputs, input),
-    unregister: (input) => _.without(this.inputs, input)
+    valueFor: function(attr) {return _.get((this.value || {}), attr)},
+    register: function(input) {return _.concat(this.inputs, input)},
+    unregister: function(input) {_.without(this.inputs, input)}
   },
   computed: {
     classes
@@ -104,7 +128,7 @@ export default {
   props: {
     value: {
       required: false,
-      type: [String, Object]
+      type: Object
     },
     firstNameAttr: {
       required: false,
@@ -115,6 +139,11 @@ export default {
       required: false,
       type: String,
       default: "last_name"
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: () => []
     },
     onChange: {
       required: false,

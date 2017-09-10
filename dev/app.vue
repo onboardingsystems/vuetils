@@ -66,7 +66,7 @@
 
     <h2>Name</h2>
     <div>
-      <obs-name :value.sync="name" />
+      <obs-name :value.sync="name" :required="true" />
     </div>
 
 
