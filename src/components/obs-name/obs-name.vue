@@ -101,9 +101,11 @@ function anyErrors(checkForErrors = false) {
     this.$refs.lastNameField.anyErrors(checkForErrors);
   }
 
-  let externalFirstNameErrors = this.errors[this.firstNameAttr] || [];
+  let errors = this.errors || {};
+
+  let externalFirstNameErrors = errors[this.firstNameAttr] || [];
   let internalFirstNameErrors = this.internalErrors[this.firstNameAttr] || [];
-  let externalLastNameErrors = this.errors[this.lastNameAttr] || [];
+  let externalLastNameErrors = errors[this.lastNameAttr] || [];
   let internalLastNameErrors = this.internalErrors[this.lastNameAttr] || [];
 
   let firstNameErrors = externalFirstNameErrors.slice(0).concat(internalFirstNameErrors.slice(0));
@@ -161,8 +163,8 @@ export default {
     },
     errors: {
       required: false,
-      type: Array,
-      default: () => []
+      type: Object,
+      default: () => {}
     },
     onChange: {
       required: false,
