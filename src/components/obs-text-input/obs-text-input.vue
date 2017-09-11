@@ -1,7 +1,7 @@
 <template>
   <div :class="classes">
     <obs-label :text="label" :hint="hint" :htmlFor="id" :required="required" />
-    <input :id="id" class="form-control obs-text-input" :type="type" :value="value"
+    <input :id="initialId" class="form-control obs-text-input" :type="type" :value="value"
       :placeholder="placeholder"
       @change="handleChange" @blur="handleBlur"
       :autofocus="autofocus" />
@@ -120,6 +120,14 @@ function mounted() {
   }
 }
 
+function initialId() {
+  if (_.isEmpty(this.id)) {
+    return _.uniqueId('text_');
+  }
+
+  return this.id;
+}
+
 function beforeDestroy() {
   if (_.isFunction(this.willUnmount))
     this.willUnmount(this);
@@ -149,7 +157,7 @@ export default {
     handleBlur, handleChange, anyErrors, formatAndValidate, format
   },
   computed: {
-    classes, initialValue, combinedErrors
+    classes, initialValue, combinedErrors, initialId
   },
   props: {
     value: {
@@ -173,8 +181,7 @@ export default {
     },
     id: {
       required: false,
-      type: String,
-      default: _.uniqueId('text_')
+      type: String
     },
     className: {
       required: false,

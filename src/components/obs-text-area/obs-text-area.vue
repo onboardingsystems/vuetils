@@ -1,7 +1,7 @@
 <template>
   <div :class="classes">
     <obs-label :text="label" :hint="hint" :htmlFor="id" :required="required" />
-    <textarea :id="id" class="form-control obs-text-area" :rows="rows" :value="value"
+    <textarea :id="initialId" class="form-control obs-text-area" :rows="rows" :value="value"
       :placeholder="placeholder" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
     <obs-error :errors="combinedErrors" />
   </div>
@@ -58,6 +58,15 @@ function formatAndValidate(value) {
 
   return formatResult;
 }
+
+function initialId() {
+  if (_.isEmpty(this.id)) {
+    return _.uniqueId('text_');
+  }
+
+  return this.id;
+}
+
 
 function handleChange(e) {
   if (_.isFunction(this.onChange)) {
@@ -135,7 +144,7 @@ export default {
     handleBlur, handleChange, formatAndValidate, format, anyErrors
   },
   computed: {
-    classes, initialValue, combinedErrors
+    classes, initialValue, combinedErrors, initialId
   },
   props: {
     value: {
@@ -159,8 +168,7 @@ export default {
     },
     id: {
       required: false,
-      type: String,
-      default: _.uniqueId('text_')
+      type: String
     },
     className: {
       required: false,
