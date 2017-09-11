@@ -144,9 +144,6 @@ function anyErrors(checkForErrors = false) {
 }
 
 function valueUpdated(attribute, newValue) {
-  console.log('Updated event');
-  console.log(newValue);
-
   let existingValue = this.value || {};
 
   let value = {
