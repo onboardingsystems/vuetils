@@ -59,11 +59,6 @@ function classesFor(attr, classes = "") {
   });
 }
 
-  // takes the errors passed in and selects out only errors for this component
-function nameErrors() {
-  return _.pick(this.errors, [this.firstNameAttr, this.lastNameAttr])
-}
-
 function combinedErrors() {
   return this.anyErrors();
 }
@@ -200,14 +195,6 @@ export default {
       required: false,
       type: Boolean,
       default: false
-    },
-    didMount: {
-      required: false,
-      type: Function
-    },
-    willUnmount: {
-      required: false,
-      type: Function
     },
     firstNameCustomValidator: {
       required: false,

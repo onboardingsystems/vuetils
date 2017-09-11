@@ -9,3 +9,4 @@ export {default as ObsTextArea} from './obs-text-area';
 export {default as ObsSubmit} from './obs-submit';
 export {default as ObsCompoundLayout} from './obs-compound-layout';
 export {default as ObsName} from './obs-name';
+export {default as ObsAddressUs} from './obs-address-us';

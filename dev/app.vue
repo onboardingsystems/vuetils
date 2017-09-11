@@ -1,6 +1,6 @@
 <template>
   <div id="root">
-    <h2>Label</h2>
+    <!-- <h2>Label</h2>
     <div>
       <obs-label text="Hello World!" />
     </div>
@@ -54,16 +54,21 @@
     <h2>Text Area Default</h2>
     <div>
       <obs-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired" />
+    </div> -->
+
+    <h2>US Address Field</h2>
+    <div>
+      <obs-address-us :value.sync="address" :required="true"  />
     </div>
 
-    <h2>Form Builder</h2>
+    <!-- <h2>Form Builder</h2>
     <div>
       <obs-form-builder @submit="onSubmit" >
         <obs-name :value.sync="name" :required="true" />
 
         <obs-submit />
       </obs-form-builder>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -79,6 +84,7 @@ function data() {
     textRequired: null,
     textAreaRequired: null,
     name: null,
+    address: null,
     formName: null
   };
 }
