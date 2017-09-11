@@ -5,8 +5,7 @@
       :placeholder="placeholder"
       @change="handleChange" @blur="handleBlur"
       :autofocus="autofocus" />
-    <obs-error :errors="errors" />
-    <obs-error :errors="internalErrors" />
+    <obs-error :errors="combinedErrors" />
   </div>
 </template>
 
@@ -24,7 +23,7 @@ function data() {
 function classes() {
   return cx({
     "form-group": true,
-    "has-error":  !_.isEmpty(this.errors),
+    "has-error":  !_.isEmpty(this.anyErrors()),
     [ this.className ]: _.isString(this.className)
   });
 }
@@ -126,8 +125,15 @@ function beforeDestroy() {
     this.willUnmount(this);
 }
 
-function isValid() {
-  return true;
+function combinedErrors() {
+  return this.anyErrors();
+}
+
+function anyErrors() {
+  let externalErrors = this.errors || [];
+  let internalErrors = this.internalErrors || [];
+
+  return externalErrors.concat(internalErrors);
 }
 
 export default {
@@ -136,10 +142,10 @@ export default {
   mounted,
   beforeDestroy,
   methods: {
-    handleBlur, handleChange, isValid, formatAndValidate, format
+    handleBlur, handleChange, anyErrors, formatAndValidate, format
   },
   computed: {
-    classes, initialValue
+    classes, initialValue, combinedErrors
   },
   props: {
     value: {

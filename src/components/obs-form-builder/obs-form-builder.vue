@@ -29,14 +29,20 @@ function mounted() {
 
 function processChildren(children) {
   let validatableComponents = _.map(children, function(component) {
-    let currentComponents = processChildren(component.$children);
     let currentContext = null;
 
     if (_.isEmpty(component._vnode.tag)) {
       let context = component.$vnode.context;
-      if (_.isFunction(context.isValid)) {
+      if (_.isFunction(context.anyErrors)) {
         currentContext = context;
       }
+    }
+
+    let currentComponents = [];
+
+    if (currentContext === null) {
+      // Only scan children if parent is not handling the event.
+      currentComponents = processChildren(component.$children);
     }
 
     currentComponents.push(currentContext);
@@ -48,9 +54,9 @@ function processChildren(children) {
 
 function onSubmit() {
   // Check all components to validate, if everything is good then pass to the onsubmit action.
-  let results = _.map(this.validatableComponents, (comp) => comp.isValid());
+  let results = _.map(this.validatableComponents, (comp) => comp.anyErrors());
 
-  if (results.indexOf(false) === -1) {
+  if (results === []) {
     this.onsubmit();
   }
 }

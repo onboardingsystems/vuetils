@@ -28,8 +28,7 @@
           :custom-validator="lastNameCustomValidator" />
       </div>
     </obs-compound-layout >
-    <obs-error :errors="errorsWithLabelNames()" />
-    <obs-error :errors="internalErrors" />
+    <obs-error :errors="combinedErrors" />
   </div>
 </template>
 
@@ -41,14 +40,14 @@ import cx from 'classnames';
 function data() {
   return {
     inputs: [],
-    internalErrors: []
+    internalErrors: {}
   };
 }
 
 function classes() {
   return cx({
     'form-group': true,
-    'has-child-error': !_.isEmpty(this.errorsWithLabelNames()),
+    'has-child-error': !_.isEmpty(this.anyErrors()),
     [ this.className ]: _.isString(this.className)
   });
 }
@@ -56,7 +55,7 @@ function classes() {
 function classesFor(attr, classes = "") {
   return cx({
     [classes]: _.isString(classes),
-    "has-error": !_.isEmpty(this.nameErrors()[attr])
+    "has-error": !_.isEmpty(this.anyErrors())
   });
 }
 
@@ -65,18 +64,8 @@ function nameErrors() {
   return _.pick(this.errors, [this.firstNameAttr, this.lastNameAttr])
 }
 
-function errorsWithLabelNames() {
-  return _.reduce(this.nameErrors(), (acc, errors, attr)=> {
-    var name
-    if (attr === this.props.firstNameAttr)
-      name = "First name"
-    else
-      name = "Last name"
-    _.forEach(errors, (error)=> {
-      acc.push(`${name} ${error}`)
-    })
-    return acc
-  }, []);
+function combinedErrors() {
+  return this.anyErrors();
 }
 
 function onChangeEvent(attribute) {
@@ -91,9 +80,34 @@ function onBlurEvent(attribute) {
     return _.bind(this.onBlur, this, attribute);
   } else {
     return function({errors}) {
-      _this.internalErrors = errors;
+      if (attribute === _this.firstNameAttr) {
+        _this.internalErrors = {
+          [_this.firstNameAttr]: errors,
+          [_this.lastNameAttr]: _this.internalErrors[_this.lastNameAttr]
+        };
+      } else {
+        _this.internalErrors = {
+          [_this.firstNameAttr]: _this.internalErrors[_this.firstNameAttr],
+          [_this.lastNameAttr]: errors
+        };
+      }
     };
   }
+}
+
+function anyErrors() {
+  let externalFirstNameErrors = this.errors[this.firstNameAttr] || [];
+  let internalFirstNameErrors = this.internalErrors[this.firstNameAttr] || [];
+  let externalLastNameErrors = this.errors[this.lastNameAttr] || [];
+  let internalLastNameErrors = this.internalErrors[this.lastNameAttr] || [];
+
+  let firstNameErrors = externalFirstNameErrors.slice(0).concat(internalFirstNameErrors.slice(0));
+  let lastNameErrors = externalLastNameErrors.slice(0).concat(internalLastNameErrors.slice(0));
+
+  firstNameErrors = _.map(firstNameErrors, (message) => `First Name ${message}`);
+  lastNameErrors = _.map(lastNameErrors, (message) => `Last Name ${message}`);
+
+  return firstNameErrors.concat(lastNameErrors);
 }
 
 function onFirstNameChanged(value) {
@@ -114,7 +128,7 @@ export default {
   name: "ObsName",
   data,
   methods:{
-    classesFor, nameErrors, errorsWithLabelNames,
+    classesFor, anyErrors,
     onFirstNameChanged, onLastNameChanged,
     onChangeEvent, onBlurEvent,
     formatter: (type) => Formatters[type],
@@ -123,7 +137,7 @@ export default {
     unregister: function(input) {_.without(this.inputs, input)}
   },
   computed: {
-    classes
+    classes, combinedErrors
   },
   props: {
     value: {
