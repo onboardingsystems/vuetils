@@ -58,7 +58,7 @@
 
     <h2>Form Builder</h2>
     <div>
-      <obs-form-builder :onsubmit="onSubmit" >
+      <obs-form-builder @submit="onSubmit" >
         <obs-name :value.sync="name" :required="true" />
 
         <obs-submit />
@@ -83,7 +83,7 @@ function data() {
   };
 }
 
-function onSubmit(e) {
+function onSubmit() {
   console.log('On change:');
   console.log(this.name);
 }

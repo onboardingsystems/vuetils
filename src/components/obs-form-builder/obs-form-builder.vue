@@ -21,10 +21,9 @@ function classes() {
   });
 }
 
-
 function mounted() {
   let holder = _.flattenDeep(processChildren(this.$children));
-  this.validatableComponents = _.filter(holder, (entry) => entry !== null);
+  this.validatableComponents = _.reject(holder, _.isNull);
 }
 
 function processChildren(children) {
@@ -60,7 +59,7 @@ function onSubmit() {
   results = _.flatten(results);
 
   if (_.isEmpty(results)) {
-    this.onsubmit();
+    this.$emit('submit');
   }
 }
 
