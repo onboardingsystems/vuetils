@@ -12,6 +12,12 @@ import _ from 'lodash';
 import Formatters from '../../utils/formatters';
 import cx from 'classnames';
 
+function data() {
+  return {
+    internalErrors: []
+  }
+}
+
 function classes() {
   return cx({
     "form-group": true,
@@ -78,10 +84,14 @@ function handleChange(e) {
 }
 
 function handleBlur() {
+  this.internalErrors = [];
+  let result = this.formatAndValidate(this.value);
+
   if (_.isFunction(this.onBlur)) {
-    var result = this.formatAndValidate(this.value);
-    this.onblur(result);
+    this.onBlur(result);
     return result.errors;
+  } else {
+    this.internalErrors = result.errors;
   }
 }
 
@@ -138,6 +148,7 @@ function anyErrors(checkForErrors = false) {
 }
 export default {
   name: "ObsTextArea",
+  data,
   mounted,
   beforeDestroy,
   methods: {
