@@ -89,10 +89,6 @@ function handleBlur() {
 }
 
 function mounted() {
-  if (_.isFunction(this.didMount)) {
-    this.didMount(this);
-  }
-
   // If props.value is nil (undefined or null), fall back to
   // props.defaultValue and submit the formatted and parsed defaultValue back
   // to the formBuilder so we can be rendered again with a valid value in our
@@ -105,7 +101,7 @@ function mounted() {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
     if(valid && _.isFunction(this.onChange)) {
-      this.onChange({formatted, parsed});
+      this.onChange(formatted);
     } else {
       this.$emit('update:value', formatted);
     }
@@ -128,11 +124,6 @@ function initialId() {
   return this.id;
 }
 
-function beforeDestroy() {
-  if (_.isFunction(this.willUnmount))
-    this.willUnmount(this);
-}
-
 function combinedErrors() {
   return this.anyErrors();
 }
@@ -152,7 +143,6 @@ export default {
   name: "FeText",
   data,
   mounted,
-  beforeDestroy,
   methods: {
     handleBlur, handleChange, anyErrors, formatAndValidate, format
   },
@@ -226,14 +216,6 @@ export default {
       type: Function
     },
     onBlur: {
-      required: false,
-      type: Function
-    },
-    didMount: {
-      required: false,
-      type: Function
-    },
-    willUnmount: {
       required: false,
       type: Function
     }

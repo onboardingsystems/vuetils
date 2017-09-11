@@ -112,7 +112,7 @@ function mounted() {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
     if(valid && _.isFunction(this.onChange)) {
-      this.handleChange({formatted, parsed});
+      this.handleChange(formatted);
     } else {
       this.$emit('update:value', formatted);
     }
@@ -120,7 +120,7 @@ function mounted() {
     let {valid, formatted} = this.formatAndValidate(this.value);
 
     if (valid && _.isFunction(this.onChange)) {
-      this.handleChange({formatted});
+      this.handleChange(formatted);
     } else {
       this.$emit('update:value', formatted);
     }

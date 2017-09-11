@@ -11,7 +11,6 @@
           :class="classesFor(firstNameAttr, 'name-first')"
           :on-change="onChangeEvent(firstNameAttr)"
           :on-blur="onBlurEvent(firstNameAttr)"
-          :did-mount="register" :will-unmount="unregister"
           :autofocus="autofocus"
           :custom-validator="firstNameCustomValidator" />
       </div>
@@ -24,7 +23,6 @@
           :className="classesFor(lastNameAttr, 'name-last')"
           :on-change="onChangeEvent(lastNameAttr)"
           :on-blur="onBlurEvent(lastNameAttr)"
-          :did-mount="register" :will-unmount="unregister"
           :custom-validator="lastNameCustomValidator" />
       </div>
     </fe-compound-layout >
@@ -134,9 +132,7 @@ export default {
     onFirstNameChanged, onLastNameChanged,
     onChangeEvent, onBlurEvent,
     formatter: (type) => Formatters[type],
-    valueFor: function(attr) {return _.get((this.value || {}), attr)},
-    register: function(input) {return _.concat(this.inputs, input)},
-    unregister: function(input) {_.without(this.inputs, input)}
+    valueFor: function(attr) {return _.get((this.value || {}), attr)}
   },
   computed: {
     classes, combinedErrors

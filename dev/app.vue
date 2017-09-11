@@ -61,6 +61,7 @@
       <fe-form @submit="onSubmit" >
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
+        <fe-checkbox :value.sync="iAgree" label="I agree" />
 
         <fe-submit />
       </fe-form>
@@ -81,6 +82,7 @@ function data() {
     textAreaRequired: null,
     name: null,
     address: null,
+    iAgree: false,
     formName: null
   };
 }
