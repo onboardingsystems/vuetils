@@ -32,53 +32,34 @@
 
     <h2>Text Input</h2>
     <div>
-      <obs-text-input label="Username" placeholder="example: joe, notjoe" :autofocus="true" />
+      <obs-text-input label="Username" placeholder="example: joe, notjoe" :autofocus="true" :value.sync="text1" />
     </div>
     <h2>Text Input Required</h2>
     <div>
-      <obs-text-input label="Username" placeholder="example: joe, notjoe" :required="true" />
+      <obs-text-input label="Username" placeholder="example: joe, notjoe" :required="true" :value.sync="text2" />
     </div>
     <h2>Text Input Default</h2>
     <div>
-      <obs-text-input label="Username" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textRequired"/>
+      <obs-text-input label="Username" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textRequired" />
     </div>
 
     <h2>Text Area</h2>
     <div>
-      <obs-text-area label="Content" placeholder="example: joe, notjoe" />
+      <obs-text-area label="Content" placeholder="example: joe, notjoe" :value.sync="textArea1" />
     </div>
     <h2>Text Area Required</h2>
     <div>
-      <obs-text-area label="Content" placeholder="example: joe, notjoe" :required="true"/>
+      <obs-text-area label="Content" placeholder="example: joe, notjoe" :required="true" :value.sync="textArea2" />
     </div>
     <h2>Text Area Default</h2>
     <div>
-      <obs-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired"/>
+      <obs-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired" />
     </div>
-
-    <h2>Compound Layout</h2>
-    <div>
-      <obs-compound-layout>
-        <obs-text-input label="First Name" />
-        <obs-text-input label="Last Name" />
-      </obs-compound-layout>
-    </div>
-
-    <h2>Name</h2>
-    <div>
-      <obs-name :value.sync="name" :required="true" />
-    </div>
-
 
     <h2>Form Builder</h2>
     <div>
       <obs-form-builder :onsubmit="onSubmit" >
-        <div class="col-xs-6">
-          <obs-text-input label="Age" :value.sync="age" />
-        </div>
-        <div class="col-xs-6">
-          <obs-text-input label="Color" :value.sync="color" />
-        </div>
+        <obs-name :value.sync="name" :required="true" />
 
         <obs-submit />
       </obs-form-builder>
@@ -89,14 +70,16 @@
 <script>
 function data() {
   return {
+    text1: '',
+    text2: '',
+    textArea1: '',
+    textArea2: '',
     age: 0,
     color: 'red',
     textRequired: null,
     textAreaRequired: null,
-    name: {
-      first_name: 'Joe',
-      last_name: 'Lindley'
-    }
+    name: null,
+    formName: null
   };
 }
 

@@ -31,10 +31,11 @@ function processChildren(children) {
   let validatableComponents = _.map(children, function(component) {
     let currentContext = null;
 
-    if (_.isEmpty(component._vnode.tag)) {
-      let context = component.$vnode.context;
-      if (_.isFunction(context.anyErrors)) {
-        currentContext = context;
+    // Check if current component is a top level custom component
+    // that implements a 'anyErrors' method.
+    if (component.$vnode && component.$vnode.tag) {
+      if (_.isFunction(component.anyErrors)) {
+        currentContext = component;
       }
     }
 
@@ -43,9 +44,10 @@ function processChildren(children) {
     if (currentContext === null) {
       // Only scan children if parent is not handling the event.
       currentComponents = processChildren(component.$children);
+    } else {
+      currentComponents.push(currentContext);
     }
 
-    currentComponents.push(currentContext);
     return currentComponents;
   });
 
@@ -54,9 +56,10 @@ function processChildren(children) {
 
 function onSubmit() {
   // Check all components to validate, if everything is good then pass to the onsubmit action.
-  let results = _.map(this.validatableComponents, (comp) => comp.anyErrors());
+  let results = _.map(this.validatableComponents, (comp) => comp.anyErrors(true));
+  results = _.flatten(results);
 
-  if (results === []) {
+  if (_.isEmpty(results)) {
     this.onsubmit();
   }
 }

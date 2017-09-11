@@ -3,7 +3,7 @@
     <obs-label :text="label" :required="required" :htmlFor="id" :hint="hint" />
     <obs-compound-layout layout="inline">
       <div class="flex-grow-shrink">
-        <obs-text-input :id="id"
+        <obs-text-input :id="id" ref="firstNameField"
           :value="valueFor(firstNameAttr)"
           @update:value="onFirstNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
@@ -16,7 +16,7 @@
           :custom-validator="firstNameCustomValidator" />
       </div>
       <div class="flex-grow-shrink">
-        <obs-text-input
+        <obs-text-input ref="lastNameField"
           :value="valueFor(lastNameAttr)"
           @update:value="onLastNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
@@ -95,7 +95,12 @@ function onBlurEvent(attribute) {
   }
 }
 
-function anyErrors() {
+function anyErrors(checkForErrors = false) {
+  if (checkForErrors) {
+    this.$refs.firstNameField.anyErrors(checkForErrors);
+    this.$refs.lastNameField.anyErrors(checkForErrors);
+  }
+
   let externalFirstNameErrors = this.errors[this.firstNameAttr] || [];
   let internalFirstNameErrors = this.internalErrors[this.firstNameAttr] || [];
   let externalLastNameErrors = this.errors[this.lastNameAttr] || [];

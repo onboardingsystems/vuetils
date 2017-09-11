@@ -37,7 +37,7 @@ function format(value) {
 // still need something here to help prevent bad values from being rendered.
 function initialValue() {
   let currentValue = document.getElementById(this.id).value;
-  if (newProps.value !== currentValue && _.isFunction(this.props.onChange)) {
+  if (newProps.value !== currentValue && _.isFunction(this.onChange)) {
     var result = this.formatAndValidate(newProps.value);
     if (result.valid) {
       this.onChange(result.formatted);
@@ -129,7 +129,11 @@ function combinedErrors() {
   return this.anyErrors();
 }
 
-function anyErrors() {
+function anyErrors(checkForErrors = false) {
+  if (checkForErrors) {
+    this.handleBlur();
+  }
+
   let externalErrors = this.errors || [];
   let internalErrors = this.internalErrors || [];
 
