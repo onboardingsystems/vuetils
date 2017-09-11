@@ -1,6 +1,6 @@
 <template>
   <div :class="classes">
-    <obs-label :text="label" :hint="hint" :htmlFor="id" :required="required" />
+    <obs-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
     <textarea :id="initialId" class="form-control obs-text-area" :rows="rows" :value="value"
       :placeholder="placeholder" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
     <obs-error :errors="combinedErrors" />

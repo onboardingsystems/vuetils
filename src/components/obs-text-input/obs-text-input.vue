@@ -1,6 +1,6 @@
 <template>
   <div :class="classes">
-    <obs-label :text="label" :hint="hint" :htmlFor="id" :required="required" />
+    <obs-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
     <input :id="initialId" class="form-control obs-text-input" :type="type" :value="value"
       :placeholder="placeholder"
       @change="handleChange" @blur="handleBlur"
