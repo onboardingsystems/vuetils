@@ -56,19 +56,15 @@
       <fe-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired" />
     </div> -->
 
-    <h2>US Address Field</h2>
+    <h2>Form Builder</h2>
     <div>
-      <fe-address-us :value.sync="address" :required="true"  />
-    </div>
-
-    <!-- <h2>Form Builder</h2>
-    <div>
-      <fe-form-builder @submit="onSubmit" >
+      <fe-form @submit="onSubmit" >
         <fe-name :value.sync="name" :required="true" />
+        <fe-address-us :value.sync="address" :required="true"  />
 
         <fe-submit />
-      </fe-form-builder>
-    </div> -->
+      </fe-form>
+    </div>
   </div>
 </template>
 

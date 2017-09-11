@@ -8,41 +8,41 @@
         @update:value="streetChanged"
         :required="required" :formatter="formatter('stringFormatter')"
         placeholder="Address"
-        :className="classesFor(streetNameAttr, 'address-line-1')"
+        :class="classesFor(streetNameAttr, 'address-line-1')"
         :on-change="onChangeEvent(streetNameAttr)"
         :on-blur="onBlurEvent(streetNameAttr)"
         :autofocus="autofocus" :custom-validator="streetCustomValidator" />
 
       <fe-compound-layout  layout="inline">
-        <div className="flex-grow-shrink">
+        <div class="flex-grow-shrink">
           <fe-text ref="city"
             :value="valueFor(cityNameAttr)"
             @update:value="cityChanged"
             :required="required" :formatter="formatter('stringFormatter')"
             placeholder="City"
-            :className="classesFor(cityNameAttr, 'address-city')"
+            :class="classesFor(cityNameAttr, 'address-city')"
             :on-change="onChangeEvent(cityNameAttr)"
             :on-blur="onBlurEvent(cityNameAttr)"
             :custom-validator="cityCustomValidator" />
         </div>
-        <div className="flex-static">
+        <div class="flex-static">
           <fe-text ref="state"
             :value="valueFor(stateNameAttr)"
             @update:value="stateChanged"
             :required="required" :formatter="formatter('stateFormatter')"
             placeholder="ST"
-            :className="classesFor(stateNameAttr, 'address-state state')"
+            :class="classesFor(stateNameAttr, 'address-state state')"
             :on-change="onChangeEvent(stateNameAttr)"
             :on-blur="onBlurEvent(stateNameAttr)"
             :custom-validator="stateCustomValidator" />
         </div>
-        <div className="flex-static">
+        <div class="flex-static">
           <fe-text ref="zip"
             :value="valueFor(zipNameAttr)"
             @update:value="zipChanged"
             :required="required" :formatter="formatter('zipcodeFormatter')"
             placeholder="Zip"
-            :className="classesFor(zipNameAttr, 'address-zipcode zipcode')"
+            :class="classesFor(zipNameAttr, 'address-zipcode zipcode')"
             :on-change="onChangeEvent(zipNameAttr)"
             :on-blur="onBlurEvent(zipNameAttr)"
             :custom-validator="zipCustomValidator" />
