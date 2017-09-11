@@ -85,8 +85,7 @@ function data() {
 
 function onSubmit(e) {
   console.log('On change:');
-  console.log(this.age);
-  console.log(this.color);
+  console.log(this.name);
 }
 
 export default {
