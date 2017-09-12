@@ -60,15 +60,11 @@ function initialId() {
   return this.id;
 }
 
-function anyErrors(checkForErrors = false) {
-  return [];
-}
-
 export default {
   name: "FeCheckbox",
   mounted,
   methods: {
-    handleChange, anyErrors
+    handleChange
   },
   computed: {
     classes, initialValue, initialId
