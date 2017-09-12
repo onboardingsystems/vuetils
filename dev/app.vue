@@ -62,8 +62,13 @@
     </div> -->
 
     <h2>Form Builder</h2>
-    <div>
+    <div class="col-xs-6">
       <fe-form @submit="onSubmit" >
+        <fe-text label="Username" :required="true" :value.sync="username" placeholder="joe, notjoe, ect." />
+        <fe-textarea label="Job History" :required="true" :value.sync="jobHistory" placeholder="Stuff you did..." rows="6" />
+
+        <fe-number label="Current Age" :required="true" :value.sync="currentAge" placeholder="24" />
+
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
         <fe-checkbox :value.sync="iAgree" :required="true">I agree</fe-checkbox>
@@ -78,15 +83,11 @@
 <script>
 function data() {
   return {
-    text1: '',
-    text2: '',
-    textArea1: '',
-    textArea2: '',
+    username: null,
     optionValue: null,
-    age: 0,
+    currentAge: null,
     color: 'red',
-    textRequired: null,
-    textAreaRequired: null,
+    jobHistory: null,
     name: null,
     address: null,
     iAgree: false,

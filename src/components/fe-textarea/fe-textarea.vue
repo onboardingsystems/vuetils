@@ -120,7 +120,7 @@ function anyErrors(checkForErrors = false) {
   return externalErrors.concat(internalErrors);
 }
 export default {
-  name: "FeTextArea",
+  name: "FeTextarea",
   data,
   mounted,
   methods: {
@@ -184,7 +184,7 @@ export default {
     },
     rows: {
       required: false,
-      type: Number,
+      type: [String, Number],
       default: 3
     },
     customValidator: {
