@@ -35,7 +35,9 @@ export default {
     }
   },
   computed: {
-    somethingToRender: function() {return !_.isEmpty(this.text) || !_.isEmpty(this.hint)}
+    somethingToRender: function() {
+      return !_.isEmpty(this.text) || !_.isEmpty(this.hint) || !_.isEmpty(this.$slots.default);
+    }
   }
 }
 </script>

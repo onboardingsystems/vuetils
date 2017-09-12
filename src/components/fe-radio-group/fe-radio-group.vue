@@ -1,27 +1,152 @@
 <template>
     <div :class="groupClasses" :id="id">
       <fe-label class="radio-group-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
-      <fe-error :errors="errors" />
+      <div class="radio" v-for="option in options" :key="option.value">
+        <label :class="{'radio-label': true, 'checked': isChecked(option)}">
+          <input type="radio" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
+          {{option.name}}
+        </label>
+      </div>
+      <fe-error :errors="combinedErrors" />
     </div>
 </template>
 
 <script>
-import Formatters from '../../utils/formatters';
 import _ from 'lodash';
 import cx from 'classnames';
+
+function data() {
+  return {
+    internalErrors: []
+  };
+}
 
 function groupClasses() {
   return cx({
     "form-group": true,
-    "has-error":  !_.isEmpty(this.errors),
+    "has-error":  !_.isEmpty(this.anyErrors()),
     [this.className]: _.isString(this.className)
   });
 }
 
+function isChecked(option) {
+  return this.value === option.value;
+}
+
+function initialId() {
+  if (_.isEmpty(this.id)) {
+    return _.uniqueId('option_');
+  }
+
+  return this.id;
+}
+
+function mounted() {
+  // If props.value is nil (undefined or null), fall back to
+  // props.defaultValue and submit the formatted and parsed defaultValue back
+  // to the formBuilder so we can be rendered again with a valid value in our
+  // props.
+  //
+  // A defaultValue that responds to _.isNil will result in an infinate loop.
+  // So check that the defaultValue will not respond to isNil before
+  // submitting a new value for props.value.
+  if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
+    var {valid: valid, parsed: parsed, formatted: formatted} = this.formatAndValidate(this.defaultValue)
+    if(valid) {
+      this.$emit('change', formatted);
+      this.$emit('update:value', formatted);
+    }
+  } else {
+    var {valid: valid, formatted: formatted} = this.formatAndValidate(this.value)
+    if(valid) {
+      this.$emit('change', formatted);
+      this.$emit('update:value', formatted);
+    }
+  }
+}
+
+function formatAndValidate(value) {
+  var formatted, parsed, errors = []
+
+  // rewrite "blank" values as null
+  if (_.isNil(value))
+    value = null;
+  if (_.isEmpty(value))
+    value = null;
+
+  // both formatted and parsed values are the same.  This is by design to
+  // simplify things.  Otherwise, the value props would have to be able to
+  // accept the formatted or parsed value as valid input.
+  formatted = value;
+  parsed = value;
+
+  // check for required
+  if (this.required && _.isNull(parsed)) {
+    errors.push('is required');
+  }
+
+  // check for inclusion in the list of options, but only if there wasn't a
+  // requirement error first
+  if (_.isEmpty(errors)) {
+    let allowedValues = _.map(this.options, "value");
+
+    if (!_.includes(allowedValues, value)) {
+      errors.push('invalid value');
+      parsed = null;
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    parsed,
+    formatted,
+    errors
+  };
+}
+
+function handleChange(e) {
+  this.internalErrors = [];
+  let result = this.formatAndValidate(e.target.value);
+  this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
+}
+
+function handleBlur() {
+  this.internalErrors = [];
+  let result = this.formatAndValidate(this.value);
+
+  if (_.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result)
+    return result.errors;
+  } else {
+    this.internalErrors = result.errors;
+  }
+}
+
+function combinedErrors() {
+  return this.anyErrors();
+}
+
+function anyErrors(checkForErrors = false) {
+  if (checkForErrors) {
+    this.handleBlur();
+  }
+
+  let externalErrors = this.errors || [];
+  let internalErrors = this.internalErrors || [];
+
+  return externalErrors.concat(internalErrors);
+}
+
 export default {
   name: "FeRadioGroup",
+  data,
+  mounted,
+  methods: {
+    isChecked, formatAndValidate, handleChange, handleBlur, anyErrors
+  },
   computed: {
-    groupClasses
+    groupClasses, initialId, combinedErrors
   },
   props: {
     value: {
@@ -41,7 +166,7 @@ export default {
     errors: {
       required: false,
       type: Array,
-      default: () => {}
+      default: () => []
     },
     id: {
       required: false,
@@ -77,6 +202,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .has-error .radio-group-label {
+    color: black
+  }
 </style>

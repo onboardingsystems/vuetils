@@ -68,7 +68,7 @@
         <fe-address-us :value.sync="address" :required="true"  />
         <fe-checkbox :value.sync="iAgree" :required="true">I agree</fe-checkbox>
 
-        <fe-radio-group label="Options to Select" />
+        <fe-radio-group label="Options to Select" :value.sync="optionValue" :required="true" :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me.'}]" />
         <fe-submit />
       </fe-form>
     </div>
@@ -82,6 +82,7 @@ function data() {
     text2: '',
     textArea1: '',
     textArea2: '',
+    optionValue: null,
     age: 0,
     color: 'red',
     textRequired: null,
