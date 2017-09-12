@@ -12,7 +12,8 @@
           @change="value => onChangeEvent(firstNameAttr, value)"
           @blur="result => onBlurEvent(firstNameAttr, result)"
           :autofocus="autofocus"
-          :custom-validator="firstNameCustomValidator" />
+          :custom-validator="firstNameCustomValidator"
+          :editable="editable" />
       </div>
       <div class="flex-grow-shrink">
         <fe-text ref="lastNameField"
@@ -23,7 +24,8 @@
           :className="classesFor(lastNameAttr, 'name-last')"
           @change="value => onChangeEvent(lastNameAttr, value)"
           @blur="result => onBlurEvent(lastNameAttr, result)"
-          :custom-validator="lastNameCustomValidator" />
+          :custom-validator="lastNameCustomValidator"
+          :editable="editable" />
       </div>
     </fe-compound-layout >
     <fe-error :errors="combinedErrors" />
@@ -186,6 +188,11 @@ export default {
     lastNameCustomValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 }

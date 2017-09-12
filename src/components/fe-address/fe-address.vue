@@ -11,6 +11,7 @@
         :class="classesFor(streetNameAttr, 'address-line-1')"
         @change="value => onChangeEvent(streetNameAttr, value)"
         @blur="result => onBlurEvent(streetNameAttr, result)"
+        :editable="editable"
         :autofocus="autofocus" :custom-validator="streetCustomValidator" />
 
       <fe-compound-layout  layout="inline">
@@ -23,6 +24,7 @@
             :class="classesFor(cityNameAttr, 'address-city')"
             @change="value => onChangeEvent(cityNameAttr, value)"
             @blur="result => onBlurEvent(cityNameAttr, result)"
+            :editable="editable"
             :custom-validator="cityCustomValidator" />
         </div>
         <div class="flex-static">
@@ -34,6 +36,7 @@
             :class="classesFor(stateNameAttr, 'address-state state')"
             @change="value => onChangeEvent(stateNameAttr, value)"
             @blur="result => onBlurEvent(stateNameAttr, result)"
+            :editable="editable"
             :custom-validator="stateCustomValidator" />
         </div>
         <div class="flex-static">
@@ -45,6 +48,7 @@
             :class="classesFor(zipNameAttr, 'address-zipcode zipcode')"
             @change="value => onChangeEvent(zipNameAttr, value)"
             @blur="result => onBlurEvent(zipNameAttr, result)"
+            :editable="editable"
             :custom-validator="zipCustomValidator" />
         </div>
       </fe-compound-layout >
@@ -153,7 +157,7 @@ function valueUpdated(attribute, newValue) {
 }
 
 export default {
-  name: "FeAddressUs",
+  name: "FeAddress",
   data,
   methods:{
     anyErrors, onChangeEvent, onBlurEvent,
@@ -240,6 +244,11 @@ export default {
     zipCustomValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 }

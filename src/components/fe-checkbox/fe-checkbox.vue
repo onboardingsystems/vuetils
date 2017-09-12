@@ -2,7 +2,7 @@
   <div :class="className">
     <div :class="classes">
       <label>
-        <input type="checkbox" ref="checkbox" :id="initialId" :checked="initialValue" @change="handleChange" />
+        <input type="checkbox" ref="checkbox" :id="initialId" :checked="initialValue" @change="handleChange" :disabled="!editable" />
         <slot>
           {{label}}
         </slot>
@@ -115,6 +115,11 @@ export default {
     onChange: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 }

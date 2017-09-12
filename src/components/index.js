@@ -9,7 +9,7 @@ export {default as FeTextArea} from './fe-textarea';
 export {default as FeSubmit} from './fe-submit';
 export {default as FeCompoundLayout} from './fe-compound-layout';
 export {default as FeName} from './fe-name';
-export {default as FeAddressUs} from './fe-address-us';
+export {default as FeAddress} from './fe-address';
 export {default as FeCheckbox} from './fe-checkbox';
 export {default as FeRadioGroup} from './fe-radio-group';
 export {default as FeNumber} from './fe-number';

@@ -1,4 +1,4 @@
-import FeAddress from './fe-address-us';
+import FeAddress from './fe-address';
 
 FeAddress.install = function install(Vue) {
   Vue.component(FeAddress.name, FeAddress)

@@ -8,6 +8,7 @@
            :customValidator="customValidator"
            @update:value="updated"
            @update:parsed="parsed"
+           :editable="editable"
            />
 </template>
 
@@ -81,6 +82,11 @@ export default {
     customValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 }

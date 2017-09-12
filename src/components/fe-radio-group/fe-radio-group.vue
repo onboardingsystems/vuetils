@@ -3,7 +3,7 @@
       <fe-label class="radio-group-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
       <div class="radio" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option)}">
-          <input type="radio" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
+          <input type="radio" :disabled="!editable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
           {{option.name}}
         </label>
       </div>
@@ -197,6 +197,11 @@ export default {
     customValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 }

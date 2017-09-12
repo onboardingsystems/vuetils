@@ -1,31 +1,35 @@
 <template>
   <div id="root">
     <h2>Form Builder</h2>
+    <fe-checkbox :value.sync="editable">Fields are editable</fe-checkbox>
+
     <div class="col-xs-6">
       <fe-form @submit="onSubmit" >
-        <fe-text label="Username" :required="true" :value.sync="username" placeholder="joe, notjoe, ect." />
-        <fe-textarea label="Job History" :required="true" :value.sync="jobHistory" placeholder="Stuff you did..." rows="6" />
+        <fe-text label="Username" :required="true" :value.sync="username" placeholder="joe, notjoe, ect." :editable="editable" />
+        <fe-textarea label="Job History" :required="true" :value.sync="jobHistory" placeholder="Stuff you did..." rows="6" :editable="editable" />
 
-        <fe-number label="Current Age" :required="true" :value.sync="currentAge" placeholder="24" />
-        <fe-phone label="Home Number" :required="true" :value.sync="phone" />
-        <fe-email label="Email Address" :required="true" :value.sync="email" />
-        <fe-ssn label="Social Security Number" :required="true" :value.sync="ssn" />
-        <fe-state label="US State Code" :required="true" :value.sync="state" />
-        <fe-zipcode label="Zip Code" :required="true" :value.sync="zipcode" />
-        <fe-currency label="Cost" :required="true" :value.sync="cost" />
-        <fe-dollars label="Rent" :required="true" :value.sync="rent" />
-        <fe-percent label="Sales Tax" :required="true" :value.sync="salesTax" :parsed.sync="parsedSalesTax" />
-        <fe-date label="Start Date" :required="true" :value.sync="startDate" :parsed.sync="parsedStartDate" />
-        <fe-date label="End Date" :required="true" :value.sync="endDate" :parsed.sync="parsedEndDate" format="month-year" />
-        <fe-time label="Open Time" :required="true" :value.sync="openTime" />
-        <fe-ordinal label="Ordinal" :required="true" :value.sync="ordinal" />
+        <fe-number label="Current Age" :required="true" :value.sync="currentAge" placeholder="24" :editable="editable" />
+        <fe-phone label="Home Number" :required="true" :value.sync="phone" :editable="editable" />
+        <fe-email label="Email Address" :required="true" :value.sync="email" :editable="editable" />
+        <fe-ssn label="Social Security Number" :required="true" :value.sync="ssn" :editable="editable" />
+        <fe-state label="US State Code" :required="true" :value.sync="state" :editable="editable" />
+        <fe-zipcode label="Zip Code" :required="true" :value.sync="zipcode" :editable="editable" />
+        <fe-currency label="Cost" :required="true" :value.sync="cost" :editable="editable" />
+        <fe-dollars label="Rent" :required="true" :value.sync="rent" :editable="editable" />
+        <fe-percent label="Sales Tax" :required="true" :value.sync="salesTax" :parsed.sync="parsedSalesTax" :editable="editable" />
+        <fe-date label="Start Date" :required="true" :value.sync="startDate" :parsed.sync="parsedStartDate" :editable="editable" />
+        <fe-date label="End Date" :required="true" :value.sync="endDate" :parsed.sync="parsedEndDate" format="month-year" :editable="editable" />
+        <fe-time label="Open Time" :required="true" :value.sync="openTime" :editable="editable" />
+        <fe-ordinal label="Ordinal" :required="true" :value.sync="ordinal" :editable="editable" />
 
-        <fe-name :value.sync="name" :required="true" />
-        <fe-address-us :value.sync="address" :required="true"  />
-        <fe-checkbox :value.sync="iAgree" :required="true">I agree</fe-checkbox>
+        <fe-name :value.sync="name" :required="true" :editable="editable" />
+        <fe-address :value.sync="address" :required="true"  :editable="editable" />
+        <fe-checkbox :value.sync="iAgree" :required="true" :editable="editable" >I agree</fe-checkbox>
 
-        <fe-radio-group label="Options to Select" :value.sync="optionValue" :required="true" :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me.'}]" />
-        <fe-submit />
+        <fe-radio-group label="Options to Select" :value.sync="optionValue" :required="true"
+                        :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me.'}]"
+                        :editable="editable" />
+        <fe-submit :editable="editable" />
       </fe-form>
     </div>
   </div>
@@ -34,6 +38,7 @@
 <script>
 function data() {
   return {
+    editable: true,
     ordinal: null,
     openTime: null,
     startDate: null,

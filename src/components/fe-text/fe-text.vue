@@ -1,10 +1,11 @@
 <template>
   <div :class="classes">
     <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
-    <input :id="initialId" class="form-control fe-text" :type="type" :value="value"
+    <input v-if="editable" :id="initialId" class="form-control fe-text" :type="type" :value="value"
       :placeholder="placeholder"
       @change="handleChange" @blur="handleBlur"
       :autofocus="autofocus" />
+    <pre v-if="!editable">{{value}}</pre>
     <fe-error :errors="combinedErrors" />
   </div>
 </template>
@@ -196,6 +197,11 @@ export default {
     customValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 }
