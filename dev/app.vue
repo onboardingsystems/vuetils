@@ -68,6 +68,7 @@
         <fe-textarea label="Job History" :required="true" :value.sync="jobHistory" placeholder="Stuff you did..." rows="6" />
 
         <fe-number label="Current Age" :required="true" :value.sync="currentAge" placeholder="24" />
+        <fe-phone label="Home Number" :required="true" :value.sync="phone" />
 
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
@@ -86,6 +87,7 @@ function data() {
     username: null,
     optionValue: null,
     currentAge: null,
+    phone: null,
     color: 'red',
     jobHistory: null,
     name: null,

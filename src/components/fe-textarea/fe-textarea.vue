@@ -195,6 +195,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .has-error label {
+    color: black
+  }
 </style>

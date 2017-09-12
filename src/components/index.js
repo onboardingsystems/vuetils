@@ -13,3 +13,4 @@ export {default as FeAddressUs} from './fe-address-us';
 export {default as FeCheckbox} from './fe-checkbox';
 export {default as FeRadioGroup} from './fe-radio-group';
 export {default as FeNumber} from './fe-number';
+export {default as FePhone} from './fe-phone';
