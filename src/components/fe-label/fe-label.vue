@@ -1,6 +1,8 @@
 <template>
   <label v-if="somethingToRender" class="control-label fe-label" :for="htmlFor">
-    {{text}}
+    <slot>
+      {{text}}
+    </slot>
     <fe-required-marker :required="required" />
     <fe-hint :hint="hint" />
   </label>

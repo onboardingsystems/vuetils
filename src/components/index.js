@@ -11,3 +11,4 @@ export {default as FeCompoundLayout} from './fe-compound-layout';
 export {default as FeName} from './fe-name';
 export {default as FeAddressUs} from './fe-address-us';
 export {default as FeCheckbox} from './fe-checkbox';
+export {default as FeRadioGroup} from './fe-radio-group';

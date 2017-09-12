@@ -33684,6 +33684,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeName", function() { return __WEBPACK_IMPORTED_MODULE_10__fe_name__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__fe_address_us__ = __webpack_require__(191);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeAddressUs", function() { return __WEBPACK_IMPORTED_MODULE_11__fe_address_us__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__fe_checkbox__ = __webpack_require__(197);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeCheckbox", function() { return __WEBPACK_IMPORTED_MODULE_12__fe_checkbox__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__fe_radio_group__ = __webpack_require__(203);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeRadioGroup", function() { return __WEBPACK_IMPORTED_MODULE_13__fe_radio_group__["a"]; });
+
+
 
 
 
@@ -34183,6 +34189,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -34253,7 +34261,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "for": _vm.htmlFor
     }
-  }, [_vm._v("\n  " + _vm._s(_vm.text) + "\n  "), _c('fe-required-marker', {
+  }, [_vm._t("default", [_vm._v("\n    " + _vm._s(_vm.text) + "\n  ")]), _vm._v(" "), _c('fe-required-marker', {
     attrs: {
       "required": _vm.required
     }
@@ -34261,7 +34269,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "hint": _vm.hint
     }
-  })], 1) : _vm._e()
+  })], 2) : _vm._e()
 },staticRenderFns: []}
 
 /***/ }),
@@ -34417,13 +34425,6 @@ function onSubmit() {
     classes: classes
   },
   props: {
-    onsubmit: {
-      required: false,
-      type: Function,
-      default: function _default() {
-        return false;
-      }
-    },
     className: {
       required: false,
       type: String
@@ -34561,14 +34562,6 @@ function format(value) {
 // little while.  So since our defaultValue doesn't kick in right away we
 // still need something here to help prevent bad values from being rendered.
 function initialValue() {
-  var currentValue = document.getElementById(this.id).value;
-  if (newProps.value !== currentValue && __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-    var result = this.formatAndValidate(newProps.value);
-    if (result.valid) {
-      this.onChange(result.formatted);
-    }
-  }
-
   if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.value)) {
     return "";
   } else {
@@ -34593,20 +34586,17 @@ function formatAndValidate(value) {
 }
 
 function handleChange(e) {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-    this.onChange(e.target.value);
-  } else {
-    var result = this.formatAndValidate(e.target.value);
-    this.$emit('update:value', result.formatted);
-  }
+  var result = this.formatAndValidate(e.target.value);
+  this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
 }
 
 function handleBlur() {
   this.internalErrors = [];
   var result = this.formatAndValidate(this.value);
 
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onBlur)) {
-    this.onBlur(result);
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result);
     return result.errors;
   } else {
     this.internalErrors = result.errors;
@@ -34614,10 +34604,6 @@ function handleBlur() {
 }
 
 function mounted() {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.didMount)) {
-    this.didMount(this);
-  }
-
   // If props.value is nil (undefined or null), fall back to
   // props.defaultValue and submit the formatted and parsed defaultValue back
   // to the formBuilder so we can be rendered again with a valid value in our
@@ -34632,21 +34618,15 @@ function mounted() {
         parsed = _formatAndValidate.parsed,
         formatted = _formatAndValidate.formatted;
 
-    if (valid && __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-      this.onChange({ formatted: formatted, parsed: parsed });
-    } else {
-      this.$emit('update:value', formatted);
-    }
+    this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
         _formatted = _formatAndValidate2.formatted;
 
-    if (_valid && __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-      this.onChange({ formatted: _formatted });
-    } else {
-      this.$emit('update:value', _formatted);
-    }
+    this.$emit('change', _formatted);
+    this.$emit('update:value', _formatted);
   }
 }
 
@@ -34656,10 +34636,6 @@ function initialId() {
   }
 
   return this.id;
-}
-
-function beforeDestroy() {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.willUnmount)) this.willUnmount(this);
 }
 
 function combinedErrors() {
@@ -34683,7 +34659,6 @@ function anyErrors() {
   name: "FeText",
   data: data,
   mounted: mounted,
-  beforeDestroy: beforeDestroy,
   methods: {
     handleBlur: handleBlur, handleChange: handleChange, anyErrors: anyErrors, formatAndValidate: formatAndValidate, format: format
   },
@@ -34751,22 +34726,6 @@ function anyErrors() {
       default: 'text'
     },
     customValidator: {
-      required: false,
-      type: Function
-    },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
-      required: false,
-      type: Function
-    },
-    didMount: {
-      required: false,
-      type: Function
-    },
-    willUnmount: {
       required: false,
       type: Function
     }
@@ -36063,7 +36022,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required
     }
   }), _vm._v(" "), _c('input', {
-    staticClass: "form-control fe-text-input",
+    staticClass: "form-control fe-text",
     attrs: {
       "id": _vm.initialId,
       "type": _vm.type,
@@ -36197,14 +36156,6 @@ function format(value) {
 // little while.  So since our defaultValue doesn't kick in right away we
 // still need something here to help prevent bad values from being rendered.
 function initialValue() {
-  var currentValue = document.getElementById(this.id).value;
-  if (newProps.value !== currentValue && __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.props.onChange)) {
-    var result = this.formatAndValidate(newProps.value);
-    if (result.valid) {
-      this.onChange(result.formatted);
-    }
-  }
-
   if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.value)) {
     return "";
   } else {
@@ -36230,27 +36181,24 @@ function formatAndValidate(value) {
 
 function initialId() {
   if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.id)) {
-    return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.uniqueId('text_');
+    return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.uniqueId('textarea_');
   }
 
   return this.id;
 }
 
 function handleChange(e) {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-    this.onChange(e.target.value);
-  } else {
-    var result = this.formatAndValidate(e.target.value);
-    this.$emit('update:value', result.formatted);
-  }
+  var result = this.formatAndValidate(e.target.value);
+  this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
 }
 
 function handleBlur() {
   this.internalErrors = [];
   var result = this.formatAndValidate(this.value);
 
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onBlur)) {
-    this.onBlur(result);
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result);
     return result.errors;
   } else {
     this.internalErrors = result.errors;
@@ -36258,10 +36206,6 @@ function handleBlur() {
 }
 
 function mounted() {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.didMount)) {
-    this.didMount(this);
-  }
-
   // If props.value is nil (undefined or null), fall back to
   // props.defaultValue and submit the formatted and parsed defaultValue back
   // to the formBuilder so we can be rendered again with a valid value in our
@@ -36276,26 +36220,16 @@ function mounted() {
         parsed = _formatAndValidate.parsed,
         formatted = _formatAndValidate.formatted;
 
-    if (valid && __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-      this.handleChange({ formatted: formatted, parsed: parsed });
-    } else {
-      this.$emit('update:value', formatted);
-    }
+    this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
         _formatted = _formatAndValidate2.formatted;
 
-    if (_valid && __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-      this.handleChange({ formatted: _formatted });
-    } else {
-      this.$emit('update:value', _formatted);
-    }
+    this.$emit('change', _formatted);
+    this.$emit('update:value', _formatted);
   }
-}
-
-function beforeDestroy() {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.willUnmount)) this.willUnmount(this);
 }
 
 function combinedErrors() {
@@ -36318,7 +36252,6 @@ function anyErrors() {
   name: "FeTextArea",
   data: data,
   mounted: mounted,
-  beforeDestroy: beforeDestroy,
   methods: {
     handleBlur: handleBlur, handleChange: handleChange, formatAndValidate: formatAndValidate, format: format, anyErrors: anyErrors
   },
@@ -36386,22 +36319,6 @@ function anyErrors() {
       default: 3
     },
     customValidator: {
-      required: false,
-      type: Function
-    },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
-      required: false,
-      type: Function
-    },
-    didMount: {
-      required: false,
-      type: Function
-    },
-    willUnmount: {
       required: false,
       type: Function
     }
@@ -36772,8 +36689,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
 
 
 
@@ -36805,30 +36720,23 @@ function combinedErrors() {
   return this.anyErrors();
 }
 
-function onChangeEvent(attribute) {
-  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.onChange)) {
-    return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.bind(this.onChange, this, attribute);
-  }
+function onChangeEvent(attribute, value) {
+  this.$emit('change', attribute, value);
 }
 
-function onBlurEvent(attribute) {
-  var _this = this;
-  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.onBlur)) {
-    return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.bind(this.onBlur, this, attribute);
+function onBlurEvent(attribute, result) {
+  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', attribute, result);
   } else {
-    return function (_ref) {
-      var errors = _ref.errors;
+    if (attribute === this.firstNameAttr) {
+      var _internalErrors;
 
-      if (attribute === _this.firstNameAttr) {
-        var _this$internalErrors;
+      this.internalErrors = (_internalErrors = {}, _defineProperty(_internalErrors, this.firstNameAttr, result.errors), _defineProperty(_internalErrors, this.lastNameAttr, this.internalErrors[this.lastNameAttr]), _internalErrors);
+    } else {
+      var _internalErrors2;
 
-        _this.internalErrors = (_this$internalErrors = {}, _defineProperty(_this$internalErrors, _this.firstNameAttr, errors), _defineProperty(_this$internalErrors, _this.lastNameAttr, _this.internalErrors[_this.lastNameAttr]), _this$internalErrors);
-      } else {
-        var _this$internalErrors2;
-
-        _this.internalErrors = (_this$internalErrors2 = {}, _defineProperty(_this$internalErrors2, _this.firstNameAttr, _this.internalErrors[_this.firstNameAttr]), _defineProperty(_this$internalErrors2, _this.lastNameAttr, errors), _this$internalErrors2);
-      }
-    };
+      this.internalErrors = (_internalErrors2 = {}, _defineProperty(_internalErrors2, this.firstNameAttr, this.internalErrors[this.firstNameAttr]), _defineProperty(_internalErrors2, this.lastNameAttr, result.errors), _internalErrors2);
+    }
   }
 }
 
@@ -36884,12 +36792,6 @@ function onLastNameChanged(value) {
     },
     valueFor: function valueFor(attr) {
       return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.get(this.value || {}, attr);
-    },
-    register: function register(input) {
-      return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.concat(this.inputs, input);
-    },
-    unregister: function unregister(input) {
-      __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.without(this.inputs, input);
     }
   },
   computed: {
@@ -36914,14 +36816,6 @@ function onLastNameChanged(value) {
       required: false,
       type: Object,
       default: function _default() {}
-    },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
-      required: false,
-      type: Function
     },
     label: {
       required: false,
@@ -36981,7 +36875,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('div', {
     staticClass: "flex-grow-shrink"
-  }, [_c('fe-text-input', {
+  }, [_c('fe-text', {
     ref: "firstNameField",
     class: _vm.classesFor(_vm.firstNameAttr, 'name-first'),
     attrs: {
@@ -36990,19 +36884,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required,
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "First",
-      "on-change": _vm.onChangeEvent(_vm.firstNameAttr),
-      "on-blur": _vm.onBlurEvent(_vm.firstNameAttr),
-      "did-mount": _vm.register,
-      "will-unmount": _vm.unregister,
       "autofocus": _vm.autofocus,
       "custom-validator": _vm.firstNameCustomValidator
     },
     on: {
-      "update:value": _vm.onFirstNameChanged
+      "update:value": _vm.onFirstNameChanged,
+      "change": function (value) { return _vm.onChangeEvent(_vm.firstNameAttr, value); },
+      "blur": function (result) { return _vm.onBlurEvent(_vm.firstNameAttr, result); }
     }
   })], 1), _vm._v(" "), _c('div', {
     staticClass: "flex-grow-shrink"
-  }, [_c('fe-text-input', {
+  }, [_c('fe-text', {
     ref: "lastNameField",
     attrs: {
       "value": _vm.valueFor(_vm.lastNameAttr),
@@ -37010,14 +36902,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "Last",
       "className": _vm.classesFor(_vm.lastNameAttr, 'name-last'),
-      "on-change": _vm.onChangeEvent(_vm.lastNameAttr),
-      "on-blur": _vm.onBlurEvent(_vm.lastNameAttr),
-      "did-mount": _vm.register,
-      "will-unmount": _vm.unregister,
       "custom-validator": _vm.lastNameCustomValidator
     },
     on: {
-      "update:value": _vm.onLastNameChanged
+      "update:value": _vm.onLastNameChanged,
+      "change": function (value) { return _vm.onChangeEvent(_vm.lastNameAttr, value); },
+      "blur": function (result) { return _vm.onBlurEvent(_vm.lastNameAttr, result); }
     }
   })], 1)]), _vm._v(" "), _c('fe-error', {
     attrs: {
@@ -37185,27 +37075,20 @@ function classesFor(attr) {
   return __WEBPACK_IMPORTED_MODULE_2_classnames___default()((_cx2 = {}, _defineProperty(_cx2, classes, __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isString(classes)), _defineProperty(_cx2, "has-error", !__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isEmpty(this.anyErrors())), _cx2));
 }
 
-function onChangeEvent(attribute) {
-  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.onChange)) {
-    return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.bind(this.onChange, this, attribute);
-  }
+function onChangeEvent(attribute, value) {
+  this.$emit('change', attribute, value);
 }
 
-function onBlurEvent(attribute) {
-  var _this = this;
-  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.onBlur)) {
-    return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.bind(this.onBlur, this, attribute);
+function onBlurEvent(attribute, result) {
+  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', attribute, result);
   } else {
-    return function (_ref) {
-      var _updatedErrors;
+    var _updatedErrors;
 
-      var errors = _ref.errors;
+    var updatedErrors = (_updatedErrors = {}, _defineProperty(_updatedErrors, this.streetNameAttr, this.internalErrors[this.streetNameAttr]), _defineProperty(_updatedErrors, this.cityNameAttr, this.internalErrors[this.cityNameAttr]), _defineProperty(_updatedErrors, this.stateNameAttr, this.internalErrors[this.stateNameAttr]), _defineProperty(_updatedErrors, this.zipNameAttr, this.internalErrors[this.zipNameAttr]), _updatedErrors);
 
-      var updatedErrors = (_updatedErrors = {}, _defineProperty(_updatedErrors, _this.streetNameAttr, _this.internalErrors[_this.streetNameAttr]), _defineProperty(_updatedErrors, _this.cityNameAttr, _this.internalErrors[_this.cityNameAttr]), _defineProperty(_updatedErrors, _this.stateNameAttr, _this.internalErrors[_this.stateNameAttr]), _defineProperty(_updatedErrors, _this.zipNameAttr, _this.internalErrors[_this.zipNameAttr]), _updatedErrors);
-
-      updatedErrors[attribute] = errors;
-      _this.internalErrors = updatedErrors;
-    };
+    updatedErrors[attribute] = result.errors;
+    this.internalErrors = updatedErrors;
   }
 }
 
@@ -37324,14 +37207,6 @@ function valueUpdated(attribute, newValue) {
       type: Object,
       default: function _default() {}
     },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
-      required: false,
-      type: Function
-    },
     label: {
       required: false,
       type: String,
@@ -37399,87 +37274,493 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "layout": "full"
     }
-  }, [_c('fe-text-input', {
+  }, [_c('fe-text', {
     ref: "street",
+    class: _vm.classesFor(_vm.streetNameAttr, 'address-line-1'),
     attrs: {
       "id": _vm.id,
       "value": _vm.valueFor(_vm.streetNameAttr),
       "required": _vm.required,
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "Address",
-      "className": _vm.classesFor(_vm.streetNameAttr, 'address-line-1'),
-      "on-change": _vm.onChangeEvent(_vm.streetNameAttr),
-      "on-blur": _vm.onBlurEvent(_vm.streetNameAttr),
       "autofocus": _vm.autofocus,
       "custom-validator": _vm.streetCustomValidator
     },
     on: {
-      "update:value": _vm.streetChanged
+      "update:value": _vm.streetChanged,
+      "change": function (value) { return _vm.onChangeEvent(_vm.streetNameAttr, value); },
+      "blur": function (result) { return _vm.onBlurEvent(_vm.streetNameAttr, result); }
     }
   }), _vm._v(" "), _c('fe-compound-layout', {
     attrs: {
       "layout": "inline"
     }
   }, [_c('div', {
-    attrs: {
-      "className": "flex-grow-shrink"
-    }
-  }, [_c('fe-text-input', {
+    staticClass: "flex-grow-shrink"
+  }, [_c('fe-text', {
     ref: "city",
+    class: _vm.classesFor(_vm.cityNameAttr, 'address-city'),
     attrs: {
       "value": _vm.valueFor(_vm.cityNameAttr),
       "required": _vm.required,
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "City",
-      "className": _vm.classesFor(_vm.cityNameAttr, 'address-city'),
-      "on-change": _vm.onChangeEvent(_vm.cityNameAttr),
-      "on-blur": _vm.onBlurEvent(_vm.cityNameAttr),
       "custom-validator": _vm.cityCustomValidator
     },
     on: {
-      "update:value": _vm.cityChanged
+      "update:value": _vm.cityChanged,
+      "change": function (value) { return _vm.onChangeEvent(_vm.cityNameAttr, value); },
+      "blur": function (result) { return _vm.onBlurEvent(_vm.cityNameAttr, result); }
     }
   })], 1), _vm._v(" "), _c('div', {
-    attrs: {
-      "className": "flex-static"
-    }
-  }, [_c('fe-text-input', {
+    staticClass: "flex-static"
+  }, [_c('fe-text', {
     ref: "state",
+    class: _vm.classesFor(_vm.stateNameAttr, 'address-state state'),
     attrs: {
       "value": _vm.valueFor(_vm.stateNameAttr),
       "required": _vm.required,
       "formatter": _vm.formatter('stateFormatter'),
       "placeholder": "ST",
-      "className": _vm.classesFor(_vm.stateNameAttr, 'address-state state'),
-      "on-change": _vm.onChangeEvent(_vm.stateNameAttr),
-      "on-blur": _vm.onBlurEvent(_vm.stateNameAttr),
       "custom-validator": _vm.stateCustomValidator
     },
     on: {
-      "update:value": _vm.stateChanged
+      "update:value": _vm.stateChanged,
+      "change": function (value) { return _vm.onChangeEvent(_vm.stateNameAttr, value); },
+      "blur": function (result) { return _vm.onBlurEvent(_vm.stateNameAttr, result); }
     }
   })], 1), _vm._v(" "), _c('div', {
-    attrs: {
-      "className": "flex-static"
-    }
-  }, [_c('fe-text-input', {
+    staticClass: "flex-static"
+  }, [_c('fe-text', {
     ref: "zip",
+    class: _vm.classesFor(_vm.zipNameAttr, 'address-zipcode zipcode'),
     attrs: {
       "value": _vm.valueFor(_vm.zipNameAttr),
       "required": _vm.required,
       "formatter": _vm.formatter('zipcodeFormatter'),
       "placeholder": "Zip",
-      "className": _vm.classesFor(_vm.zipNameAttr, 'address-zipcode zipcode'),
-      "on-change": _vm.onChangeEvent(_vm.zipNameAttr),
-      "on-blur": _vm.onBlurEvent(_vm.zipNameAttr),
       "custom-validator": _vm.zipCustomValidator
     },
     on: {
-      "update:value": _vm.zipChanged
+      "update:value": _vm.zipChanged,
+      "change": function (value) { return _vm.onChangeEvent(_vm.zipNameAttr, value); },
+      "blur": function (result) { return _vm.onBlurEvent(_vm.zipNameAttr, result); }
     }
   })], 1)])], 1), _vm._v(" "), _c('fe-error', {
     attrs: {
       "errors": _vm.combinedErrors
+    }
+  })], 1)
+},staticRenderFns: []}
+
+/***/ }),
+/* 197 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_checkbox__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_checkbox___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_checkbox__);
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_checkbox___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_checkbox___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_checkbox___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_checkbox___default.a);
+
+/***/ }),
+/* 198 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(199)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(201),
+  /* template */
+  __webpack_require__(202),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 199 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(200);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("840b7296", content, true);
+
+/***/ }),
+/* 200 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 201 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+function classes() {
+  return __WEBPACK_IMPORTED_MODULE_1_classnames___default()({
+    "checkbox": true,
+    "has-error": !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.errors)
+  });
+}
+
+// having a value of null can be bad for our controlled inputs, even if for a
+// little while.  So since our defaultValue doesn't kick in right away we
+// still need something here to help prevent bad values from being rendered.
+function initialValue() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isBoolean(this.value)) {
+    return this.value;
+  } else {
+    return this.defaultValue;
+  }
+}
+
+function handleChange(e) {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
+    this.onChange(e.target.checked);
+  } else {
+    this.$emit('update:value', e.target.checked);
+  }
+}
+
+function mounted() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
+    this.onChange(this.$refs.checkbox.checked);
+  } else {
+    this.$emit('update:value', this.$refs.checkbox.checked);
+  }
+}
+
+function initialId() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.id)) {
+    return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.uniqueId('checkbox_');
+  }
+
+  return this.id;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeCheckbox",
+  mounted: mounted,
+  methods: {
+    handleChange: handleChange
+  },
+  computed: {
+    classes: classes, initialValue: initialValue, initialId: initialId
+  },
+  props: {
+    value: {
+      required: false,
+      type: Boolean
+    },
+    defaultValue: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    onChange: {
+      required: false,
+      type: Function
+    }
+  }
+});
+
+/***/ }),
+/* 202 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    class: _vm.className
+  }, [_c('div', {
+    class: _vm.classes
+  }, [_c('label', [_c('input', {
+    ref: "checkbox",
+    attrs: {
+      "type": "checkbox",
+      "id": _vm.initialId
+    },
+    domProps: {
+      "checked": _vm.initialValue
+    },
+    on: {
+      "change": _vm.handleChange
+    }
+  }), _vm._v(" "), _vm._t("default", [_vm._v("\n        " + _vm._s(_vm.label) + "\n      ")]), _vm._v(" "), _c('fe-required-marker', {
+    attrs: {
+      "required": _vm.required
+    }
+  })], 2), _vm._v(" "), _c('fe-error', {
+    attrs: {
+      "errors": _vm.errors
+    }
+  })], 1), _vm._v(" "), _c('fe-hint', {
+    attrs: {
+      "hint": _vm.hint
+    }
+  })], 1)
+},staticRenderFns: []}
+
+/***/ }),
+/* 203 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_radio_group__ = __webpack_require__(204);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_radio_group___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_radio_group__);
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_radio_group___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_radio_group___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_radio_group___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_radio_group___default.a);
+
+/***/ }),
+/* 204 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(205)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(207),
+  /* template */
+  __webpack_require__(208),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 205 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(206);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("31d9d352", content, true);
+
+/***/ }),
+/* 206 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 207 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+
+function groupClasses() {
+  return __WEBPACK_IMPORTED_MODULE_2_classnames___default()(_defineProperty({
+    "form-group": true,
+    "has-error": !__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isEmpty(this.errors)
+  }, this.className, __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isString(this.className)));
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  computed: {
+    groupClasses: groupClasses
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    options: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {}
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    label: {
+      required: false,
+      type: String
+    },
+    hint: {
+      required: false,
+      type: String
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: true
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    }
+  }
+});
+
+/***/ }),
+/* 208 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    class: _vm.groupClasses,
+    attrs: {
+      "id": _vm.id
+    }
+  }, [_c('fe-label', {
+    staticClass: "radio-group-label",
+    attrs: {
+      "hint": _vm.hint,
+      "htmlFor": _vm.id,
+      "required": _vm.required
+    }
+  }, [_vm._v(_vm._s(_vm.label))]), _vm._v(" "), _c('fe-error', {
+    attrs: {
+      "errors": _vm.errors
     }
   })], 1)
 },staticRenderFns: []}

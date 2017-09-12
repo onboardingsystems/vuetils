@@ -68,6 +68,7 @@
         <fe-address-us :value.sync="address" :required="true"  />
         <fe-checkbox :value.sync="iAgree" :required="true">I agree</fe-checkbox>
 
+        <fe-radio-group label="Options to Select" />
         <fe-submit />
       </fe-form>
     </div>
