@@ -23,3 +23,4 @@ export {default as FeDollars} from './fe-dollars';
 export {default as FePercent} from './fe-percent';
 export {default as FeDate} from './fe-date';
 export {default as FeTime} from './fe-time';
+export {default as FeOrdinal} from './fe-ordinal';

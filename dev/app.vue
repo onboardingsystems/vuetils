@@ -1,66 +1,5 @@
 <template>
   <div id="root">
-    <!-- <h2>Label</h2>
-    <div>
-      <fe-label text="Hello World!" />
-    </div>
-    <h2>Label with Required</h2>
-    <div>
-      <fe-label text="Hello World!" :required="true" />
-    </div>
-    <h2>Label with Hint</h2>
-    <div>
-      <fe-label text="Hello World!" hint="Joe was here" />
-    </div>
-    <h2>Label with Nothing to Show</h2>
-    <div>
-      <fe-label />
-    </div>
-
-    <h2>Single Error</h2>
-    <div>
-      <fe-error :errors="['Error 1']" />
-    </div>
-    <h2>Mutliple Errors</h2>
-    <div>
-      <fe-error :errors="['Error 1', 'Error 2']" />
-    </div>
-    <h2>No Errors</h2>
-    <div>
-      <fe-error :errors="null" />
-    </div>
-
-    <h2>Text Input</h2>
-    <div>
-      <fe-text-input label="Username" placeholder="example: joe, notjoe" :autofocus="true" :value.sync="text1" />
-    </div>
-    <h2>Text Input Required</h2>
-    <div>
-      <fe-text-input label="Username" placeholder="example: joe, notjoe" :required="true" :value.sync="text2" />
-    </div>
-    <h2>Text Input Default</h2>
-    <div>
-      <fe-text-input label="Username" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textRequired" />
-    </div>
-
-    <h2>Text Area</h2>
-    <div>
-      <fe-text-area label="Content" placeholder="example: joe, notjoe" :value.sync="textArea1" />
-    </div>
-    <h2>Text Area Required</h2>
-    <div>
-      <fe-text-area label="Content" placeholder="example: joe, notjoe" :required="true" :value.sync="textArea2" />
-    </div>
-    <h2>Text Area Default</h2>
-    <div>
-      <fe-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired" />
-    </div> -->
-
-    <!-- <h2>Text Input Required</h2>
-    <div>
-      <fe-text label="Username" placeholder="example: joe, notjoe" :required="true" :value.sync="text2" />
-    </div> -->
-
     <h2>Form Builder</h2>
     <div class="col-xs-6">
       <fe-form @submit="onSubmit" >
@@ -79,6 +18,7 @@
         <fe-date label="Start Date" :required="true" :value.sync="startDate" :parsed.sync="parsedStartDate" />
         <fe-date label="End Date" :required="true" :value.sync="endDate" :parsed.sync="parsedEndDate" format="month-year" />
         <fe-time label="Open Time" :required="true" :value.sync="openTime" />
+        <fe-ordinal label="Ordinal" :required="true" :value.sync="ordinal" />
 
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
@@ -94,6 +34,7 @@
 <script>
 function data() {
   return {
+    ordinal: null,
     openTime: null,
     startDate: null,
     parsedStartDate: null,
