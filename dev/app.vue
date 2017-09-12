@@ -75,7 +75,7 @@
         <fe-zipcode label="Zip Code" :required="true" :value.sync="zipcode" />
         <fe-currency label="Cost" :required="true" :value.sync="cost" />
         <fe-dollars label="Rent" :required="true" :value.sync="rent" />
-        <fe-percent label="Sales Tax" :required="true" :value.sync="salesTax" />
+        <fe-percent label="Sales Tax" :required="true" :value.sync="salesTax" :parsed.sync="parsedSalesTax" />
 
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
@@ -93,6 +93,7 @@ function data() {
   return {
     username: null,
     salesTax: null,
+    parsedSalesTax: null,
     cost: null,
     rent: null,
     ssn: null,

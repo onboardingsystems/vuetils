@@ -17,7 +17,8 @@ export default {
   name: "FeCurrency",
   methods: {
     formatter: (type) => Formatters[type],
-    updated: function(value) { this.$emit('update:value', value) }
+    updated: function(value) { this.$emit('update:value', value) },
+    parsed: function(value) { this.$emit('update:parsed', value) }
   },
   props: {
     value: {

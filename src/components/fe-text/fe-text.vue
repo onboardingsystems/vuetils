@@ -63,6 +63,7 @@ function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
   this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('update:parsed', result.parsed);
 }
 
 function handleBlur() {
@@ -91,11 +92,13 @@ function mounted() {
 
     this.$emit('change', formatted);
     this.$emit('update:value', formatted);
+    this.$emit('update:parsed', parsed);
   } else {
-    let {valid, formatted} = this.formatAndValidate(this.value);
+    let {valid, formatted, parsed} = this.formatAndValidate(this.value);
 
     this.$emit('change', formatted);
     this.$emit('update:value', formatted);
+    this.$emit('update:parsed', parsed);
   }
 }
 
