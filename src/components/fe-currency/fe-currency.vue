@@ -7,6 +7,7 @@
            :required="required"    type="text"
            :customValidator="customValidator"
            @update:value="updated"
+           @update:parsed="parsed"
            />
 </template>
 
