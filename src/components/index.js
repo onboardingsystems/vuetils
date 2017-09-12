@@ -17,3 +17,7 @@ export {default as FePhone} from './fe-phone';
 export {default as FeEmail} from './fe-email';
 export {default as FeSsn} from './fe-ssn';
 export {default as FeState} from './fe-state';
+export {default as FeZipcode} from './fe-zipcode';
+export {default as FeCurrency} from './fe-currency';
+export {default as FeDollars} from './fe-dollars';
+export {default as FePercent} from './fe-percent';

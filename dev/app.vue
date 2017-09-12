@@ -72,6 +72,10 @@
         <fe-email label="Email Address" :required="true" :value.sync="email" />
         <fe-ssn label="Social Security Number" :required="true" :value.sync="ssn" />
         <fe-state label="US State Code" :required="true" :value.sync="state" />
+        <fe-zipcode label="Zip Code" :required="true" :value.sync="zipcode" />
+        <fe-currency label="Cost" :required="true" :value.sync="cost" />
+        <fe-dollars label="Rent" :required="true" :value.sync="rent" />
+        <fe-percent label="Sales Tax" :required="true" :value.sync="salesTax" />
 
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
@@ -88,8 +92,12 @@
 function data() {
   return {
     username: null,
+    salesTax: null,
+    cost: null,
+    rent: null,
     ssn: null,
     state: null,
+    zipcode: null,
     email: null,
     optionValue: null,
     currentAge: null,
