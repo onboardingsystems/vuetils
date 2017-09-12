@@ -393,7 +393,7 @@ const Formatters = {
 
     valid = temp.isValid()
     if (valid) {
-      formatted = temp.format(this.timeFormat)
+      formatted = temp.format('h:mm a')
       parsed    = formatted
     } else {
       errors.push('invalid time')

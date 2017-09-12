@@ -7,6 +7,7 @@
            :required="required"    type="text"
            :customValidator="customValidator"
            @update:value="updated"
+           @update:parsed="parsed"
            />
 </template>
 
@@ -17,7 +18,8 @@ export default {
   name: "FeSsn",
   methods: {
     formatter: (type) => Formatters[type],
-    updated: function(value) { this.$emit('update:value', value) }
+    updated: function(value) { this.$emit('update:value', value) },
+    parsed: function(value) { this.$emit('update:parsed', value) }
   },
   props: {
     value: {

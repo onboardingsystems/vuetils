@@ -76,6 +76,9 @@
         <fe-currency label="Cost" :required="true" :value.sync="cost" />
         <fe-dollars label="Rent" :required="true" :value.sync="rent" />
         <fe-percent label="Sales Tax" :required="true" :value.sync="salesTax" :parsed.sync="parsedSalesTax" />
+        <fe-date label="Start Date" :required="true" :value.sync="startDate" :parsed.sync="parsedStartDate" />
+        <fe-date label="End Date" :required="true" :value.sync="endDate" :parsed.sync="parsedEndDate" format="month-year" />
+        <fe-time label="Open Time" :required="true" :value.sync="openTime" />
 
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
@@ -91,6 +94,11 @@
 <script>
 function data() {
   return {
+    openTime: null,
+    startDate: null,
+    parsedStartDate: null,
+    endDate: null,
+    parsedEndDate: null,
     username: null,
     salesTax: null,
     parsedSalesTax: null,

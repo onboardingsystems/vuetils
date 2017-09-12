@@ -1,6 +1,6 @@
 <template>
   <fe-text :value="value"          :defaultValue="defaultValue"
-           :errors="errors"        :formatter="formatter('zipcodeFormatter')"
+           :errors="errors"        :formatter="dateFormatter"
            :id="id"                :className="className"
            :autofocus="autofocus"  :placeholder="placeholder"
            :label="label"          :hint="hint"
@@ -14,10 +14,14 @@
 <script>
 import Formatters from '../../utils/formatters';
 
+function dateFormatter(value, opt = {}) {
+  return Formatters.dateFormatter(value, _.merge({}, opt, {format: this.format}));
+}
+
 export default {
-  name: "FeZipcode",
+  name: "FeDate",
   methods: {
-    formatter: (type) => Formatters[type],
+    dateFormatter,
     updated: function(value) { this.$emit('update:value', value) },
     parsed: function(value) { this.$emit('update:parsed', value) }
   },
@@ -30,6 +34,11 @@ export default {
       required: false,
       type: String,
       default: ''
+    },
+    format: {
+      required: false,
+      type: String,
+      default: 'full-date'
     },
     errors: {
       required: false,

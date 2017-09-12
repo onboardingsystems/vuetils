@@ -21,3 +21,5 @@ export {default as FeZipcode} from './fe-zipcode';
 export {default as FeCurrency} from './fe-currency';
 export {default as FeDollars} from './fe-dollars';
 export {default as FePercent} from './fe-percent';
+export {default as FeDate} from './fe-date';
+export {default as FeTime} from './fe-time';
