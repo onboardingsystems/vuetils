@@ -69,6 +69,9 @@
 
         <fe-number label="Current Age" :required="true" :value.sync="currentAge" placeholder="24" />
         <fe-phone label="Home Number" :required="true" :value.sync="phone" />
+        <fe-email label="Email Address" :required="true" :value.sync="email" />
+        <fe-ssn label="Social Security Number" :required="true" :value.sync="ssn" />
+        <fe-state label="US State Code" :required="true" :value.sync="state" />
 
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
@@ -85,6 +88,9 @@
 function data() {
   return {
     username: null,
+    ssn: null,
+    state: null,
+    email: null,
     optionValue: null,
     currentAge: null,
     phone: null,

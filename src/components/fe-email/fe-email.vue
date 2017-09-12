@@ -1,6 +1,6 @@
 <template>
   <fe-text :value="value"          :defaultValue="defaultValue"
-           :errors="errors"        :formatter="formatter('phoneFormatter')"
+           :errors="errors"        :formatter="formatter('emailFormatter')"
            :id="id"                :className="className"
            :autofocus="autofocus"  :placeholder="placeholder"
            :label="label"          :hint="hint"
@@ -14,7 +14,7 @@
 import Formatters from '../../utils/formatters';
 
 export default {
-  name: "FePhone",
+  name: "FeEmail",
   methods: {
     formatter: (type) => Formatters[type],
     updated: function(value) { this.$emit('update:value', value) }
