@@ -34,14 +34,6 @@ function format(value) {
 // little while.  So since our defaultValue doesn't kick in right away we
 // still need something here to help prevent bad values from being rendered.
 function initialValue() {
-  let currentValue = document.getElementById(this.id).value;
-  if (newProps.value !== currentValue && _.isFunction(this.props.onChange)) {
-    var result = this.formatAndValidate(newProps.value);
-    if (result.valid) {
-      this.onChange(result.formatted);
-    }
-  }
-
   if (_.isNil(this.value)) {
     return "";
   } else {
@@ -67,28 +59,24 @@ function formatAndValidate(value) {
 
 function initialId() {
   if (_.isEmpty(this.id)) {
-    return _.uniqueId('text_');
+    return _.uniqueId('textarea_');
   }
 
   return this.id;
 }
 
-
 function handleChange(e) {
-  if (_.isFunction(this.onChange)) {
-    this.onChange(e.target.value);
-  } else {
-    var result = this.formatAndValidate(e.target.value);
-    this.$emit('update:value', result.formatted);
-  }
+  var result = this.formatAndValidate(e.target.value);
+  this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
 }
 
 function handleBlur() {
   this.internalErrors = [];
   let result = this.formatAndValidate(this.value);
 
-  if (_.isFunction(this.onBlur)) {
-    this.onBlur(result);
+  if (_.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result)
     return result.errors;
   } else {
     this.internalErrors = result.errors;
@@ -96,10 +84,6 @@ function handleBlur() {
 }
 
 function mounted() {
-  if (_.isFunction(this.didMount)) {
-    this.didMount(this);
-  }
-
   // If props.value is nil (undefined or null), fall back to
   // props.defaultValue and submit the formatted and parsed defaultValue back
   // to the formBuilder so we can be rendered again with a valid value in our
@@ -111,25 +95,14 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
-    if(valid && _.isFunction(this.onChange)) {
-      this.handleChange(formatted);
-    } else {
-      this.$emit('update:value', formatted);
-    }
+    this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
   } else {
     let {valid, formatted} = this.formatAndValidate(this.value);
 
-    if (valid && _.isFunction(this.onChange)) {
-      this.handleChange(formatted);
-    } else {
-      this.$emit('update:value', formatted);
-    }
+    this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
   }
-}
-
-function beforeDestroy() {
-  if (_.isFunction(this.willUnmount))
-    this.willUnmount(this);
 }
 
 function combinedErrors() {
@@ -150,7 +123,6 @@ export default {
   name: "FeTextArea",
   data,
   mounted,
-  beforeDestroy,
   methods: {
     handleBlur, handleChange, formatAndValidate, format, anyErrors
   },
@@ -216,22 +188,6 @@ export default {
       default: 3
     },
     customValidator: {
-      required: false,
-      type: Function
-    },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
-      required: false,
-      type: Function
-    },
-    didMount: {
-      required: false,
-      type: Function
-    },
-    willUnmount: {
       required: false,
       type: Function
     }

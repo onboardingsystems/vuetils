@@ -9,8 +9,8 @@
           :required="required" :formatter="formatter('stringFormatter')"
           placeholder="First"
           :class="classesFor(firstNameAttr, 'name-first')"
-          :on-change="onChangeEvent(firstNameAttr)"
-          :on-blur="onBlurEvent(firstNameAttr)"
+          @change="value => onChangeEvent(firstNameAttr, value)"
+          @blur="result => onBlurEvent(firstNameAttr, result)"
           :autofocus="autofocus"
           :custom-validator="firstNameCustomValidator" />
       </div>
@@ -21,8 +21,8 @@
           :required="required" :formatter="formatter('stringFormatter')"
           placeholder="Last"
           :className="classesFor(lastNameAttr, 'name-last')"
-          :on-change="onChangeEvent(lastNameAttr)"
-          :on-blur="onBlurEvent(lastNameAttr)"
+          @change="value => onChangeEvent(lastNameAttr, value)"
+          @blur="result => onBlurEvent(lastNameAttr, result)"
           :custom-validator="lastNameCustomValidator" />
       </div>
     </fe-compound-layout >
@@ -61,30 +61,25 @@ function combinedErrors() {
   return this.anyErrors();
 }
 
-function onChangeEvent(attribute) {
-  if (_.isFunction(this.onChange)) {
-    return _.bind(this.onChange, this, attribute);
-  }
+function onChangeEvent(attribute, value) {
+  this.$emit('change', attribute, value);
 }
 
-function onBlurEvent(attribute) {
-  let _this = this;
-  if (_.isFunction(this.onBlur)) {
-    return _.bind(this.onBlur, this, attribute);
+function onBlurEvent(attribute, result) {
+  if (_.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', attribute, result);
   } else {
-    return function({errors}) {
-      if (attribute === _this.firstNameAttr) {
-        _this.internalErrors = {
-          [_this.firstNameAttr]: errors,
-          [_this.lastNameAttr]: _this.internalErrors[_this.lastNameAttr]
-        };
-      } else {
-        _this.internalErrors = {
-          [_this.firstNameAttr]: _this.internalErrors[_this.firstNameAttr],
-          [_this.lastNameAttr]: errors
-        };
-      }
-    };
+    if (attribute === this.firstNameAttr) {
+      this.internalErrors = {
+        [this.firstNameAttr]: result.errors,
+        [this.lastNameAttr]: this.internalErrors[this.lastNameAttr]
+      };
+    } else {
+      this.internalErrors = {
+        [this.firstNameAttr]: this.internalErrors[this.firstNameAttr],
+        [this.lastNameAttr]: result.errors
+      };
+    }
   }
 }
 
@@ -156,14 +151,6 @@ export default {
       required: false,
       type: Object,
       default: () => {}
-    },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
-      required: false,
-      type: Function
     },
     label: {
       required: false,

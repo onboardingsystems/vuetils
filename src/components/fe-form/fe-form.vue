@@ -74,11 +74,6 @@ export default {
     classes
   },
   props: {
-    onsubmit: {
-      required: false,
-      type: Function,
-      default: () => false
-    },
     className: {
       required: false,
       type: String

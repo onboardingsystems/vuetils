@@ -3,7 +3,9 @@
     <div :class="classes">
       <label>
         <input type="checkbox" ref="checkbox" :id="initialId" :checked="initialValue" @change="handleChange" />
-        {{this.label}}
+        <slot>
+          {{label}}
+        </slot>
         <fe-required-marker :required="required" />
       </label>
       <fe-error :errors="errors" />

@@ -9,8 +9,8 @@
         :required="required" :formatter="formatter('stringFormatter')"
         placeholder="Address"
         :class="classesFor(streetNameAttr, 'address-line-1')"
-        :on-change="onChangeEvent(streetNameAttr)"
-        :on-blur="onBlurEvent(streetNameAttr)"
+        @change="value => onChangeEvent(streetNameAttr, value)"
+        @blur="result => onBlurEvent(streetNameAttr, result)"
         :autofocus="autofocus" :custom-validator="streetCustomValidator" />
 
       <fe-compound-layout  layout="inline">
@@ -21,8 +21,8 @@
             :required="required" :formatter="formatter('stringFormatter')"
             placeholder="City"
             :class="classesFor(cityNameAttr, 'address-city')"
-            :on-change="onChangeEvent(cityNameAttr)"
-            :on-blur="onBlurEvent(cityNameAttr)"
+            @change="value => onChangeEvent(cityNameAttr, value)"
+            @blur="result => onBlurEvent(cityNameAttr, result)"
             :custom-validator="cityCustomValidator" />
         </div>
         <div class="flex-static">
@@ -32,8 +32,8 @@
             :required="required" :formatter="formatter('stateFormatter')"
             placeholder="ST"
             :class="classesFor(stateNameAttr, 'address-state state')"
-            :on-change="onChangeEvent(stateNameAttr)"
-            :on-blur="onBlurEvent(stateNameAttr)"
+            @change="value => onChangeEvent(stateNameAttr, value)"
+            @blur="result => onBlurEvent(stateNameAttr, result)"
             :custom-validator="stateCustomValidator" />
         </div>
         <div class="flex-static">
@@ -43,8 +43,8 @@
             :required="required" :formatter="formatter('zipcodeFormatter')"
             placeholder="Zip"
             :class="classesFor(zipNameAttr, 'address-zipcode zipcode')"
-            :on-change="onChangeEvent(zipNameAttr)"
-            :on-blur="onBlurEvent(zipNameAttr)"
+            @change="value => onChangeEvent(zipNameAttr, value)"
+            @blur="result => onBlurEvent(zipNameAttr, result)"
             :custom-validator="zipCustomValidator" />
         </div>
       </fe-compound-layout >
@@ -80,28 +80,23 @@ function classesFor(attr, classes = "") {
   });
 }
 
-function onChangeEvent(attribute) {
-  if (_.isFunction(this.onChange)) {
-    return _.bind(this.onChange, this, attribute);
-  }
+function onChangeEvent(attribute, value) {
+  this.$emit('change', attribute, value);
 }
 
-function onBlurEvent(attribute) {
-  let _this = this;
-  if (_.isFunction(this.onBlur)) {
-    return _.bind(this.onBlur, this, attribute);
+function onBlurEvent(attribute, result) {
+  if (_.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', attribute, result);
   } else {
-    return function({errors}) {
-      let updatedErrors = {
-        [_this.streetNameAttr]: _this.internalErrors[_this.streetNameAttr],
-        [_this.cityNameAttr]: _this.internalErrors[_this.cityNameAttr],
-        [_this.stateNameAttr]: _this.internalErrors[_this.stateNameAttr],
-        [_this.zipNameAttr]: _this.internalErrors[_this.zipNameAttr]
-      };
-
-      updatedErrors[attribute] = errors;
-      _this.internalErrors = updatedErrors
+    let updatedErrors = {
+      [this.streetNameAttr]: this.internalErrors[this.streetNameAttr],
+      [this.cityNameAttr]: this.internalErrors[this.cityNameAttr],
+      [this.stateNameAttr]: this.internalErrors[this.stateNameAttr],
+      [this.zipNameAttr]: this.internalErrors[this.zipNameAttr]
     };
+
+    updatedErrors[attribute] = result.errors;
+    this.internalErrors = updatedErrors
   }
 }
 

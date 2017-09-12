@@ -36,14 +36,6 @@ function format(value) {
 // little while.  So since our defaultValue doesn't kick in right away we
 // still need something here to help prevent bad values from being rendered.
 function initialValue() {
-  let currentValue = document.getElementById(this.id).value;
-  if (newProps.value !== currentValue && _.isFunction(this.onChange)) {
-    var result = this.formatAndValidate(newProps.value);
-    if (result.valid) {
-      this.onChange(result.formatted);
-    }
-  }
-
   if (_.isNil(this.value)) {
     return "";
   } else {
@@ -68,20 +60,17 @@ function formatAndValidate(value) {
 }
 
 function handleChange(e) {
-  if (_.isFunction(this.onChange)) {
-    this.onChange(e.target.value);
-  } else {
-    var result = this.formatAndValidate(e.target.value);
-    this.$emit('update:value', result.formatted);
-  }
+  var result = this.formatAndValidate(e.target.value);
+  this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
 }
 
 function handleBlur() {
   this.internalErrors = [];
   let result = this.formatAndValidate(this.value);
 
-  if (_.isFunction(this.onBlur)) {
-    this.onBlur(result);
+  if (_.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result)
     return result.errors;
   } else {
     this.internalErrors = result.errors;
@@ -100,19 +89,13 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
-    if(valid && _.isFunction(this.onChange)) {
-      this.onChange(formatted);
-    } else {
-      this.$emit('update:value', formatted);
-    }
+    this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
   } else {
     let {valid, formatted} = this.formatAndValidate(this.value);
 
-    if (valid && _.isFunction(this.onChange)) {
-      this.onChange({formatted});
-    } else {
-      this.$emit('update:value', formatted);
-    }
+    this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
   }
 }
 
@@ -208,14 +191,6 @@ export default {
       default: 'text'
     },
     customValidator: {
-      required: false,
-      type: Function
-    },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
       required: false,
       type: Function
     }

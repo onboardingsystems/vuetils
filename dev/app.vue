@@ -56,12 +56,17 @@
       <fe-text-area label="Content" placeholder="example: joe, notjoe" default-value="Default Value" :value.sync="textAreaRequired" />
     </div> -->
 
+    <!-- <h2>Text Input Required</h2>
+    <div>
+      <fe-text label="Username" placeholder="example: joe, notjoe" :required="true" :value.sync="text2" />
+    </div> -->
+
     <h2>Form Builder</h2>
     <div>
       <fe-form @submit="onSubmit" >
         <fe-name :value.sync="name" :required="true" />
         <fe-address-us :value.sync="address" :required="true"  />
-        <fe-checkbox :value.sync="iAgree" label="I agree" />
+        <fe-checkbox :value.sync="iAgree" :required="true">I agree</fe-checkbox>
 
         <fe-submit />
       </fe-form>
