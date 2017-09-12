@@ -198,14 +198,6 @@ export default {
       type: Object,
       default: () => {}
     },
-    onChange: {
-      required: false,
-      type: Function
-    },
-    onBlur: {
-      required: false,
-      type: Function
-    },
     label: {
       required: false,
       type: String,
