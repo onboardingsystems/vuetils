@@ -1,5 +1,5 @@
 <template>
-  <input v-if="isEditable" type="submit" class="" value="Save" />
+  <input v-if="isEditable" type="submit" class="fe-submit" :value="label" />
 </template>
 
 <script>
@@ -30,6 +30,11 @@ export default {
       required: false,
       type: Boolean,
       default: true
+    },
+    label: {
+      required: false,
+      type: String,
+      default: 'Save'
     }
   }
 }
