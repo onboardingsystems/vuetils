@@ -4875,6 +4875,509 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var _ = __webpack_require__(5);
+var moment = __webpack_require__(0);
+var numeral = __webpack_require__(165);
+
+function adjustElixirDateTime(dateTime) {
+  if (dateTime === undefined || dateTime === null) return dateTime;
+
+  // This function assumes you are using ISO datetime format.
+  // Function is intended to support date time values from Elixir.
+  var extendedIndex = dateTime.indexOf('.');
+  var zIndex = dateTime.indexOf('Z');
+
+  // Check if there is a '.' but no 'Z' value in the string.
+  if (extendedIndex > -1 && zIndex === -1) {
+    return dateTime + 'Z';
+  }
+
+  return dateTime;
+}
+
+var Formatters = {
+  addressLines: function addressLines(addressObj) {
+    if (_.isEmpty(_.omitBy(addressObj, _.isEmpty))) return [];
+    var line1 = addressObj.street_1;
+    var line2 = null;
+    var line3 = addressObj.city + ', ' + addressObj.state + ' ' + addressObj.zip;
+    return _.compact(_.concat([], line1, line2, line3));
+  },
+  addressOneLine: function addressOneLine(addressObj) {
+    if (_.isEmpty(_.omitBy(addressObj, _.isEmpty))) return '';
+    return this.addressLines(addressObj).join(', ');
+  },
+  currencyDisplay: function currencyDisplay(value) {
+    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'dollars';
+
+    var numObj;
+    numObj = numeral(value);
+    if (format === 'dollars') return numObj.format('$0,0');else return numObj.format('$0,0.00');
+  },
+  ordinalize: function ordinalize(value) {
+    var ordinal, last_2;
+    value = (value || "").toString();
+    if (_.isEmpty(value)) return '';
+    // check what digit the number ends with for choosing the correct text
+    // ending
+    switch (value.charAt(value.length - 1)) {
+      case '1':
+        ordinal = 'st';
+        break;
+      case '2':
+        ordinal = 'nd';
+        break;
+      case '3':
+        ordinal = 'rd';
+        break;
+      default:
+        ordinal = 'th';
+    }
+    // address some exceptions when looking at larger portion
+    last_2 = value.slice(-2);
+    if (last_2 == '11' || last_2 == '12' || last_2 == '13') ordinal = 'th';
+
+    return value + ordinal;
+  },
+
+
+  // ########
+  //
+  timeFormat: 'h:mm a',
+  // Standard Date Formatter (ex: Jun 3, 2014) - uses locale settings
+  dateFormat: 'll',
+  dollarsFormat: '$0,0',
+  dollarsCentsFormat: '$0,0.00',
+  monthYearFormat: 'MMM YYYY',
+  monthDayYearFormat: 'MMM D, YYYY',
+  // Default detailed date/time display format
+  dateTimeDetailedFormat: 'MMM DD, YYYY  h:mm:ss a',
+
+  // Relative language description of the date/time (ex: "3 days ago", "seconds ago")
+  timeAgoDisplay: function timeAgoDisplay(value) {
+    if (_.isEmpty(value)) return null;
+    return this.parseDate(value).fromNow();
+  },
+
+
+  // Standard Date and Time Formatter (ex: Jun 3, 2014 3:05:53 p)
+  datetimeDisplay: function datetimeDisplay(value) {
+    if (_.isEmpty(value)) return null;
+    return this.parseDate(value).format(this.dateTimeDetailedFormat);
+  },
+  requiredFormatter: function requiredFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var options = _.merge({}, { required: false }, options);
+    var parsed,
+        formatted,
+        errors = [];
+
+    // react inputs don't like null values - otherwise they are considered
+    // uncontrolled inputs and we want controlled inputs.  So all formatters
+    // must at least return an empty string.
+    if (_.isNil(value)) {
+      formatted = "";
+    } else {
+      formatted = value;
+    }
+
+    if (options.required && _.isEmpty(value.toString().trim())) {
+      parsed = null;
+      errors.push('is required');
+    } else {
+      parsed = formatted;
+    }
+    return {
+      valid: errors.length === 0,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  stringFormatter: function stringFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var options = _.merge({}, { required: false }, options);
+    var parsed,
+        formatted,
+        errors = [];
+
+    if (_.isNumber(value)) value = value.toString();
+    if (_.isEmpty(value)) value = "";
+    formatted = parsed = _.trim(value.toString());
+    if (options.required && _.isEmpty(parsed)) {
+      parsed = null;
+      errors.push('is required');
+    }
+    return {
+      valid: errors.length === 0,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  phoneFormatter: function phoneFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    // remove all non-digits
+    parsed = val.parsed.replace(/\D/g, '');
+    valid = parsed.length === 10;
+    if (valid) {
+      formatted = parsed.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+    } else {
+      formatted = parsed;
+      parsed = null;
+      errors.push('invalid phone number');
+    }
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  emailFormatter: function emailFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        emailRegex,
+        valid,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    var _val = val,
+        formatted = _val.formatted,
+        parsed = _val.parsed;
+    // check that it matches our regex for a email
+
+    emailRegex = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$/;
+    if (valid = emailRegex.test(formatted)) {
+      parsed = formatted;
+    } else {
+      parsed = null;
+      errors.push('invalid email');
+    }
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  ssnFormatter: function ssnFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    // remove all non-digits
+    parsed = val.parsed.replace(/\D/g, '');
+    valid = parsed.length === 9;
+    if (valid) {
+      formatted = parsed.replace(/^(\d{3})(\d{2})(\d{4})$/, "$1-$2-$3");
+    } else {
+      formatted = parsed;
+      parsed = null;
+      errors.push('invalid SSN');
+    }
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  stateFormatter: function stateFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    // remove 0-9
+    parsed = _.toUpper(val.parsed.replace(/\d/g, ''));
+    valid = parsed.length === 2;
+    // TODO: compare against a list of known states?
+    if (valid) {
+      formatted = parsed.replace(/^(\D{2})$/, "$1");
+    } else {
+      formatted = parsed;
+      errors.push('invalid state');
+    }
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  zipcodeFormatter: function zipcodeFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    // remove all non-digits
+    parsed = val.parsed.replace(/\D/g, '');
+    valid = parsed.length === 5;
+    if (valid) {
+      formatted = parsed.replace(/^(\d{5})$/, "$1");
+    } else {
+      formatted = parsed;
+      parsed = null;
+      errors.push('is invalid');
+    }
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  numberFormatter: function numberFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        numObj,
+        valid,
+        parsed,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    numObj = numeral(_.trim(val.parsed.replace(/[$\s,]/g, '')));
+    parsed = numObj.value();
+    // TODO: numeraljs does not throw errors.... we might want to think about
+    // detecting our own?
+    valid = true;
+    var formatted = numObj.format('0');
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+
+
+  // Currency formatting and validation.
+  //
+  // Options:
+  //   * format - 'dollars' to suppress display of cents. 'cents' - default, full display.
+  currencyFormatter: function currencyFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        numObj,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    options = _.merge({}, { format: 'cents' }, options);
+    // remove '$', spaces and ','.
+    // Using numeral, convert to a number.
+    numObj = numeral(_.trim(val.parsed.replace(/[$\s,]/g, '')));
+    parsed = numObj.value();
+    // TODO: numeraljs does not throw errors.... we might want to think about
+    // detecting our own?
+    valid = true;
+    if (options.format == 'dollars') formatted = numObj.format('$0,0');else formatted = numObj.format('$0,0.00');
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  dollarsFormatter: function dollarsFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    options['format'] = 'dollars';
+    return Formatters.currencyFormatter(value, options);
+  },
+
+
+  // Percent formatting and validation.
+  //
+  percentFormatter: function percentFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        numObj,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+    val = Formatters.stringFormatter(value, options);
+    if (_.isEmpty(val.parsed)) return val;
+    options = _.merge({}, { format: 'cents' }, options);
+    // remove '%', spaces and ','.
+    // Using numeral, convert to a number.
+    numObj = numeral(_.trim(val.parsed.replace(/[$\s,%]/g, '')));
+    parsed = numObj.value();
+    // TODO: numeraljs does not throw errors.... we might want to think about
+    // detecting our own?
+    valid = true;
+    formatted = numObj.format('0,0.00');
+    formatted = formatted + "%";
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+
+
+  // Date formatting and validation.
+  //
+  // Options:
+  //  * format - 'full-date' for "MMM DD, YYYY". 'month-year' for "MMM YYYY"
+  dateFormatter: function dateFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        temp,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+
+    value = adjustElixirDateTime(value);
+
+    val = Formatters.stringFormatter(value, options);
+    if (!val.valid) return val;
+    options = _.merge({}, { format: 'full-date' }, options);
+    temp = this.parseDate(val.parsed);
+    valid = temp.isValid();
+    if (valid) {
+      // store parsed value as just the date portion.
+      parsed = temp.format('YYYY-MM-DD');
+      if (options.format == 'month-year') formatted = temp.format(this.monthYearFormat);else formatted = temp.format(this.monthDayYearFormat);
+    } else {
+      errors.push('invalid date');
+      formatted = value;
+      parsed = null;
+    }
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+
+
+  // Time formatting and validation.
+  //
+  // Options:
+  //  * format - 'full-date' for "MMM DD, YYYY". 'month-year' for "MMM YYYY"
+  timeFormatter: function timeFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        temp,
+        valid,
+        parsed,
+        formatted,
+        errors = [];
+
+    value = adjustElixirDateTime(value);
+
+    val = Formatters.stringFormatter(value, options);
+    if (!val.valid) return val;
+    temp = moment(val.parsed, ["hh:mm:ss a", "YYYY-MM-DDTHH:mm:ssZ"]);
+
+    valid = temp.isValid();
+    if (valid) {
+      formatted = temp.format('h:mm a');
+      parsed = formatted;
+    } else {
+      errors.push('invalid time');
+      formatted = value;
+      parsed = null;
+    }
+    return {
+      valid: valid,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  ordinalFormatter: function ordinalFormatter(value) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    var val,
+        parsed,
+        formatted,
+        errors = [];
+    // remove all non-digits
+    var val = Formatters.stringFormatter(value, options);
+    if (!val.valid) {
+      return val;
+    }
+    formatted = val.parsed.replace(/\D/g, '');
+    // if have a parsed value (not blank/empty)
+    if (!_.isEmpty(formatted)) {
+      parsed = parseInt(formatted);
+      formatted = Formatters.ordinalize(formatted);
+    } else {
+      errors.push('is invalid');
+      formatted = val.parsed;
+      parsed = null;
+    }
+    return {
+      valid: errors.length === 0,
+      parsed: parsed,
+      formatted: formatted,
+      errors: errors
+    };
+  },
+  parseDate: function parseDate(date) {
+    // Parse the date using supported formats. Deals with Firefox/Chrome
+    // behavior differences with "new Date()" behavior. Specifically an issue
+    // accepting "Dec 2014" as a date in Firefox. NOTE: This is not "strict"
+    // formatting, so a "/" is also allowed as well as not full 2 digit months
+    // or days, and with or without a comma.
+    return moment(date, [
+    // dates
+    'MMDDYYYY', 'MMM YYYY', 'MMM DD YYYY', 'M-D-YYYY', 'YYYY-M-D',
+    // date times
+    'YYYY-MM-DD h:mm a', 'MMM DD YYYY h:mm a', 'M-D-YYYY h:mm a', 'YYYY-MM-DD h:mm a',
+    // date times with seconds
+    'YYYY-MM-DD h:mm:ss a', 'MMM DD YYYY h:mm:ss a', 'M-D-YYYY h:mm:ss a', 'YYYY-MM-DD h:mm:ss a',
+    // Elixir format
+    'YYYY-MM-DDTHH:mm:ssZ']);
+  }
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (Formatters);
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21966,7 +22469,7 @@ module.exports = function normalizeComponent (
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(151), __webpack_require__(7)(module)))
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -22019,509 +22522,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
 	}
 }());
 
-
-/***/ }),
-/* 6 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var _ = __webpack_require__(4);
-var moment = __webpack_require__(0);
-var numeral = __webpack_require__(165);
-
-function adjustElixirDateTime(dateTime) {
-  if (dateTime === undefined || dateTime === null) return dateTime;
-
-  // This function assumes you are using ISO datetime format.
-  // Function is intended to support date time values from Elixir.
-  var extendedIndex = dateTime.indexOf('.');
-  var zIndex = dateTime.indexOf('Z');
-
-  // Check if there is a '.' but no 'Z' value in the string.
-  if (extendedIndex > -1 && zIndex === -1) {
-    return dateTime + 'Z';
-  }
-
-  return dateTime;
-}
-
-var Formatters = {
-  addressLines: function addressLines(addressObj) {
-    if (_.isEmpty(_.omitBy(addressObj, _.isEmpty))) return [];
-    var line1 = addressObj.street_1;
-    var line2 = null;
-    var line3 = addressObj.city + ', ' + addressObj.state + ' ' + addressObj.zip;
-    return _.compact(_.concat([], line1, line2, line3));
-  },
-  addressOneLine: function addressOneLine(addressObj) {
-    if (_.isEmpty(_.omitBy(addressObj, _.isEmpty))) return '';
-    return this.addressLines(addressObj).join(', ');
-  },
-  currencyDisplay: function currencyDisplay(value) {
-    var format = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'dollars';
-
-    var numObj;
-    numObj = numeral(value);
-    if (format === 'dollars') return numObj.format('$0,0');else return numObj.format('$0,0.00');
-  },
-  ordinalize: function ordinalize(value) {
-    var ordinal, last_2;
-    value = (value || "").toString();
-    if (_.isEmpty(value)) return '';
-    // check what digit the number ends with for choosing the correct text
-    // ending
-    switch (value.charAt(value.length - 1)) {
-      case '1':
-        ordinal = 'st';
-        break;
-      case '2':
-        ordinal = 'nd';
-        break;
-      case '3':
-        ordinal = 'rd';
-        break;
-      default:
-        ordinal = 'th';
-    }
-    // address some exceptions when looking at larger portion
-    last_2 = value.slice(-2);
-    if (last_2 == '11' || last_2 == '12' || last_2 == '13') ordinal = 'th';
-
-    return value + ordinal;
-  },
-
-
-  // ########
-  //
-  timeFormat: 'h:mm a',
-  // Standard Date Formatter (ex: Jun 3, 2014) - uses locale settings
-  dateFormat: 'll',
-  dollarsFormat: '$0,0',
-  dollarsCentsFormat: '$0,0.00',
-  monthYearFormat: 'MMM YYYY',
-  monthDayYearFormat: 'MMM D, YYYY',
-  // Default detailed date/time display format
-  dateTimeDetailedFormat: 'MMM DD, YYYY  h:mm:ss a',
-
-  // Relative language description of the date/time (ex: "3 days ago", "seconds ago")
-  timeAgoDisplay: function timeAgoDisplay(value) {
-    if (_.isEmpty(value)) return null;
-    return this.parseDate(value).fromNow();
-  },
-
-
-  // Standard Date and Time Formatter (ex: Jun 3, 2014 3:05:53 p)
-  datetimeDisplay: function datetimeDisplay(value) {
-    if (_.isEmpty(value)) return null;
-    return this.parseDate(value).format(this.dateTimeDetailedFormat);
-  },
-  requiredFormatter: function requiredFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var options = _.merge({}, { required: false }, options);
-    var parsed,
-        formatted,
-        errors = [];
-
-    // react inputs don't like null values - otherwise they are considered
-    // uncontrolled inputs and we want controlled inputs.  So all formatters
-    // must at least return an empty string.
-    if (_.isNil(value)) {
-      formatted = "";
-    } else {
-      formatted = value;
-    }
-
-    if (options.required && _.isEmpty(value.toString().trim())) {
-      parsed = null;
-      errors.push('is required');
-    } else {
-      parsed = formatted;
-    }
-    return {
-      valid: errors.length === 0,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  stringFormatter: function stringFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var options = _.merge({}, { required: false }, options);
-    var parsed,
-        formatted,
-        errors = [];
-
-    if (_.isNumber(value)) value = value.toString();
-    if (_.isEmpty(value)) value = "";
-    formatted = parsed = _.trim(value.toString());
-    if (options.required && _.isEmpty(parsed)) {
-      parsed = null;
-      errors.push('is required');
-    }
-    return {
-      valid: errors.length === 0,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  phoneFormatter: function phoneFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    // remove all non-digits
-    parsed = val.parsed.replace(/\D/g, '');
-    valid = parsed.length === 10;
-    if (valid) {
-      formatted = parsed.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-    } else {
-      formatted = parsed;
-      parsed = null;
-      errors.push('invalid phone number');
-    }
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  emailFormatter: function emailFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        emailRegex,
-        valid,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    var _val = val,
-        formatted = _val.formatted,
-        parsed = _val.parsed;
-    // check that it matches our regex for a email
-
-    emailRegex = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]+$/;
-    if (valid = emailRegex.test(formatted)) {
-      parsed = formatted;
-    } else {
-      parsed = null;
-      errors.push('invalid email');
-    }
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  ssnFormatter: function ssnFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    // remove all non-digits
-    parsed = val.parsed.replace(/\D/g, '');
-    valid = parsed.length === 9;
-    if (valid) {
-      formatted = parsed.replace(/^(\d{3})(\d{2})(\d{4})$/, "$1-$2-$3");
-    } else {
-      formatted = parsed;
-      parsed = null;
-      errors.push('invalid SSN');
-    }
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  stateFormatter: function stateFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    // remove 0-9
-    parsed = _.toUpper(val.parsed.replace(/\d/g, ''));
-    valid = parsed.length === 2;
-    // TODO: compare against a list of known states?
-    if (valid) {
-      formatted = parsed.replace(/^(\D{2})$/, "$1");
-    } else {
-      formatted = parsed;
-      errors.push('invalid state');
-    }
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  zipcodeFormatter: function zipcodeFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    // remove all non-digits
-    parsed = val.parsed.replace(/\D/g, '');
-    valid = parsed.length === 5;
-    if (valid) {
-      formatted = parsed.replace(/^(\d{5})$/, "$1");
-    } else {
-      formatted = parsed;
-      parsed = null;
-      errors.push('is invalid');
-    }
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  numberFormatter: function numberFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        numObj,
-        valid,
-        parsed,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    numObj = numeral(_.trim(val.parsed.replace(/[$\s,]/g, '')));
-    parsed = numObj.value();
-    // TODO: numeraljs does not throw errors.... we might want to think about
-    // detecting our own?
-    valid = true;
-    var formatted = numObj.format('0');
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-
-
-  // Currency formatting and validation.
-  //
-  // Options:
-  //   * format - 'dollars' to suppress display of cents. 'cents' - default, full display.
-  currencyFormatter: function currencyFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        numObj,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    options = _.merge({}, { format: 'cents' }, options);
-    // remove '$', spaces and ','.
-    // Using numeral, convert to a number.
-    numObj = numeral(_.trim(val.parsed.replace(/[$\s,]/g, '')));
-    parsed = numObj.value();
-    // TODO: numeraljs does not throw errors.... we might want to think about
-    // detecting our own?
-    valid = true;
-    if (options.format == 'dollars') formatted = numObj.format('$0,0');else formatted = numObj.format('$0,0.00');
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  dollarsFormatter: function dollarsFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    options['format'] = 'dollars';
-    return Formatters.currencyFormatter(value, options);
-  },
-
-
-  // Percent formatting and validation.
-  //
-  percentFormatter: function percentFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        numObj,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-    val = Formatters.stringFormatter(value, options);
-    if (_.isEmpty(val.parsed)) return val;
-    options = _.merge({}, { format: 'cents' }, options);
-    // remove '%', spaces and ','.
-    // Using numeral, convert to a number.
-    numObj = numeral(_.trim(val.parsed.replace(/[$\s,%]/g, '')));
-    parsed = numObj.value();
-    // TODO: numeraljs does not throw errors.... we might want to think about
-    // detecting our own?
-    valid = true;
-    formatted = numObj.format('0,0.00');
-    formatted = formatted + "%";
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-
-
-  // Date formatting and validation.
-  //
-  // Options:
-  //  * format - 'full-date' for "MMM DD, YYYY". 'month-year' for "MMM YYYY"
-  dateFormatter: function dateFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        temp,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-
-    value = adjustElixirDateTime(value);
-
-    val = Formatters.stringFormatter(value, options);
-    if (!val.valid) return val;
-    options = _.merge({}, { format: 'full-date' }, options);
-    temp = this.parseDate(val.parsed);
-    valid = temp.isValid();
-    if (valid) {
-      // store parsed value as just the date portion.
-      parsed = temp.format('YYYY-MM-DD');
-      if (options.format == 'month-year') formatted = temp.format(this.monthYearFormat);else formatted = temp.format(this.monthDayYearFormat);
-    } else {
-      errors.push('invalid date');
-      formatted = value;
-      parsed = null;
-    }
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-
-
-  // Time formatting and validation.
-  //
-  // Options:
-  //  * format - 'full-date' for "MMM DD, YYYY". 'month-year' for "MMM YYYY"
-  timeFormatter: function timeFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        temp,
-        valid,
-        parsed,
-        formatted,
-        errors = [];
-
-    value = adjustElixirDateTime(value);
-
-    val = Formatters.stringFormatter(value, options);
-    if (!val.valid) return val;
-    temp = moment(val.parsed, ["hh:mm:ss a", "YYYY-MM-DDTHH:mm:ssZ"]);
-
-    valid = temp.isValid();
-    if (valid) {
-      formatted = temp.format(this.timeFormat);
-      parsed = formatted;
-    } else {
-      errors.push('invalid time');
-      formatted = value;
-      parsed = null;
-    }
-    return {
-      valid: valid,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  ordinalFormatter: function ordinalFormatter(value) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-    var val,
-        parsed,
-        formatted,
-        errors = [];
-    // remove all non-digits
-    var val = Formatters.stringFormatter(value, options);
-    if (!val.valid) {
-      return val;
-    }
-    formatted = val.parsed.replace(/\D/g, '');
-    // if have a parsed value (not blank/empty)
-    if (!_.isEmpty(formatted)) {
-      parsed = parseInt(formatted);
-      formatted = Formatters.ordinalize(formatted);
-    } else {
-      errors.push('is invalid');
-      formatted = val.parsed;
-      parsed = null;
-    }
-    return {
-      valid: errors.length === 0,
-      parsed: parsed,
-      formatted: formatted,
-      errors: errors
-    };
-  },
-  parseDate: function parseDate(date) {
-    // Parse the date using supported formats. Deals with Firefox/Chrome
-    // behavior differences with "new Date()" behavior. Specifically an issue
-    // accepting "Dec 2014" as a date in Firefox. NOTE: This is not "strict"
-    // formatting, so a "/" is also allowed as well as not full 2 digit months
-    // or days, and with or without a comma.
-    return moment(date, [
-    // dates
-    'MMDDYYYY', 'MMM YYYY', 'MMM DD YYYY', 'M-D-YYYY', 'YYYY-M-D',
-    // date times
-    'YYYY-MM-DD h:mm a', 'MMM DD YYYY h:mm a', 'M-D-YYYY h:mm a', 'YYYY-MM-DD h:mm a',
-    // date times with seconds
-    'YYYY-MM-DD h:mm:ss a', 'MMM DD YYYY h:mm:ss a', 'M-D-YYYY h:mm:ss a', 'YYYY-MM-DD h:mm:ss a',
-    // Elixir format
-    'YYYY-MM-DDTHH:mm:ssZ']);
-  }
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (Formatters);
 
 /***/ }),
 /* 7 */
@@ -33682,12 +33682,57 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeCompoundLayout", function() { return __WEBPACK_IMPORTED_MODULE_9__fe_compound_layout__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__fe_name__ = __webpack_require__(185);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeName", function() { return __WEBPACK_IMPORTED_MODULE_10__fe_name__["a"]; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__fe_address_us__ = __webpack_require__(191);
-/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeAddressUs", function() { return __WEBPACK_IMPORTED_MODULE_11__fe_address_us__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__fe_address__ = __webpack_require__(191);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeAddress", function() { return __WEBPACK_IMPORTED_MODULE_11__fe_address__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__fe_checkbox__ = __webpack_require__(197);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeCheckbox", function() { return __WEBPACK_IMPORTED_MODULE_12__fe_checkbox__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__fe_radio_group__ = __webpack_require__(203);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeRadioGroup", function() { return __WEBPACK_IMPORTED_MODULE_13__fe_radio_group__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__fe_number__ = __webpack_require__(209);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeNumber", function() { return __WEBPACK_IMPORTED_MODULE_14__fe_number__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__fe_phone__ = __webpack_require__(215);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FePhone", function() { return __WEBPACK_IMPORTED_MODULE_15__fe_phone__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__fe_email__ = __webpack_require__(221);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeEmail", function() { return __WEBPACK_IMPORTED_MODULE_16__fe_email__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__fe_ssn__ = __webpack_require__(227);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeSsn", function() { return __WEBPACK_IMPORTED_MODULE_17__fe_ssn__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__fe_state__ = __webpack_require__(233);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeState", function() { return __WEBPACK_IMPORTED_MODULE_18__fe_state__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__fe_zipcode__ = __webpack_require__(239);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeZipcode", function() { return __WEBPACK_IMPORTED_MODULE_19__fe_zipcode__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__fe_currency__ = __webpack_require__(245);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeCurrency", function() { return __WEBPACK_IMPORTED_MODULE_20__fe_currency__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__fe_dollars__ = __webpack_require__(251);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeDollars", function() { return __WEBPACK_IMPORTED_MODULE_21__fe_dollars__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__fe_percent__ = __webpack_require__(257);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FePercent", function() { return __WEBPACK_IMPORTED_MODULE_22__fe_percent__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__fe_date__ = __webpack_require__(263);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeDate", function() { return __WEBPACK_IMPORTED_MODULE_23__fe_date__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__fe_time__ = __webpack_require__(269);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeTime", function() { return __WEBPACK_IMPORTED_MODULE_24__fe_time__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__fe_ordinal__ = __webpack_require__(275);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeOrdinal", function() { return __WEBPACK_IMPORTED_MODULE_25__fe_ordinal__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__fe_confirm_button__ = __webpack_require__(281);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeConfirmButton", function() { return __WEBPACK_IMPORTED_MODULE_26__fe_confirm_button__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__fe_hold_button__ = __webpack_require__(287);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeHoldButton", function() { return __WEBPACK_IMPORTED_MODULE_27__fe_hold_button__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__fe_ellipsis__ = __webpack_require__(293);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeEllipsis", function() { return __WEBPACK_IMPORTED_MODULE_28__fe_ellipsis__["a"]; });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -34179,7 +34224,7 @@ exports.push([module.i, "label[data-v-ef2a8988]{display:block;font-weight:700}",
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 //
 //
@@ -34219,7 +34264,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   },
   computed: {
     somethingToRender: function somethingToRender() {
-      return !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.text) || !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.hint);
+      return !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.text) || !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.hint) || !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.$slots.default);
     }
   }
 });
@@ -34342,9 +34387,9 @@ exports.push([module.i, "", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -34414,10 +34459,31 @@ function onSubmit() {
   }
 }
 
+function setChildrenEditable(children, editable) {
+  __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.each(children, function (component) {
+    var currentContext = null;
+
+    // Check if current component is a top level custom component
+    // that a editable prop
+    if (component.$vnode && component.formEditable !== undefined) {
+      component.formEditable = editable;
+    } else {
+      setChildrenEditable(component.$children, editable);
+    }
+  });
+}
+
+function updated() {
+  if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.editable)) {
+    setChildrenEditable(this.$children, this.editable);
+  }
+}
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'FeForm',
   data: data,
   mounted: mounted,
+  updated: updated,
   methods: {
     onSubmit: onSubmit
   },
@@ -34428,6 +34494,11 @@ function onSubmit() {
     className: {
       required: false,
       type: String
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: null
     }
   }
 });
@@ -34477,7 +34548,7 @@ var Component = __webpack_require__(3)(
   /* template */
   __webpack_require__(166),
   /* scopeId */
-  null,
+  "data-v-22d79974",
   /* cssModules */
   null
 )
@@ -34496,7 +34567,7 @@ var content = __webpack_require__(162);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(2)("206cff44", content, true);
+var update = __webpack_require__(2)("8467fc9a", content, true);
 
 /***/ }),
 /* 162 */
@@ -34507,7 +34578,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".has-error label[data-v-22d79974]{color:#000}", ""]);
 
 // exports
 
@@ -34518,13 +34589,14 @@ exports.push([module.i, "", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_formatters__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_formatters__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
 //
 //
 //
@@ -34543,7 +34615,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function data() {
   return {
-    internalErrors: []
+    internalErrors: [],
+    formEditable: null
   };
 }
 
@@ -34589,6 +34662,7 @@ function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
   this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('update:parsed', result.parsed);
 }
 
 function handleBlur() {
@@ -34620,13 +34694,16 @@ function mounted() {
 
     this.$emit('change', formatted);
     this.$emit('update:value', formatted);
+    this.$emit('update:parsed', parsed);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
-        _formatted = _formatAndValidate2.formatted;
+        _formatted = _formatAndValidate2.formatted,
+        _parsed = _formatAndValidate2.parsed;
 
     this.$emit('change', _formatted);
     this.$emit('update:value', _formatted);
+    this.$emit('update:parsed', _parsed);
   }
 }
 
@@ -34655,6 +34732,14 @@ function anyErrors() {
   return externalErrors.concat(internalErrors);
 }
 
+function isEditable() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
+}
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "FeText",
   data: data,
@@ -34663,7 +34748,8 @@ function anyErrors() {
     handleBlur: handleBlur, handleChange: handleChange, anyErrors: anyErrors, formatAndValidate: formatAndValidate, format: format
   },
   computed: {
-    classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId
+    classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId,
+    isEditable: isEditable
   },
   props: {
     value: {
@@ -34685,7 +34771,7 @@ function anyErrors() {
     formatter: {
       requied: false,
       type: Function,
-      default: __WEBPACK_IMPORTED_MODULE_1__utils_formatters__["a" /* default */].requiredFormatter
+      default: __WEBPACK_IMPORTED_MODULE_1__utils_formatters__["a" /* default */].stringFormatter
     },
     id: {
       required: false,
@@ -34728,6 +34814,11 @@ function anyErrors() {
     customValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 });
@@ -36021,7 +36112,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "htmlFor": _vm.initialId,
       "required": _vm.required
     }
-  }), _vm._v(" "), _c('input', {
+  }), _vm._v(" "), (_vm.isEditable) ? _c('input', {
     staticClass: "form-control fe-text",
     attrs: {
       "id": _vm.initialId,
@@ -36036,7 +36127,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "change": _vm.handleChange,
       "blur": _vm.handleBlur
     }
-  }), _vm._v(" "), _c('fe-error', {
+  }) : _vm._e(), _vm._v(" "), (!_vm.isEditable) ? _c('pre', [_vm._v(_vm._s(_vm.value))]) : _vm._e(), _vm._v(" "), _c('fe-error', {
     attrs: {
       "errors": _vm.combinedErrors
     }
@@ -36073,7 +36164,7 @@ var Component = __webpack_require__(3)(
   /* template */
   __webpack_require__(172),
   /* scopeId */
-  null,
+  "data-v-8c2c27e4",
   /* cssModules */
   null
 )
@@ -36092,7 +36183,7 @@ var content = __webpack_require__(170);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(2)("216fb59e", content, true);
+var update = __webpack_require__(2)("21431406", content, true);
 
 /***/ }),
 /* 170 */
@@ -36103,7 +36194,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".has-error label[data-v-8c2c27e4]{color:#000}", ""]);
 
 // exports
 
@@ -36114,13 +36205,14 @@ exports.push([module.i, "", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_formatters__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_formatters__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
 //
 //
 //
@@ -36137,7 +36229,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function data() {
   return {
-    internalErrors: []
+    internalErrors: [],
+    formEditable: null
   };
 }
 
@@ -36191,6 +36284,7 @@ function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
   this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('update:parsed', result.parsed);
 }
 
 function handleBlur() {
@@ -36222,13 +36316,16 @@ function mounted() {
 
     this.$emit('change', formatted);
     this.$emit('update:value', formatted);
+    this.$emit('update:parsed', parsed);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
-        _formatted = _formatAndValidate2.formatted;
+        _formatted = _formatAndValidate2.formatted,
+        _parsed = _formatAndValidate2.parsed;
 
     this.$emit('change', _formatted);
     this.$emit('update:value', _formatted);
+    this.$emit('update:parsed', _parsed);
   }
 }
 
@@ -36248,15 +36345,24 @@ function anyErrors() {
 
   return externalErrors.concat(internalErrors);
 }
+
+function isEditable() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
+}
+
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "FeTextArea",
+  name: "FeTextarea",
   data: data,
   mounted: mounted,
   methods: {
     handleBlur: handleBlur, handleChange: handleChange, formatAndValidate: formatAndValidate, format: format, anyErrors: anyErrors
   },
   computed: {
-    classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId
+    classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId, isEditable: isEditable
   },
   props: {
     value: {
@@ -36315,12 +36421,17 @@ function anyErrors() {
     },
     rows: {
       required: false,
-      type: Number,
+      type: [String, Number],
       default: 3
     },
     customValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 });
@@ -36339,7 +36450,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "htmlFor": _vm.initialId,
       "required": _vm.required
     }
-  }), _vm._v(" "), _c('textarea', {
+  }), _vm._v(" "), (_vm.isEditable) ? _c('textarea', {
     staticClass: "form-control fe-text-area",
     attrs: {
       "id": _vm.initialId,
@@ -36354,7 +36465,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "change": _vm.handleChange,
       "blur": _vm.handleBlur
     }
-  }), _vm._v(" "), _c('fe-error', {
+  }) : _vm._e(), _vm._v(" "), (!_vm.isEditable) ? _c('pre', [_vm._v(_vm._s(_vm.value))]) : _vm._e(), _vm._v(" "), _c('fe-error', {
     attrs: {
       "errors": _vm.combinedErrors
     }
@@ -36431,15 +36542,63 @@ exports.push([module.i, ".error[data-v-caf433ec]{color:#c0392b}", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
 //
 
+
+
+
+function data() {
+  return {
+    formEditable: null
+  };
+}
+
+function classes() {
+  return __WEBPACK_IMPORTED_MODULE_1_classnames___default()(_defineProperty({
+    "btn": true
+  }, this.className, __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isString(this.className)));
+}
+
+function isEditable() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
+}
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'FeSubmit',
-  props: {},
-  computed: {}
+  data: data,
+  computed: {
+    isEditable: isEditable, classes: classes
+  },
+  props: {
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    },
+    label: {
+      required: false,
+      type: String,
+      default: 'Save'
+    },
+    className: {
+      required: false,
+      type: String,
+      default: 'btn-primary'
+    }
+  }
 });
 
 /***/ }),
@@ -36447,12 +36606,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('input', {
+  return (_vm.isEditable) ? _c('input', {
+    staticClass: "fe-submit",
+    class: _vm.classes,
     attrs: {
-      "type": "submit",
-      "value": "Save"
+      "type": "submit"
+    },
+    domProps: {
+      "value": _vm.label
     }
-  })
+  }) : _vm._e()
 },staticRenderFns: []}
 
 /***/ }),
@@ -36525,7 +36688,7 @@ exports.push([module.i, ".flex-static[data-v-0097b07c]{-ms-flex:0 0 auto;flex:0 
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -36650,13 +36813,15 @@ exports.push([module.i, "", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
 //
 //
 //
@@ -36851,6 +37016,11 @@ function onLastNameChanged(value) {
     lastNameCustomValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 });
@@ -36885,7 +37055,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "First",
       "autofocus": _vm.autofocus,
-      "custom-validator": _vm.firstNameCustomValidator
+      "custom-validator": _vm.firstNameCustomValidator,
+      "editable": _vm.editable
     },
     on: {
       "update:value": _vm.onFirstNameChanged,
@@ -36902,7 +37073,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "Last",
       "className": _vm.classesFor(_vm.lastNameAttr, 'name-last'),
-      "custom-validator": _vm.lastNameCustomValidator
+      "custom-validator": _vm.lastNameCustomValidator,
+      "editable": _vm.editable
     },
     on: {
       "update:value": _vm.onLastNameChanged,
@@ -36921,15 +37093,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_address_us__ = __webpack_require__(192);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_address_us___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_address_us__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_address__ = __webpack_require__(192);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_address___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_address__);
 
 
-__WEBPACK_IMPORTED_MODULE_0__fe_address_us___default.a.install = function install(Vue) {
-  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_address_us___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_address_us___default.a);
+__WEBPACK_IMPORTED_MODULE_0__fe_address___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_address___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_address___default.a);
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_address_us___default.a);
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_address___default.a);
 
 /***/ }),
 /* 192 */
@@ -36945,7 +37117,7 @@ var Component = __webpack_require__(3)(
   /* template */
   __webpack_require__(196),
   /* scopeId */
-  "data-v-0193b770",
+  "data-v-4d0eab08",
   /* cssModules */
   null
 )
@@ -36964,7 +37136,7 @@ var content = __webpack_require__(194);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(2)("4ab1fd70", content, true);
+var update = __webpack_require__(2)("1f338f48", content, true);
 
 /***/ }),
 /* 194 */
@@ -36975,7 +37147,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, ".address-us .address-state[data-v-0193b770]{width:55px}.address-us .address-zipcode[data-v-0193b770]{width:74px}", ""]);
+exports.push([module.i, ".address-us .address-state[data-v-4d0eab08]{width:55px}.address-us .address-zipcode[data-v-4d0eab08]{width:74px}", ""]);
 
 // exports
 
@@ -36986,13 +37158,17 @@ exports.push([module.i, ".address-us .address-state[data-v-0193b770]{width:55px}
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
 //
 //
 //
@@ -37150,7 +37326,7 @@ function valueUpdated(attribute, newValue) {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "FeAddressUs",
+  name: "FeAddress",
   data: data,
   methods: {
     anyErrors: anyErrors, onChangeEvent: onChangeEvent, onBlurEvent: onBlurEvent,
@@ -37249,6 +37425,11 @@ function valueUpdated(attribute, newValue) {
     zipCustomValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 });
@@ -37283,6 +37464,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required,
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "Address",
+      "editable": _vm.editable,
       "autofocus": _vm.autofocus,
       "custom-validator": _vm.streetCustomValidator
     },
@@ -37305,6 +37487,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required,
       "formatter": _vm.formatter('stringFormatter'),
       "placeholder": "City",
+      "editable": _vm.editable,
       "custom-validator": _vm.cityCustomValidator
     },
     on: {
@@ -37322,6 +37505,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required,
       "formatter": _vm.formatter('stateFormatter'),
       "placeholder": "ST",
+      "editable": _vm.editable,
       "custom-validator": _vm.stateCustomValidator
     },
     on: {
@@ -37339,6 +37523,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required,
       "formatter": _vm.formatter('zipcodeFormatter'),
       "placeholder": "Zip",
+      "editable": _vm.editable,
       "custom-validator": _vm.zipCustomValidator
     },
     on: {
@@ -37423,9 +37608,9 @@ exports.push([module.i, "", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
 //
 //
@@ -37446,6 +37631,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
+
+function data() {
+  return {
+    formEditable: null
+  };
+}
 
 function classes() {
   return __WEBPACK_IMPORTED_MODULE_1_classnames___default()({
@@ -37489,14 +37680,23 @@ function initialId() {
   return this.id;
 }
 
+function isEditable() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
+}
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "FeCheckbox",
+  data: data,
   mounted: mounted,
   methods: {
     handleChange: handleChange
   },
   computed: {
-    classes: classes, initialValue: initialValue, initialId: initialId
+    classes: classes, initialValue: initialValue, initialId: initialId, isEditable: isEditable
   },
   props: {
     value: {
@@ -37546,6 +37746,11 @@ function initialId() {
     onChange: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 });
@@ -37563,7 +37768,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     ref: "checkbox",
     attrs: {
       "type": "checkbox",
-      "id": _vm.initialId
+      "id": _vm.initialId,
+      "disabled": !_vm.isEditable
     },
     domProps: {
       "checked": _vm.initialValue
@@ -37615,7 +37821,7 @@ var Component = __webpack_require__(3)(
   /* template */
   __webpack_require__(208),
   /* scopeId */
-  null,
+  "data-v-1a78afdc",
   /* cssModules */
   null
 )
@@ -37634,7 +37840,7 @@ var content = __webpack_require__(206);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(2)("31d9d352", content, true);
+var update = __webpack_require__(2)("6a5d6ae2", content, true);
 
 /***/ }),
 /* 206 */
@@ -37645,7 +37851,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, ".has-error .radio-group-label[data-v-1a78afdc]{color:#000}", ""]);
 
 // exports
 
@@ -37656,11 +37862,10 @@ exports.push([module.i, "", ""]);
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -37670,21 +37875,165 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
 
+function data() {
+  return {
+    internalErrors: [],
+    formEditable: null
+  };
+}
 
 function groupClasses() {
-  return __WEBPACK_IMPORTED_MODULE_2_classnames___default()(_defineProperty({
+  return __WEBPACK_IMPORTED_MODULE_1_classnames___default()(_defineProperty({
     "form-group": true,
-    "has-error": !__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isEmpty(this.errors)
-  }, this.className, __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isString(this.className)));
+    "has-error": !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.anyErrors())
+  }, this.className, __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isString(this.className)));
+}
+
+function isChecked(option) {
+  return this.value === option.value;
+}
+
+function initialId() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.id)) {
+    return __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.uniqueId('option_');
+  }
+
+  return this.id;
+}
+
+function mounted() {
+  // If props.value is nil (undefined or null), fall back to
+  // props.defaultValue and submit the formatted and parsed defaultValue back
+  // to the formBuilder so we can be rendered again with a valid value in our
+  // props.
+  //
+  // A defaultValue that responds to _.isNil will result in an infinate loop.
+  // So check that the defaultValue will not respond to isNil before
+  // submitting a new value for props.value.
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.value) && !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.defaultValue)) {
+    var _formatAndValidate = this.formatAndValidate(this.defaultValue),
+        valid = _formatAndValidate.valid,
+        parsed = _formatAndValidate.parsed,
+        formatted = _formatAndValidate.formatted;
+
+    if (valid) {
+      this.$emit('change', formatted);
+      this.$emit('update:value', formatted);
+    }
+  } else {
+    var _formatAndValidate2 = this.formatAndValidate(this.value),
+        valid = _formatAndValidate2.valid,
+        formatted = _formatAndValidate2.formatted;
+
+    if (valid) {
+      this.$emit('change', formatted);
+      this.$emit('update:value', formatted);
+    }
+  }
+}
+
+function formatAndValidate(value) {
+  var formatted,
+      parsed,
+      errors = [];
+
+  // rewrite "blank" values as null
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(value)) value = null;
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(value)) value = null;
+
+  // both formatted and parsed values are the same.  This is by design to
+  // simplify things.  Otherwise, the value props would have to be able to
+  // accept the formatted or parsed value as valid input.
+  formatted = value;
+  parsed = value;
+
+  // check for required
+  if (this.required && __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNull(parsed)) {
+    errors.push('is required');
+  }
+
+  // check for inclusion in the list of options, but only if there wasn't a
+  // requirement error first
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(errors)) {
+    var allowedValues = __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.map(this.options, "value");
+
+    if (!__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.includes(allowedValues, value)) {
+      errors.push('invalid value');
+      parsed = null;
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    parsed: parsed,
+    formatted: formatted,
+    errors: errors
+  };
+}
+
+function handleChange(e) {
+  this.internalErrors = [];
+  var result = this.formatAndValidate(e.target.value);
+  this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
+}
+
+function handleBlur() {
+  this.internalErrors = [];
+  var result = this.formatAndValidate(this.value);
+
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result);
+    return result.errors;
+  } else {
+    this.internalErrors = result.errors;
+  }
+}
+
+function combinedErrors() {
+  return this.anyErrors();
+}
+
+function anyErrors() {
+  var checkForErrors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+  if (checkForErrors) {
+    this.handleBlur();
+  }
+
+  var externalErrors = this.errors || [];
+  var internalErrors = this.internalErrors || [];
+
+  return externalErrors.concat(internalErrors);
+}
+
+function isEditable() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeRadioGroup",
+  data: data,
+  mounted: mounted,
+  methods: {
+    isChecked: isChecked, formatAndValidate: formatAndValidate, handleChange: handleChange, handleBlur: handleBlur, anyErrors: anyErrors
+  },
   computed: {
-    groupClasses: groupClasses
+    groupClasses: groupClasses, initialId: initialId, combinedErrors: combinedErrors, isEditable: isEditable
   },
   props: {
     value: {
@@ -37706,7 +38055,9 @@ function groupClasses() {
     errors: {
       required: false,
       type: Array,
-      default: function _default() {}
+      default: function _default() {
+        return [];
+      }
     },
     id: {
       required: false,
@@ -37737,6 +38088,11 @@ function groupClasses() {
     customValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     }
   }
 });
@@ -37758,11 +38114,2959 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "htmlFor": _vm.id,
       "required": _vm.required
     }
-  }, [_vm._v(_vm._s(_vm.label))]), _vm._v(" "), _c('fe-error', {
+  }, [_vm._v(_vm._s(_vm.label))]), _vm._v(" "), _vm._l((_vm.options), function(option) {
+    return _c('div', {
+      key: option.value,
+      staticClass: "radio"
+    }, [_c('label', {
+      class: {
+        'radio-label': true, 'checked': _vm.isChecked(option)
+      }
+    }, [_c('input', {
+      attrs: {
+        "type": "radio",
+        "disabled": !_vm.isEditable,
+        "name": _vm.initialId,
+        "autofocus": _vm.autofocus
+      },
+      domProps: {
+        "value": option.value,
+        "checked": _vm.isChecked(option)
+      },
+      on: {
+        "change": _vm.handleChange,
+        "blur": _vm.handleBlur
+      }
+    }), _vm._v("\n      " + _vm._s(option.name) + "\n    ")])])
+  }), _vm._v(" "), _c('fe-error', {
     attrs: {
-      "errors": _vm.errors
+      "errors": _vm.combinedErrors
     }
-  })], 1)
+  })], 2)
+},staticRenderFns: []}
+
+/***/ }),
+/* 209 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_number__ = __webpack_require__(210);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_number___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_number__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_number___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_number___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_number___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_number___default.a);
+
+/***/ }),
+/* 210 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(211)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(213),
+  /* template */
+  __webpack_require__(214),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 211 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(212);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("24276e56", content, true);
+
+/***/ }),
+/* 212 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 213 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeNumber",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: [String, Number]
+    },
+    defaultValue: {
+      required: false,
+      type: [String, Number],
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 214 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('numberFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 215 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_phone__ = __webpack_require__(216);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_phone___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_phone__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_phone___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_phone___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_phone___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_phone___default.a);
+
+/***/ }),
+/* 216 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(217)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(219),
+  /* template */
+  __webpack_require__(220),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 217 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(218);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("7181a4b6", content, true);
+
+/***/ }),
+/* 218 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 219 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FePhone",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 220 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('phoneFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 221 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_email__ = __webpack_require__(222);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_email___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_email__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_email___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_email___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_email___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_email___default.a);
+
+/***/ }),
+/* 222 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(223)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(225),
+  /* template */
+  __webpack_require__(226),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 223 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(224);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("4325b016", content, true);
+
+/***/ }),
+/* 224 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 225 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeEmail",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 226 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('emailFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 227 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_ssn__ = __webpack_require__(228);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_ssn___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_ssn__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_ssn___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_ssn___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_ssn___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_ssn___default.a);
+
+/***/ }),
+/* 228 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(229)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(231),
+  /* template */
+  __webpack_require__(232),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 229 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(230);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("59cce514", content, true);
+
+/***/ }),
+/* 230 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 231 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeSsn",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 232 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('ssnFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 233 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_state__ = __webpack_require__(234);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_state___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_state__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_state___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_state___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_state___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_state___default.a);
+
+/***/ }),
+/* 234 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(235)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(237),
+  /* template */
+  __webpack_require__(238),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 235 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(236);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("6fbcb9f1", content, true);
+
+/***/ }),
+/* 236 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 237 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeState",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 238 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('stateFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 239 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_zipcode__ = __webpack_require__(240);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_zipcode___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_zipcode__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_zipcode___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_zipcode___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_zipcode___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_zipcode___default.a);
+
+/***/ }),
+/* 240 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(241)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(243),
+  /* template */
+  __webpack_require__(244),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 241 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(242);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("7bb04bab", content, true);
+
+/***/ }),
+/* 242 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 243 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeZipcode",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 244 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('zipcodeFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 245 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_currency__ = __webpack_require__(246);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_currency___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_currency__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_currency___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_currency___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_currency___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_currency___default.a);
+
+/***/ }),
+/* 246 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(247)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(249),
+  /* template */
+  __webpack_require__(250),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 247 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(248);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("f4fb1254", content, true);
+
+/***/ }),
+/* 248 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 249 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeCurrency",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: [String, Number]
+    },
+    defaultValue: {
+      required: false,
+      type: [String, Number],
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 250 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('currencyFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 251 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_dollars__ = __webpack_require__(252);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_dollars___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_dollars__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_dollars___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_dollars___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_dollars___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_dollars___default.a);
+
+/***/ }),
+/* 252 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(253)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(255),
+  /* template */
+  __webpack_require__(256),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 253 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(254);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("0709be50", content, true);
+
+/***/ }),
+/* 254 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 255 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeDollars",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: [String, Number]
+    },
+    defaultValue: {
+      required: false,
+      type: [String, Number],
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 256 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('dollarsFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 257 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_percent__ = __webpack_require__(258);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_percent___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_percent__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_percent___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_percent___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_percent___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_percent___default.a);
+
+/***/ }),
+/* 258 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(259)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(261),
+  /* template */
+  __webpack_require__(262),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 259 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(260);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("805eac80", content, true);
+
+/***/ }),
+/* 260 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 261 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FePercent",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: [String, Number]
+    },
+    defaultValue: {
+      required: false,
+      type: [String, Number],
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 262 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('percentFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 263 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_date__ = __webpack_require__(264);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_date___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_date__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_date___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_date___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_date___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_date___default.a);
+
+/***/ }),
+/* 264 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(265)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(267),
+  /* template */
+  __webpack_require__(268),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 265 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(266);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("407b1d8a", content, true);
+
+/***/ }),
+/* 266 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 267 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+function dateFormatter(value) {
+  var opt = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+  return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */].dateFormatter(value, _.merge({}, opt, { format: this.format }));
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeDate",
+  methods: {
+    dateFormatter: dateFormatter,
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    format: {
+      required: false,
+      type: String,
+      default: 'full-date'
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 268 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.dateFormatter,
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 269 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_time__ = __webpack_require__(270);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_time___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_time__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_time___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_time___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_time___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_time___default.a);
+
+/***/ }),
+/* 270 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(271)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(273),
+  /* template */
+  __webpack_require__(274),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 271 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(272);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("8c0ae130", content, true);
+
+/***/ }),
+/* 272 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 273 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeTime",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 274 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('timeFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 275 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_ordinal__ = __webpack_require__(276);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_ordinal___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_ordinal__);
+
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_ordinal___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_ordinal___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_ordinal___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_ordinal___default.a);
+
+/***/ }),
+/* 276 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(277)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(279),
+  /* template */
+  __webpack_require__(280),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 277 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(278);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("693096e0", content, true);
+
+/***/ }),
+/* 278 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 279 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "FeOrdinal",
+  methods: {
+    formatter: function formatter(type) {
+      return __WEBPACK_IMPORTED_MODULE_0__utils_formatters__["a" /* default */][type];
+    },
+    updated: function updated(value) {
+      this.$emit('update:value', value);
+    },
+    parsed: function parsed(value) {
+      this.$emit('update:parsed', value);
+    }
+  },
+  props: {
+    value: {
+      required: false,
+      type: String
+    },
+    defaultValue: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    },
+    id: {
+      required: false,
+      type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    placeholder: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    label: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    hint: {
+      required: false,
+      type: String,
+      default: ''
+    },
+    required: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    customValidator: {
+      required: false,
+      type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    }
+  }
+});
+
+/***/ }),
+/* 280 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('fe-text', {
+    attrs: {
+      "value": _vm.value,
+      "defaultValue": _vm.defaultValue,
+      "errors": _vm.errors,
+      "formatter": _vm.formatter('ordinalFormatter'),
+      "id": _vm.id,
+      "className": _vm.className,
+      "autofocus": _vm.autofocus,
+      "placeholder": _vm.placeholder,
+      "label": _vm.label,
+      "hint": _vm.hint,
+      "required": _vm.required,
+      "type": "text",
+      "customValidator": _vm.customValidator,
+      "editable": _vm.editable
+    },
+    on: {
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
+    }
+  })
+},staticRenderFns: []}
+
+/***/ }),
+/* 281 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_confirm_button__ = __webpack_require__(282);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_confirm_button___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_confirm_button__);
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_confirm_button___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_confirm_button___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_confirm_button___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_confirm_button___default.a);
+
+/***/ }),
+/* 282 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(283)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(285),
+  /* template */
+  __webpack_require__(286),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 283 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(284);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("443bc2fa", content, true);
+
+/***/ }),
+/* 284 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 285 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+function data() {
+  return {
+    confirm: this.mode === "confirm",
+    timeout: null
+  };
+}
+
+function classes() {
+  if (this.$slot !== undefined) {
+    return __WEBPACK_IMPORTED_MODULE_0_classnames___default()({});
+  } else {
+    return __WEBPACK_IMPORTED_MODULE_0_classnames___default()({
+      'btn': true,
+      'btn-default': !this.confirm,
+      'btn-danger': this.confirm
+    });
+  }
+}
+
+function content() {
+  if (this.confirm) {
+    return this.message;
+  } else {
+    return this.label;
+  }
+}
+
+function beforeDestroy() {
+  this.clearTimeout();
+}
+
+function clearTimeout() {
+  if (this.timeout != null) {
+    window.clearTimeout(this.timeout);
+    this.timeout = null;
+  }
+}
+
+function onTimeout() {
+  this.$emit('timeout');
+  this.endConfirm();
+}
+
+function endConfirm() {
+  this.clearTimeout();
+  this.confirm = false;
+}
+
+function onMouseOver() {
+  if (this.confirm) {
+    this.clearTimeout();
+  }
+}
+
+function onMouseOut() {
+  if (this.confirm) {
+    this.timeout = setTimeout(this.onTimeout, this.wait);
+  }
+}
+
+function onClick() {
+  if (this.confirm) {
+    this.endConfirm();
+    this.$emit('action');
+  } else {
+    this.confirm = true;
+    this.$emit('confirm');
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'FeConfirmButton',
+  data: data,
+  beforeDestroy: beforeDestroy,
+  methods: {
+    onMouseOver: onMouseOver, onMouseOut: onMouseOut, onClick: onClick, clearTimeout: clearTimeout,
+    onTimeout: onTimeout, endConfirm: endConfirm
+  },
+  computed: {
+    classes: classes, content: content
+  },
+  props: {
+    label: {
+      required: false,
+      type: String,
+      default: 'Delete'
+    },
+    message: {
+      required: false,
+      type: String,
+      default: 'Are you sure?'
+    },
+    mode: {
+      required: false,
+      type: String,
+      default: null
+    },
+    wait: {
+      required: false,
+      type: Number,
+      default: 3000
+    }
+  }
+});
+
+/***/ }),
+/* 286 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    class: _vm.classes,
+    on: {
+      "mouseover": _vm.onMouseOver,
+      "mouseout": _vm.onMouseOut,
+      "click": function($event) {
+        $event.stopPropagation();
+        _vm.onClick($event)
+      }
+    }
+  }, [_vm._t("default", [_vm._v("\n    " + _vm._s(_vm.content) + "\n  ")])], 2)
+},staticRenderFns: []}
+
+/***/ }),
+/* 287 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_hold_button__ = __webpack_require__(288);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_hold_button___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_hold_button__);
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_hold_button___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_hold_button___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_hold_button___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_hold_button___default.a);
+
+/***/ }),
+/* 288 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(289)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(291),
+  /* template */
+  __webpack_require__(292),
+  /* scopeId */
+  "data-v-7958c108",
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 289 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(290);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("32f48943", content, true);
+
+/***/ }),
+/* 290 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, ".hold-button[data-v-7958c108]{position:relative}.hold-button .message[data-v-7958c108],.hold-button .progress[data-v-7958c108]{transition:opacity .5s ease-in-out}.hold-button .progress[data-v-7958c108]{position:absolute;top:0;left:0;margin-bottom:-7px;width:100%;height:100%;background:transparent;box-shadow:none}.hold-button .progress .progress-bar[data-v-7958c108]{transition:width .1s ease!important}.hold-button .done-icon[data-v-7958c108]{opacity:0;font-size:24px;color:#2ecc71;position:absolute;top:0;left:0;width:100%;height:100%;line-height:30px;transition:opacity 1s ease-in-out}.hold-button.done .message[data-v-7958c108],.hold-button.done .progress[data-v-7958c108]{opacity:0}.hold-button.done .done-icon[data-v-7958c108]{opacity:1}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 291 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+function data() {
+  return {
+    clicked: false,
+    percent: 0,
+    mouseDown: null,
+    timeout: null,
+    increment: 100
+  };
+}
+
+function beforeDestroy() {
+  if (this.timeout !== null) {
+    window.clearTimeout(this.timeout);
+  }
+}
+
+function classes() {
+  var _ref;
+
+  return _ref = {
+    "btn": true
+  }, _defineProperty(_ref, this.className, __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isString(this.className)), _defineProperty(_ref, "hold-button", true), _defineProperty(_ref, "disabled", this.percent === 100), _defineProperty(_ref, "done", this.percent === 100), _ref;
+}
+
+function doneIconClasses() {
+  var _ref2;
+
+  return _ref2 = {
+    "fa": true
+  }, _defineProperty(_ref2, "fa-" + this.doneIcon, __WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isNil(this.doneIcon)), _defineProperty(_ref2, "done-icon", true), _ref2;
+}
+
+function onMouseDown() {
+  if (this.percent < 100) {
+    var timeout = setTimeout(this.onTimeout, this.increment);
+    this.startAction();
+    this.clicked = true;
+    this.percent = 0;
+    this.timeout = timeout;
+    this.mouseDown = new Date();
+  }
+}
+
+function onMouseUp() {
+  window.clearTimeout(this.timeout);
+
+  if (this.percent < 100) {
+    this.stopAction();
+    this.clicked = false;
+    this.percent = 0;
+    this.timeout = null;
+    this.mouseDown = null;
+  }
+}
+
+function onTimeout() {
+  if (this.mouseDown != null) {
+    var percent = this.incrementPercent();
+    var timeout = null;
+
+    if (percent >= 100) {
+      percent = 100;
+      setTimeout(this.fireAction, 100);
+    } else {
+      timeout = setTimeout(this.onTimeout, this.increment);
+    }
+
+    this.percent = percent;
+    this.timeout = timeout;
+  }
+}
+
+function startAction() {
+  this.$emit('start');
+}
+
+function stopAction() {
+  this.$emit('stop');
+}
+
+function fireAction() {
+  this.$emit('action');
+}
+
+function incrementPercent() {
+  return Math.floor(this.increment / this.wait * 100 + this.percent);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'FeHoldButton',
+  data: data,
+  beforeDestroy: beforeDestroy,
+  methods: {
+    onMouseDown: onMouseDown, onMouseUp: onMouseUp, onTimeout: onTimeout, startAction: startAction,
+    stopAction: stopAction, fireAction: fireAction, incrementPercent: incrementPercent
+  },
+  computed: {
+    classes: classes, doneIconClasses: doneIconClasses
+  },
+  props: {
+    label: {
+      required: false,
+      type: String,
+      default: 'Delete'
+    },
+    className: {
+      required: false,
+      type: String,
+      default: 'btn-default'
+    },
+    doneIcon: {
+      required: false,
+      type: String,
+      default: 'check-circle-o'
+    },
+    wait: {
+      required: false,
+      type: Number,
+      default: 750
+    },
+    transitionColor: {
+      required: false,
+      type: String,
+      default: '#337ab7'
+    },
+    doneColor: {
+      required: false,
+      type: String,
+      default: '#27ae60'
+    }
+  }
+});
+
+/***/ }),
+/* 292 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    class: _vm.classes,
+    on: {
+      "mousedown": _vm.onMouseDown,
+      "mouseup": _vm.onMouseUp
+    }
+  }, [_c('div', {
+    staticClass: "message"
+  }, [(_vm.clicked) ? _c('span', [_vm._v("Hold to")]) : _vm._e(), _vm._v(" " + _vm._s(_vm.label) + "\n  ")]), _vm._v(" "), (_vm.mouseDown) ? _c('div', {
+    staticClass: "progress"
+  }, [_c('div', {
+    staticClass: "progress-bar progress-bar-striped",
+    style: ({
+      width: (_vm.percent + "%"),
+      background: _vm.transitionColor
+    }),
+    attrs: {
+      "role": "progressbar"
+    }
+  })]) : _vm._e(), _vm._v(" "), _c('i', {
+    class: _vm.doneIconClasses,
+    style: ({
+      color: _vm.doneColor
+    })
+  })])
+},staticRenderFns: []}
+
+/***/ }),
+/* 293 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_ellipsis__ = __webpack_require__(294);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_ellipsis___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_ellipsis__);
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_ellipsis___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_ellipsis___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_ellipsis___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_ellipsis___default.a);
+
+/***/ }),
+/* 294 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(295)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(297),
+  /* template */
+  __webpack_require__(298),
+  /* scopeId */
+  "data-v-62148dbc",
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 295 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(296);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("37aa2751", content, true);
+
+/***/ }),
+/* 296 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, ".loading-ellipsis[data-v-62148dbc]{opacity:.75;font-style:italic}.loading-ellipsis .dot-holder[data-v-62148dbc]{position:relative}.loading-ellipsis .dot-holder .invisi-dots[data-v-62148dbc]{opacity:0}.loading-ellipsis .dot-holder .dots[data-v-62148dbc]{position:absolute;top:0;left:0}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 297 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+function data() {
+  return {
+    dotInterval: null,
+    dotCount: 0,
+    dots: ''
+  };
+}
+
+function mounted() {
+  this.dotInterval = setInterval(this.updateDots, 500);
+}
+
+function beforeDestroy() {
+  clearInterval(this.dotInterval);
+}
+
+function updateDots() {
+  var count = this.dotCount + 1;
+
+  if (count >= 4) count = 0;
+
+  var dots = ".".repeat(count);
+  this.dotCount = count;
+  this.dots = dots;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'FeEllipsis',
+  mounted: mounted,
+  beforeDestroy: beforeDestroy,
+  data: data,
+  methods: {
+    updateDots: updateDots
+  }
+});
+
+/***/ }),
+/* 298 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('span', {
+    staticClass: "loading-ellipsis"
+  }, [_vm._t("default", [_vm._v("\n    loading\n  ")]), _vm._v(" "), _c('span', {
+    staticClass: "dot-holder"
+  }, [_c('span', {
+    staticClass: "invisi-dots"
+  }, [_vm._v("...")]), _vm._v(" "), _c('span', {
+    staticClass: "dots"
+  }, [_vm._v(_vm._s(_vm.dots))])])], 2)
 },staticRenderFns: []}
 
 /***/ })
