@@ -63,10 +63,31 @@ function onSubmit() {
   }
 }
 
+function setChildrenEditable(children, editable) {
+  _.each(children, function(component) {
+    let currentContext = null;
+
+    // Check if current component is a top level custom component
+    // that a editable prop
+    if (component.$vnode && component.formEditable !== undefined) {
+      component.formEditable = editable;
+    } else {
+      setChildrenEditable(component.$children, editable);
+    }
+  });
+}
+
+function updated() {
+  if (!_.isNil(this.editable)) {
+    setChildrenEditable(this.$children, this.editable);
+  }
+}
+
 export default {
   name: 'FeForm',
   data,
   mounted,
+  updated,
   methods: {
     onSubmit
   },
@@ -77,6 +98,11 @@ export default {
     className: {
       required: false,
       type: String
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: null
     }
   }
 }

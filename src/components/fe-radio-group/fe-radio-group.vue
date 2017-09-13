@@ -3,7 +3,7 @@
       <fe-label class="radio-group-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
       <div class="radio" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option)}">
-          <input type="radio" :disabled="!editable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
+          <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
           {{option.name}}
         </label>
       </div>
@@ -17,7 +17,8 @@ import cx from 'classnames';
 
 function data() {
   return {
-    internalErrors: []
+    internalErrors: [],
+    formEditable: null
   };
 }
 
@@ -138,6 +139,14 @@ function anyErrors(checkForErrors = false) {
   return externalErrors.concat(internalErrors);
 }
 
+function isEditable() {
+  if (_.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
+}
+
 export default {
   name: "FeRadioGroup",
   data,
@@ -146,7 +155,7 @@ export default {
     isChecked, formatAndValidate, handleChange, handleBlur, anyErrors
   },
   computed: {
-    groupClasses, initialId, combinedErrors
+    groupClasses, initialId, combinedErrors, isEditable
   },
   props: {
     value: {

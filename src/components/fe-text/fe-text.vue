@@ -1,11 +1,11 @@
 <template>
   <div :class="classes">
     <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
-    <input v-if="editable" :id="initialId" class="form-control fe-text" :type="type" :value="value"
+    <input v-if="isEditable" :id="initialId" class="form-control fe-text" :type="type" :value="value"
       :placeholder="placeholder"
       @change="handleChange" @blur="handleBlur"
       :autofocus="autofocus" />
-    <pre v-if="!editable">{{value}}</pre>
+    <pre v-if="!isEditable">{{value}}</pre>
     <fe-error :errors="combinedErrors" />
   </div>
 </template>
@@ -17,7 +17,8 @@ import cx from 'classnames';
 
 function data() {
   return {
-    internalErrors: []
+    internalErrors: [],
+    formEditable: null
   };
 }
 
@@ -126,6 +127,14 @@ function anyErrors(checkForErrors = false) {
   return externalErrors.concat(internalErrors);
 }
 
+function isEditable() {
+  if (_.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
+}
+
 export default {
   name: "FeText",
   data,
@@ -134,7 +143,8 @@ export default {
     handleBlur, handleChange, anyErrors, formatAndValidate, format
   },
   computed: {
-    classes, initialValue, combinedErrors, initialId
+    classes, initialValue, combinedErrors, initialId,
+    isEditable
   },
   props: {
     value: {

@@ -2,7 +2,7 @@
   <div :class="className">
     <div :class="classes">
       <label>
-        <input type="checkbox" ref="checkbox" :id="initialId" :checked="initialValue" @change="handleChange" :disabled="!editable" />
+        <input type="checkbox" ref="checkbox" :id="initialId" :checked="initialValue" @change="handleChange" :disabled="!isEditable" />
         <slot>
           {{label}}
         </slot>
@@ -17,6 +17,12 @@
 <script>
 import _ from 'lodash';
 import cx from 'classnames';
+
+function data() {
+  return {
+    formEditable: null
+  }
+}
 
 function classes() {
   return cx({
@@ -60,14 +66,23 @@ function initialId() {
   return this.id;
 }
 
+function isEditable() {
+  if (_.isNil(this.formEditable)) {
+    return this.editable;
+  }
+
+  return this.formEditable;
+}
+
 export default {
   name: "FeCheckbox",
+  data,
   mounted,
   methods: {
     handleChange
   },
   computed: {
-    classes, initialValue, initialId
+    classes, initialValue, initialId, isEditable
   },
   props: {
     value: {
