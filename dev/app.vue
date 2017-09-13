@@ -32,6 +32,11 @@
         <fe-submit value="Next" className="btn-success" />
       </fe-form>
     </div>
+
+    <div class="col-xs-12">
+      <h2>Buttons</h2>
+      <fe-confirm-button @action="action" @confirm="confirm" />
+    </div>
   </div>
 </template>
 
@@ -75,13 +80,15 @@ export default {
   name: 'Playground',
   data,
   methods: {
-    onSubmit
+    onSubmit,
+    action: function() {console.log('Clicked Delete')},
+    confirm: function() {console.log('Confirmed')}
   }
 }
 </script>
 
 <style scoped>
   #root {
-    margin-left: 15px;
+    margin: 15px;
   }
 </style>

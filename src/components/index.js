@@ -24,3 +24,4 @@ export {default as FePercent} from './fe-percent';
 export {default as FeDate} from './fe-date';
 export {default as FeTime} from './fe-time';
 export {default as FeOrdinal} from './fe-ordinal';
+export {default as FeConfirmButton} from './fe-confirm-button';
