@@ -98,8 +98,15 @@ function anyErrors(checkForErrors = false) {
   let externalLastNameErrors = errors[this.lastNameAttr] || [];
   let internalLastNameErrors = this.internalErrors[this.lastNameAttr] || [];
 
-  let firstNameErrors = externalFirstNameErrors.slice(0).concat(internalFirstNameErrors.slice(0));
-  let lastNameErrors = externalLastNameErrors.slice(0).concat(internalLastNameErrors.slice(0));
+  let firstNameErrors, lastNameErrors;
+
+  if (checkForErrors) {
+    firstNameErrors = internalFirstNameErrors.slice(0);
+    lastNameErrors = internalLastNameErrors.slice(0);
+  } else {
+    firstNameErrors = externalFirstNameErrors.slice(0).concat(internalFirstNameErrors.slice(0));
+    lastNameErrors = externalLastNameErrors.slice(0).concat(internalLastNameErrors.slice(0));
+  }
 
   firstNameErrors = _.map(firstNameErrors, (message) => `First Name ${message}`);
   lastNameErrors = _.map(lastNameErrors, (message) => `Last Name ${message}`);

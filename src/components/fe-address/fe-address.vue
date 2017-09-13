@@ -127,10 +127,19 @@ function anyErrors(checkForErrors = false) {
   let externalZipErrors = errors[this.zipNameAttr] || [];
   let internalZipErrors = this.internalErrors[this.zipNameAttr] || [];
 
-  let streetErrors = externalStreetErrors.slice(0).concat(internalStreetErrors.slice(0));
-  let cityErrors = externalCityErrors.slice(0).concat(internalCityErrors.slice(0));
-  let stateErrors = externalStateErrors.slice(0).concat(internalStateErrors.slice(0));
-  let zipErrors = externalZipErrors.slice(0).concat(internalZipErrors.slice(0));
+  let streetErrors, cityErrors, stateErrors, zipErrors;
+
+  if (checkForErrors) {
+    streetErrors = internalStreetErrors.slice(0);
+    cityErrors = internalCityErrors.slice(0);
+    stateErrors = internalStateErrors.slice(0);
+    zipErrors = internalZipErrors.slice(0);
+  } else {
+    streetErrors = externalStreetErrors.slice(0).concat(internalStreetErrors.slice(0));
+    cityErrors = externalCityErrors.slice(0).concat(internalCityErrors.slice(0));
+    stateErrors = externalStateErrors.slice(0).concat(internalStateErrors.slice(0));
+    zipErrors = externalZipErrors.slice(0).concat(internalZipErrors.slice(0));
+  }
 
   streetErrors = _.map(streetErrors, (message) => `Street ${message}`);
   cityErrors = _.map(cityErrors, (message) => `City ${message}`);

@@ -122,7 +122,11 @@ function anyErrors(checkForErrors = false) {
   let externalErrors = this.errors || [];
   let internalErrors = this.internalErrors || [];
 
-  return externalErrors.concat(internalErrors);
+  if (checkForErrors) {
+    return internalErrors;
+  } else {
+    return externalErrors.concat(internalErrors);
+  }
 }
 
 function isEditable() {

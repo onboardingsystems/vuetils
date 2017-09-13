@@ -34729,7 +34729,11 @@ function anyErrors() {
   var externalErrors = this.errors || [];
   var internalErrors = this.internalErrors || [];
 
-  return externalErrors.concat(internalErrors);
+  if (checkForErrors) {
+    return internalErrors;
+  } else {
+    return externalErrors.concat(internalErrors);
+  }
 }
 
 function isEditable() {
@@ -36343,7 +36347,11 @@ function anyErrors() {
   var externalErrors = this.errors || [];
   var internalErrors = this.internalErrors || [];
 
-  return externalErrors.concat(internalErrors);
+  if (checkForErrors) {
+    return internalErrors;
+  } else {
+    return externalErrors.concat(internalErrors);
+  }
 }
 
 function isEditable() {
@@ -36920,8 +36928,16 @@ function anyErrors() {
   var externalLastNameErrors = errors[this.lastNameAttr] || [];
   var internalLastNameErrors = this.internalErrors[this.lastNameAttr] || [];
 
-  var firstNameErrors = externalFirstNameErrors.slice(0).concat(internalFirstNameErrors.slice(0));
-  var lastNameErrors = externalLastNameErrors.slice(0).concat(internalLastNameErrors.slice(0));
+  var firstNameErrors = void 0,
+      lastNameErrors = void 0;
+
+  if (checkForErrors) {
+    firstNameErrors = internalFirstNameErrors.slice(0);
+    lastNameErrors = internalLastNameErrors.slice(0);
+  } else {
+    firstNameErrors = externalFirstNameErrors.slice(0).concat(internalFirstNameErrors.slice(0));
+    lastNameErrors = externalLastNameErrors.slice(0).concat(internalLastNameErrors.slice(0));
+  }
 
   firstNameErrors = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.map(firstNameErrors, function (message) {
     return 'First Name ' + message;
@@ -37293,10 +37309,22 @@ function anyErrors() {
   var externalZipErrors = errors[this.zipNameAttr] || [];
   var internalZipErrors = this.internalErrors[this.zipNameAttr] || [];
 
-  var streetErrors = externalStreetErrors.slice(0).concat(internalStreetErrors.slice(0));
-  var cityErrors = externalCityErrors.slice(0).concat(internalCityErrors.slice(0));
-  var stateErrors = externalStateErrors.slice(0).concat(internalStateErrors.slice(0));
-  var zipErrors = externalZipErrors.slice(0).concat(internalZipErrors.slice(0));
+  var streetErrors = void 0,
+      cityErrors = void 0,
+      stateErrors = void 0,
+      zipErrors = void 0;
+
+  if (checkForErrors) {
+    streetErrors = internalStreetErrors.slice(0);
+    cityErrors = internalCityErrors.slice(0);
+    stateErrors = internalStateErrors.slice(0);
+    zipErrors = internalZipErrors.slice(0);
+  } else {
+    streetErrors = externalStreetErrors.slice(0).concat(internalStreetErrors.slice(0));
+    cityErrors = externalCityErrors.slice(0).concat(internalCityErrors.slice(0));
+    stateErrors = externalStateErrors.slice(0).concat(internalStateErrors.slice(0));
+    zipErrors = externalZipErrors.slice(0).concat(internalZipErrors.slice(0));
+  }
 
   streetErrors = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.map(streetErrors, function (message) {
     return 'Street ' + message;
@@ -38014,7 +38042,11 @@ function anyErrors() {
   var externalErrors = this.errors || [];
   var internalErrors = this.internalErrors || [];
 
-  return externalErrors.concat(internalErrors);
+  if (checkForErrors) {
+    return internalErrors;
+  } else {
+    return externalErrors.concat(internalErrors);
+  }
 }
 
 function isEditable() {
