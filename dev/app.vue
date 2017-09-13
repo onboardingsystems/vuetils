@@ -29,7 +29,7 @@
         <fe-radio-group label="Options to Select" :value.sync="optionValue" :required="true"
                         :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me.'}]"
                         />
-        <fe-submit />
+        <fe-submit value="Next" className="btn-success" />
       </fe-form>
     </div>
   </div>

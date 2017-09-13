@@ -1,14 +1,22 @@
 <template>
-  <input v-if="isEditable" type="submit" class="fe-submit" :value="label" />
+  <input v-if="isEditable" :class="classes" type="submit" class="fe-submit" :value="label" />
 </template>
 
 <script>
 import _ from 'lodash';
+import cx from 'classnames';
 
 function data() {
   return {
     formEditable: null
   }
+}
+
+function classes() {
+  return cx({
+    "btn": true,
+    [ this.className ]: _.isString(this.className)
+  });
 }
 
 function isEditable() {
@@ -23,7 +31,7 @@ export default {
   name: 'FeSubmit',
   data,
   computed: {
-    isEditable
+    isEditable, classes
   },
   props: {
     editable: {
@@ -35,6 +43,11 @@ export default {
       required: false,
       type: String,
       default: 'Save'
+    },
+    className: {
+      required: false,
+      type: String,
+      default: 'btn-primary'
     }
   }
 }
