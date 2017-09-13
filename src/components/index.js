@@ -26,3 +26,4 @@ export {default as FeTime} from './fe-time';
 export {default as FeOrdinal} from './fe-ordinal';
 export {default as FeConfirmButton} from './fe-confirm-button';
 export {default as FeHoldButton} from './fe-hold-button';
+export {default as FeEllipsis} from './fe-ellipsis';

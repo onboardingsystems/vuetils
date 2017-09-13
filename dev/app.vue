@@ -37,6 +37,7 @@
       <h2>Buttons</h2>
       <fe-confirm-button @action="action" @confirm="confirm" />
       <fe-hold-button />
+      <fe-ellipsis>Getting stuff done</fe-ellipsis>
     </div>
   </div>
 </template>
