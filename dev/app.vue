@@ -36,6 +36,7 @@
     <div class="col-xs-12">
       <h2>Buttons</h2>
       <fe-confirm-button @action="action" @confirm="confirm" />
+      <fe-hold-button />
     </div>
   </div>
 </template>

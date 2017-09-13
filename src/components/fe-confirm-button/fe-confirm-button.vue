@@ -43,6 +43,7 @@ function beforeDestroy() {
 
 function clearTimeout() {
   if(this.timeout != null) {
+    window.clearTimeout(this.timeout);
     this.timeout = null;
   }
 }
@@ -65,8 +66,7 @@ function onMouseOver() {
 
 function onMouseOut() {
   if(this.confirm) {
-    let timeout = setTimeout(this.onTimeout, this.wait);
-    this.timeout = timeout;
+    this.timeout = setTimeout(this.onTimeout, this.wait);
   }
 }
 
