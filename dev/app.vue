@@ -8,6 +8,8 @@
         <fe-text label="Username" :required="true" :value.sync="username" placeholder="joe, notjoe, ect." />
         <fe-textarea label="Job History" :required="true" :value.sync="jobHistory" placeholder="Stuff you did..." rows="6" />
 
+        <fe-selection :value.sync="color" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" />
+
         <fe-number label="Current Age" :required="true" :value.sync="currentAge" placeholder="24" />
         <fe-phone label="Home Number" :required="true" :value.sync="phone" />
         <fe-email label="Email Address" :required="true" :value.sync="email" />
@@ -46,6 +48,7 @@
 function data() {
   return {
     editable: true,
+    color: null,
     ordinal: null,
     openTime: null,
     startDate: null,
