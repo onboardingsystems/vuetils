@@ -8,7 +8,7 @@
         <fe-text label="Username" :required="true" :value.sync="username" placeholder="joe, notjoe, ect." />
         <fe-textarea label="Job History" :required="true" :value.sync="jobHistory" placeholder="Stuff you did..." rows="6" />
 
-        <fe-selection :value.sync="color" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" />
+        <fe-selection label="Choose a color" :value.sync="color" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" :required="true" />
 
         <fe-number label="Current Age" :required="true" :value.sync="currentAge" placeholder="24" />
         <fe-phone label="Home Number" :required="true" :value.sync="phone" />

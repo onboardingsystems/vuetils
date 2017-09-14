@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import cx from 'classnames';
 import _ from 'lodash';
 
 function data() {
@@ -79,7 +80,7 @@ export default {
   name: 'FeSelection',
   created,
   methods: {
-    handleChange, handleBlur
+    handleChange, handleBlur, anyErrors
   },
   computed: {
     classes, initialId, combinedErrors
@@ -118,10 +119,6 @@ export default {
       type: Array,
       default: () => []
     }
-  },
-  computed: {
-    hasLabel: function() {return !_.isEmpty(this.label)},
-    labelClass: function() {return this.srOnly ? 'sr-only' : 'control-label'}
   }
 }
 </script>
