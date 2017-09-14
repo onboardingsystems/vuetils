@@ -354,6 +354,18 @@ const Formatters = {
     val = Formatters.stringFormatter(value, options)
     if (!val.valid)
       return val
+
+    // Do not generate format errors if not required by String formatter
+    // when value is empty.
+    if (_.isEmpty(value)) {
+      return {
+        valid: true,
+        parsed: value,
+        formatted: value,
+        errors: []
+      }
+    }
+
     options = _.merge({}, {format: 'full-date'}, options)
     temp = this.parseDate(val.parsed)
     valid = temp.isValid()
@@ -388,7 +400,19 @@ const Formatters = {
 
     val = Formatters.stringFormatter(value, options)
     if (!val.valid)
-      return val
+      return val;
+
+    // Do not generate format errors if not required by String formatter
+    // when value is empty.
+    if (_.isEmpty(value)) {
+      return {
+        valid: true,
+        parsed: value,
+        formatted: value,
+        errors: []
+      }
+    }
+
     temp = moment(val.parsed, ["hh:mm:ss a", "YYYY-MM-DDTHH:mm:ssZ"])
 
     valid = temp.isValid()

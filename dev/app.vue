@@ -19,7 +19,7 @@
         <fe-currency label="Cost" :required="true" :value.sync="cost" />
         <fe-dollars label="Rent" :required="true" :value.sync="rent" />
         <fe-percent label="Sales Tax" :required="true" :value.sync="salesTax" :parsed.sync="parsedSalesTax" />
-        <fe-date label="Start Date" :required="true" :value.sync="startDate" :parsed.sync="parsedStartDate" />
+        <fe-date label="Start Date" :required="false" :value.sync="startDate" :parsed.sync="parsedStartDate" />
         <fe-date label="End Date" :required="true" :value.sync="endDate" :parsed.sync="parsedEndDate" format="month-year" />
         <fe-time label="Open Time" :required="true" :value.sync="openTime" />
         <fe-ordinal label="Ordinal" :required="true" :value.sync="ordinal" />
