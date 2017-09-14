@@ -33718,6 +33718,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeHoldButton", function() { return __WEBPACK_IMPORTED_MODULE_27__fe_hold_button__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__fe_ellipsis__ = __webpack_require__(293);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeEllipsis", function() { return __WEBPACK_IMPORTED_MODULE_28__fe_ellipsis__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__fe_selection__ = __webpack_require__(299);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeSelection", function() { return __WEBPACK_IMPORTED_MODULE_29__fe_selection__["a"]; });
+
 
 
 
@@ -41099,6 +41102,249 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_vm._v("...")]), _vm._v(" "), _c('span', {
     staticClass: "dots"
   }, [_vm._v(_vm._s(_vm.dots))])])], 2)
+},staticRenderFns: []}
+
+/***/ }),
+/* 299 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_selection__ = __webpack_require__(300);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_selection___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_selection__);
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_selection___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_selection___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_selection___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_selection___default.a);
+
+/***/ }),
+/* 300 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(301)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(303),
+  /* template */
+  __webpack_require__(304),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 301 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(302);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("dc29e31c", content, true);
+
+/***/ }),
+/* 302 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 303 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+function data() {
+  return {
+    internalErrors: [],
+    formEditable: null
+  };
+}
+
+function created() {
+  // Push the default selected value back out to the parent component data.
+  // Otherwise nothing will be set if the slect box does not change the value.
+  this.$emit('update:value', __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value);
+  this.$emit('change', { valid: true, parsed: __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value, formatted: __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value });
+}
+
+function handleChange(_ref) {
+  var target = _ref.target;
+
+  var currentSelected = target.options[target.selectedIndex].value;
+  this.$emit('change', { valid: true, parsed: currentSelected, formatted: currentSelected });
+  this.$emit('update:value', currentSelected);
+}
+
+function handleBlur() {
+  this.internalErrors = [];
+
+  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result);
+    return result.errors;
+  }
+}
+
+function classes() {
+  return __WEBPACK_IMPORTED_MODULE_0_classnames___default()(_defineProperty({
+    "form-group": true,
+    "has-error": !__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isEmpty(this.anyErrors())
+  }, this.className, __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isString(this.className)));
+}
+
+function initialId() {
+  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isEmpty(this.id)) {
+    return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.uniqueId('selection_');
+  }
+
+  return this.id;
+}
+
+function combinedErrors() {
+  return this.anyErrors();
+}
+
+function anyErrors() {
+  var checkForErrors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+  if (checkForErrors) {
+    this.handleBlur();
+  }
+
+  var externalErrors = this.errors || [];
+  var internalErrors = this.internalErrors || [];
+
+  if (checkForErrors) {
+    return internalErrors;
+  } else {
+    return externalErrors.concat(internalErrors);
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'FeSelection',
+  created: created,
+  methods: {
+    handleChange: handleChange, handleBlur: handleBlur, anyErrors: anyErrors
+  },
+  computed: {
+    classes: classes, initialId: initialId, combinedErrors: combinedErrors
+  },
+  props: {
+    id: {
+      required: false
+    },
+    label: {
+      required: false,
+      type: String
+    },
+    hint: {
+      required: false,
+      type: String
+    },
+    value: {
+      required: true,
+      type: String
+    },
+    required: {
+      required: false,
+      type: Boolean
+    },
+    options: {
+      required: true,
+      type: Array
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    errors: {
+      required: false,
+      type: Array,
+      default: function _default() {
+        return [];
+      }
+    }
+  }
+});
+
+/***/ }),
+/* 304 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    class: _vm.classes
+  }, [_c('fe-label', {
+    attrs: {
+      "text": _vm.label,
+      "hint": _vm.hint,
+      "htmlFor": _vm.initialId,
+      "required": _vm.required
+    }
+  }), _vm._v(" "), _c('select', {
+    staticClass: "form-control",
+    attrs: {
+      "id": _vm.initialId,
+      "autofocus": _vm.autofocus
+    },
+    on: {
+      "change": _vm.handleChange,
+      "blur": _vm.handleBlur
+    }
+  }, _vm._l((_vm.options), function(option) {
+    return _c('option', {
+      key: option.value,
+      domProps: {
+        "value": option.value
+      }
+    }, [_vm._v(_vm._s(option.name))])
+  })), _vm._v(" "), _c('fe-error', {
+    attrs: {
+      "errors": _vm.combinedErrors
+    }
+  })], 1)
 },staticRenderFns: []}
 
 /***/ })
