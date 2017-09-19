@@ -33744,6 +33744,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeEllipsis", function() { return __WEBPACK_IMPORTED_MODULE_28__fe_ellipsis__["a"]; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__fe_selection__ = __webpack_require__(299);
 /* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeSelection", function() { return __WEBPACK_IMPORTED_MODULE_29__fe_selection__["a"]; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__fe_file_select__ = __webpack_require__(305);
+/* harmony reexport (binding) */ __webpack_require__.d(__webpack_exports__, "FeFileSelect", function() { return __WEBPACK_IMPORTED_MODULE_30__fe_file_select__["a"]; });
+
 
 
 
@@ -41369,6 +41372,147 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "errors": _vm.combinedErrors
     }
   })], 1)
+},staticRenderFns: []}
+
+/***/ }),
+/* 305 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_file_select__ = __webpack_require__(306);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__fe_file_select___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__fe_file_select__);
+
+
+__WEBPACK_IMPORTED_MODULE_0__fe_file_select___default.a.install = function install(Vue) {
+  Vue.component(__WEBPACK_IMPORTED_MODULE_0__fe_file_select___default.a.name, __WEBPACK_IMPORTED_MODULE_0__fe_file_select___default.a);
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__WEBPACK_IMPORTED_MODULE_0__fe_file_select___default.a);
+
+/***/ }),
+/* 306 */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(307)
+
+var Component = __webpack_require__(3)(
+  /* script */
+  __webpack_require__(309),
+  /* template */
+  __webpack_require__(310),
+  /* scopeId */
+  "data-v-3e7a27dc",
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 307 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(308);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(2)("12855df1", content, true);
+
+/***/ }),
+/* 308 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(1)();
+// imports
+
+
+// module
+exports.push([module.i, "label.fe-file-select[data-v-3e7a27dc]{margin-bottom:0}label.fe-file-select[data-v-3e7a27dc]:hover{cursor:pointer}label.fe-file-select input[type=file][data-v-3e7a27dc]{position:absolute;left:-9999px}", ""]);
+
+// exports
+
+
+/***/ }),
+/* 309 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+function classes() {
+  return __WEBPACK_IMPORTED_MODULE_0_classnames___default()(_defineProperty({
+    "fe-file-select": true
+  }, this.className, _.isString(this.className)));
+}
+
+function handleFileSelected() {
+  if (this.$refs.file.files.length > 0) {
+    this.$emit('fileselect', this.$refs.file.files[0]);
+    this.$refs.file.value = '';
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'FeFileSelect',
+  methods: {
+    handleFileSelected: handleFileSelected
+  },
+  computed: {
+    classes: classes
+  },
+  props: {
+    title: {
+      required: false,
+      type: String
+    }
+  }
+});
+
+/***/ }),
+/* 310 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('label', {
+    class: _vm.classes,
+    attrs: {
+      "title": _vm.title
+    }
+  }, [_c('input', {
+    ref: "file",
+    attrs: {
+      "type": "file"
+    },
+    on: {
+      "change": function($event) {
+        $event.preventDefault();
+        _vm.handleFileSelected($event)
+      }
+    }
+  }), _vm._v(" "), _vm._t("default", [_c('i', {
+    staticClass: "fa fa-cloud-upload fa-lg dark-gray"
+  })])], 2)
 },staticRenderFns: []}
 
 /***/ })
