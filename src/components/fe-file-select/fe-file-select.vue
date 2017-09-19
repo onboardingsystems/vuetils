@@ -20,6 +20,7 @@ function classes() {
 function handleFileSelected() {
   if (this.$refs.file.files.length > 0) {
     this.$emit('fileselect', this.$refs.file.files[0]);
+    this.$refs.file.value = '';
   }
 }
 

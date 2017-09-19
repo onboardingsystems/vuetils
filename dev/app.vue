@@ -32,10 +32,20 @@
                         :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me.'}]"
                         />
 
-        <fe-file-select title="This will select a file to be uploaded." @fileselect="(file) => console.log(file)" />
-
         <fe-submit value="Next" className="btn-success" />
       </fe-form>
+    </div>
+
+    <div class="col-xs-12">
+      <h2>File Selector</h2>
+
+      <h3>Default Icon</h3>
+      <fe-file-select title="This will select a file to be uploaded." @fileselect="log" />
+
+      <h3>Custom Content</h3>
+      <fe-file-select title="This will select a file to be uploaded." @fileselect="log">
+        <span style="color: blue">Click me to Select a file</span>
+      </fe-file-select>
     </div>
 
     <div class="col-xs-12">
@@ -90,7 +100,8 @@ export default {
   methods: {
     onSubmit,
     action: function() {console.log('Clicked Delete')},
-    confirm: function() {console.log('Confirmed')}
+    confirm: function() {console.log('Confirmed')},
+    log: function(entry) {console.log(entry)}
   }
 }
 </script>
