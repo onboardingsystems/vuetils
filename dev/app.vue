@@ -24,6 +24,8 @@
         <fe-time label="Open Time" :required="true" :value.sync="openTime" />
         <fe-ordinal label="Ordinal" :required="true" :value.sync="ordinal" />
 
+        <fe-inline-edit editor="email" :value.sync="inlineEmail" :display-value="inlineEmail" />
+
         <fe-name :value.sync="name" :required="true" />
         <fe-address :value.sync="address" :required="true"  />
         <fe-checkbox :value.sync="iAgree" :required="true" >I agree</fe-checkbox>
@@ -60,6 +62,7 @@
 <script>
 function data() {
   return {
+    inlineEmail: "user@obs.dev",
     editable: true,
     color: null,
     ordinal: null,
