@@ -148,6 +148,10 @@ export default {
   computed: {
     classes, initialValue, combinedErrors, initialId, isEditable
   },
+  model: {
+    prop: 'value',
+    event: 'update:value'
+  },
   props: {
     value: {
       required: false,

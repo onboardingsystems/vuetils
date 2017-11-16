@@ -22,6 +22,10 @@ export default {
     updated: function(value) { this.$emit('update:value', value) },
     parsed: function(value) { this.$emit('update:parsed', value) }
   },
+  model: {
+    prop: 'value',
+    event: 'update:value'
+  },
   props: {
     value: {
       required: false,

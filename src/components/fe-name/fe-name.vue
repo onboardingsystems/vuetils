@@ -141,6 +141,10 @@ export default {
   computed: {
     classes, combinedErrors
   },
+  model: {
+    prop: 'value',
+    event: 'update:value'
+  },
   props: {
     value: {
       required: false,

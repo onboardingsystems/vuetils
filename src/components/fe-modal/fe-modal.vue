@@ -32,6 +32,10 @@ export default {
   components: {
     FeModalRender
   },
+  model: {
+    prop: 'show',
+    event: 'update:show'
+  },
   props: {
     id: {
       required: true,

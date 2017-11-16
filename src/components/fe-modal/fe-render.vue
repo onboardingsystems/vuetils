@@ -68,7 +68,7 @@ export default {
       type: String
     },
     title: {
-      required: true,
+      required: false,
       type: String
     },
     size: {
@@ -84,7 +84,7 @@ export default {
     closeButton: {
       required: false,
       type: Boolean,
-      default: false
+      default: true
     },
     escape: {
       required: false,

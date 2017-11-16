@@ -89,6 +89,10 @@ export default {
   computed: {
     classes, initialId, combinedErrors
   },
+  model: {
+    prop: 'value',
+    event: 'update:value'
+  },
   props: {
     id: {
       required: false
