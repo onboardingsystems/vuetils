@@ -2,7 +2,8 @@
     <div :class="classes">
       <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
       <select class="form-control" :id="initialId" :autofocus="autofocus" @change="handleChange" @blur="handleBlur">
-        <option v-for="option in options" :key="option.value" :value="option.value">{{option.name}}</option>
+        <option v-for="option in options" :key="option.value"
+                :value="option.value" :selected="value === option.value">{{option.name}}</option>
       </select>
       <fe-error :errors="combinedErrors" />
     </div>
@@ -21,8 +22,11 @@ function data() {
 
 function created() {
   // Push the default selected value back out to the parent component data.
-  // Otherwise nothing will be set if the slect box does not change the value.
-  this.$emit('update:value', _.first(this.options).value);
+  // Otherwise nothing will be set if the select box does not change the value.
+  if (_.isNil(this.value)) {
+    this.$emit('update:value', _.first(this.options).value);
+  }
+
   this.$emit('change', {valid: true, parsed: _.first(this.options).value, formatted: _.first(this.options).value});
 }
 
@@ -85,6 +89,10 @@ export default {
   computed: {
     classes, initialId, combinedErrors
   },
+  model: {
+    prop: 'value',
+    event: 'update:value'
+  },
   props: {
     id: {
       required: false
@@ -98,7 +106,7 @@ export default {
       type: String
     },
     value: {
-      required: true,
+      required: false,
       type: String
     },
     required: {
