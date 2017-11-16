@@ -29,3 +29,4 @@ export {default as FeHoldButton} from './fe-hold-button';
 export {default as FeEllipsis} from './fe-ellipsis';
 export {default as FeSelection} from './fe-selection';
 export {default as FeFileSelect} from './fe-file-select';
+export {default as FeModal} from './fe-modal';

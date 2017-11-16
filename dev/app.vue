@@ -1,5 +1,13 @@
 <template>
   <div id="root">
+    <h2>Modal</h2>
+    <fe-checkbox :value.sync="showTestModal">Show Modal</fe-checkbox>
+    <fe-modal id="testModal" ref="testModal" title="Sample Dialog" :show.sync="showTestModal" :close-button="true">
+      <button slot="confirm" class="btn btn-default btn-success" @click="$refs.testModal.close()">Confirm from parent</button>
+      <button slot="cancel" class="btn btn-default btn-danger" data-dismiss="modal">Cancel</button>
+      Hello World.
+    </fe-modal>
+
     <h2>Form Builder</h2>
     <fe-checkbox :value.sync="editable">Fields are editable</fe-checkbox>
 
@@ -60,6 +68,7 @@
 <script>
 function data() {
   return {
+    showTestModal: false,
     editable: true,
     color: "blue",
     ordinal: null,
