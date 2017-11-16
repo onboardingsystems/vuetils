@@ -61,7 +61,7 @@
 function data() {
   return {
     editable: true,
-    color: null,
+    color: "blue",
     ordinal: null,
     openTime: null,
     startDate: null,
@@ -80,7 +80,6 @@ function data() {
     optionValue: null,
     currentAge: null,
     phone: null,
-    color: 'red',
     jobHistory: null,
     name: null,
     address: null,
