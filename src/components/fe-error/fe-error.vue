@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isEmpty" class="error fe-error">{{errorText}}</div>
+  <div v-if="isEmpty" class="fe-error">{{errorText}}</div>
 </template>
 
 <script>
@@ -19,8 +19,8 @@ export default {
 }
 </script>
 
-<style scoped>
-  .error {
+<style>
+  .fe-error {
     color: #c0392b;
   }
 </style>

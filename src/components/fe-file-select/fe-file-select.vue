@@ -41,8 +41,8 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-  label.fe-file-select {
+<style lang="sass">
+  .fe-file-select {
     margin-bottom: 0;
 
     &:hover {

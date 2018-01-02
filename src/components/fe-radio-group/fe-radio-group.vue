@@ -1,6 +1,6 @@
 <template>
     <div :class="groupClasses" :id="id">
-      <fe-label class="radio-group-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
+      <fe-label class="control-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
       <div class="radio" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option)}">
           <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
@@ -224,8 +224,6 @@ export default {
 }
 </script>
 
-<style scoped>
-  .has-error .radio-group-label {
-    color: black
-  }
+<style>
+
 </style>

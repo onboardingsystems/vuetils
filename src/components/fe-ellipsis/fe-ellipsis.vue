@@ -49,7 +49,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
   .loading-ellipsis {
     opacity: 0.75;
     font-style: italic;

@@ -33,7 +33,7 @@
             @update:value="stateChanged"
             :required="required" :formatter="formatter('stateFormatter')"
             placeholder="ST"
-            :class="classesFor(stateNameAttr, 'address-state state')"
+            :class="classesFor(stateNameAttr, 'fe-address-state state')"
             @change="value => onChangeEvent(stateNameAttr, value)"
             @blur="result => onBlurEvent(stateNameAttr, result)"
             :editable="editable"
@@ -45,7 +45,7 @@
             @update:value="zipChanged"
             :required="required" :formatter="formatter('zipcodeFormatter')"
             placeholder="Zip"
-            :class="classesFor(zipNameAttr, 'address-zipcode zipcode')"
+            :class="classesFor(zipNameAttr, 'fe-address-zipcode zipcode')"
             @change="value => onChangeEvent(zipNameAttr, value)"
             @blur="result => onBlurEvent(zipNameAttr, result)"
             :editable="editable"
@@ -70,7 +70,7 @@ function data() {
 
 function classes() {
   return cx({
-    'address-us': true,
+    'fe-address-us': true,
     'form-group': true,
     'has-child-error': !_.isEmpty(this.anyErrors()),
     [this.className]: _.isString(this.className)
@@ -267,12 +267,12 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
-  .address-us {
-    .address-state {
+<style lang="sass">
+  .fe-address-us {
+    .fe-address-state {
       width: 55px;
     }
-    .address-zipcode {
+    .fe-address-zipcode {
       width: 74px;
     }
   }

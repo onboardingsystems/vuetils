@@ -1,5 +1,5 @@
 <template>
-  <span v-if="required" aria-hidden="true" class="required-marker fe-required-marker" title="Required Field">*</span>
+  <span v-if="required" aria-hidden="true" class="fe-required-marker" title="Required Field">*</span>
 </template>
 
 <script>
@@ -15,8 +15,8 @@ export default {
 }
 </script>
 
-<style scoped>
-  .required-marker {
+<style>
+  .fe-required-marker {
     padding-left: 3px;
   }
 </style>

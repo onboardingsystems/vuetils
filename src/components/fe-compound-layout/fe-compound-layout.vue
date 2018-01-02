@@ -39,7 +39,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
   .flex-static {
     -webkit-flex: 0 0 auto;
     -ms-flex: 0 0 auto;

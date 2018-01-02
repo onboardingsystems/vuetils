@@ -1,5 +1,5 @@
 <template>
-  <span v-if="hint" class="help-block fe-hint">{{hint}}</span>
+  <span v-if="hint" class="fe-hint">{{hint}}</span>
 </template>
 
 <script>
@@ -15,8 +15,8 @@ export default {
 }
 </script>
 
-<style scoped>
-  .help-block {
+<style>
+  .fe-hint {
     margin: 0;
     font-weight: 300;
     color: #777;

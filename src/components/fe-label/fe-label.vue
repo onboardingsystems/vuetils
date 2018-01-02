@@ -42,9 +42,6 @@ export default {
 }
 </script>
 
-<style scoped>
-  label {
-    display: block;
-    font-weight: 700;
-  }
+<style>
+
 </style>

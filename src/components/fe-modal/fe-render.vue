@@ -6,7 +6,7 @@
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
-          <button v-if="closeButton" type="button" class="close" data-dismiss="modal">&times;</button>
+          <button v-if="closeButton" type="button" class="fe-modal-close" data-dismiss="modal">&times;</button>
           <h4 class="modal-title">{{title}}</h4>
         </div>
         <div class="modal-body">
@@ -95,8 +95,8 @@ export default {
 }
 </script>
 
-<style scoped>
-  .close {
+<style>
+  .fe-modal-close {
     color: red;
   }
 </style>

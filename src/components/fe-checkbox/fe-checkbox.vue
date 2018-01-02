@@ -1,7 +1,7 @@
 <template>
   <div :class="className">
     <div :class="classes">
-      <label>
+      <label class="control-label">
         <input type="checkbox" ref="checkbox" :id="initialId" :checked="initialValue" @change="handleChange" :disabled="!isEditable" />
         <slot>
           {{label}}

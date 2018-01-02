@@ -53,8 +53,6 @@ export default {
 }
 </script>
 
-<style scoped>
-  .error {
-    color: #c0392b;
-  }
+<style>
+
 </style>

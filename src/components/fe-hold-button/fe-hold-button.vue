@@ -149,7 +149,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="sass">
   $hold-button-height: 6px;
 
   .hold-button {
