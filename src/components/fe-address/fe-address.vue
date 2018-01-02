@@ -73,6 +73,7 @@ function classes() {
     'fe-address-us': true,
     'form-group': true,
     'has-child-error': !_.isEmpty(this.anyErrors()),
+    "has-error": !_.isEmpty(this.anyErrors()),
     [this.className]: _.isString(this.className)
   });
 }
