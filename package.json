@@ -1,6 +1,6 @@
 {
   "name": "vuetils",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "main": "dist/vuetils.js",
   "unpkg": "dist/vuetils.js",
