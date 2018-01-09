@@ -37966,6 +37966,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -38145,6 +38155,11 @@ function isEditable() {
         return [];
       }
     },
+    direction: {
+      required: false,
+      type: String,
+      default: 'vertical'
+    },
     errors: {
       required: false,
       type: Array,
@@ -38176,7 +38191,7 @@ function isEditable() {
     required: {
       required: false,
       type: Boolean,
-      default: true
+      default: false
     },
     customValidator: {
       required: false,
@@ -38195,7 +38210,7 @@ function isEditable() {
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
+  return (_vm.direction === 'vertical') ? _c('div', {
     class: _vm.groupClasses,
     attrs: {
       "id": _vm.id
@@ -38219,6 +38234,52 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "type": "radio",
         "disabled": !_vm.isEditable,
+        "name": _vm.initialId,
+        "autofocus": _vm.autofocus
+      },
+      domProps: {
+        "value": option.value,
+        "checked": _vm.isChecked(option)
+      },
+      on: {
+        "change": _vm.handleChange,
+        "blur": _vm.handleBlur
+      }
+    }), _vm._v("\n      " + _vm._s(option.name) + "\n    ")])])
+  }), _vm._v(" "), _c('fe-error', {
+    attrs: {
+      "errors": _vm.combinedErrors
+    }
+  })], 2) : _c('div', {
+    class: _vm.groupClasses,
+    attrs: {
+      "id": _vm.id
+    }
+  }, [_c('fe-label', {
+    staticClass: "control-label",
+    attrs: {
+      "hint": _vm.hint,
+      "htmlFor": _vm.id,
+      "required": _vm.required
+    }
+  }, [_vm._v(_vm._s(_vm.label))]), _vm._v(" "), _vm._l((_vm.options), function(option) {
+    return _c('div', {
+      key: option.value,
+      staticClass: "radio",
+      staticStyle: {
+        "display": "inline-block"
+      }
+    }, [_c('label', {
+      class: {
+        'radio-label': true, 'checked': _vm.isChecked(option), 'disabled': option['disabled'] === true
+      },
+      staticStyle: {
+        "margin-left": "10px"
+      }
+    }, [_c('input', {
+      attrs: {
+        "type": "radio",
+        "disabled": !_vm.isEditable || option['disabled'],
         "name": _vm.initialId,
         "autofocus": _vm.autofocus
       },
