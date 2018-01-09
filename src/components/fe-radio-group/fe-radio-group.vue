@@ -1,8 +1,18 @@
 <template>
-    <div :class="groupClasses" :id="id">
+    <div v-if="direction === 'vertical'" :class="groupClasses" :id="id">
       <fe-label class="control-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
       <div class="radio" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option)}">
+          <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
+          {{option.name}}
+        </label>
+      </div>
+      <fe-error :errors="combinedErrors" />
+    </div>
+    <div v-else :class="groupClasses" :id="id">
+      <fe-label class="control-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
+      <div class="radio" style="display: inline-block" v-for="option in options" :key="option.value">
+        <label :class="{'radio-label': true, 'checked': isChecked(option)}" style="margin-left: 10px;">
           <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
           {{option.name}}
         </label>
@@ -180,6 +190,11 @@ export default {
       type: Array,
       default: () => []
     },
+    direction: {
+      required: false,
+      type: String,
+      default: 'vertical'
+    },
     errors: {
       required: false,
       type: Array,
@@ -209,7 +224,7 @@ export default {
     required: {
       required: false,
       type: Boolean,
-      default: true
+      default: false
     },
     customValidator: {
       required: false,

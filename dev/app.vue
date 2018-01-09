@@ -37,7 +37,11 @@
         <fe-checkbox v-model="iAgree" :required="true" >I agree</fe-checkbox>
 
         <fe-radio-group label="Options to Select" v-model="optionValue" :required="true"
-                        :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me.'}]"
+                        :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me'}]"
+                        />
+
+        <fe-radio-group label="Options to Select (Horizontal)" v-model="optionValue" direction="horizontal"
+                        :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me'}]"
                         />
 
         <fe-submit value="Next" className="btn-success" />
