@@ -12,8 +12,8 @@
     <div v-else :class="groupClasses" :id="id">
       <fe-label class="control-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
       <div class="radio" style="display: inline-block" v-for="option in options" :key="option.value">
-        <label :class="{'radio-label': true, 'checked': isChecked(option)}" style="margin-left: 10px;">
-          <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
+        <label :class="{'radio-label': true, 'checked': isChecked(option), 'disabled': option['disabled'] === true}" style="margin-left: 10px;">
+          <input type="radio" :disabled="!isEditable || option['disabled']" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
           {{option.name}}
         </label>
       </div>

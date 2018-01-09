@@ -41,7 +41,7 @@
                         />
 
         <fe-radio-group label="Options to Select (Horizontal)" v-model="optionValue" direction="horizontal"
-                        :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me'}]"
+                        :options="[{value: '42', name: 'Choose Me', disabled: true}, {value: '43', name: 'Don\'t Choose Me'}]"
                         />
 
         <fe-submit value="Next" className="btn-success" />
