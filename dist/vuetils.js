@@ -34693,9 +34693,9 @@ function formatAndValidate(value) {
 
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur() {
@@ -34725,18 +34725,18 @@ function mounted() {
         parsed = _formatAndValidate.parsed,
         formatted = _formatAndValidate.formatted;
 
-    this.$emit('change', formatted);
     this.$emit('update:value', formatted);
     this.$emit('update:parsed', parsed);
+    this.$emit('change', formatted);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
         _formatted = _formatAndValidate2.formatted,
         _parsed = _formatAndValidate2.parsed;
 
-    this.$emit('change', _formatted);
     this.$emit('update:value', _formatted);
     this.$emit('update:parsed', _parsed);
+    this.$emit('change', _formatted);
   }
 }
 
@@ -36323,9 +36323,9 @@ function initialId() {
 
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur() {
@@ -36355,18 +36355,18 @@ function mounted() {
         parsed = _formatAndValidate.parsed,
         formatted = _formatAndValidate.formatted;
 
-    this.$emit('change', formatted);
     this.$emit('update:value', formatted);
     this.$emit('update:parsed', parsed);
+    this.$emit('change', formatted);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
         _formatted = _formatAndValidate2.formatted,
         _parsed = _formatAndValidate2.parsed;
 
-    this.$emit('change', _formatted);
     this.$emit('update:value', _formatted);
     this.$emit('update:parsed', _parsed);
+    this.$emit('change', _formatted);
   }
 }
 
@@ -38022,8 +38022,8 @@ function mounted() {
         formatted = _formatAndValidate.formatted;
 
     if (valid) {
-      this.$emit('change', formatted);
       this.$emit('update:value', formatted);
+      this.$emit('change', formatted);
     }
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
@@ -38031,8 +38031,8 @@ function mounted() {
         formatted = _formatAndValidate2.formatted;
 
     if (valid) {
-      this.$emit('change', formatted);
       this.$emit('update:value', formatted);
+      this.$emit('change', formatted);
     }
   }
 }
@@ -38079,8 +38079,8 @@ function formatAndValidate(value) {
 function handleChange(e) {
   this.internalErrors = [];
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur() {
