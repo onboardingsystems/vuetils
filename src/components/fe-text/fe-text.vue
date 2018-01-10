@@ -63,9 +63,9 @@ function formatAndValidate(value) {
 
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur() {
@@ -92,15 +92,15 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
-    this.$emit('change', formatted);
     this.$emit('update:value', formatted);
     this.$emit('update:parsed', parsed);
+    this.$emit('change', formatted);
   } else {
     let {valid, formatted, parsed} = this.formatAndValidate(this.value);
 
-    this.$emit('change', formatted);
     this.$emit('update:value', formatted);
     this.$emit('update:parsed', parsed);
+    this.$emit('change', formatted);
   }
 }
 

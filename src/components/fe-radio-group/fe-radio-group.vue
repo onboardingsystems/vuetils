@@ -64,14 +64,14 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     var {valid: valid, parsed: parsed, formatted: formatted} = this.formatAndValidate(this.defaultValue)
     if(valid) {
-      this.$emit('change', formatted);
       this.$emit('update:value', formatted);
+      this.$emit('change', formatted);
     }
   } else {
     var {valid: valid, formatted: formatted} = this.formatAndValidate(this.value)
     if(valid) {
-      this.$emit('change', formatted);
       this.$emit('update:value', formatted);
+      this.$emit('change', formatted);
     }
   }
 }
@@ -118,8 +118,8 @@ function formatAndValidate(value) {
 function handleChange(e) {
   this.internalErrors = [];
   let result = this.formatAndValidate(e.target.value);
-  this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur() {
