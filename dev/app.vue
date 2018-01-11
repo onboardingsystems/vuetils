@@ -34,7 +34,7 @@
 
         <fe-name v-model="name" :required="true" />
         <fe-address v-model="address" :required="true"  />
-        <fe-checkbox v-model="iAgree" :required="true" >I agree</fe-checkbox>
+        <fe-checkbox v-model="iAgree" :required="true">I agree</fe-checkbox>
 
         <fe-radio-group label="Options to Select" v-model="optionValue" :required="true"
                         :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me'}]"

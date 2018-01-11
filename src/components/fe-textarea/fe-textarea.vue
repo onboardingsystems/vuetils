@@ -104,9 +104,12 @@ function mounted() {
   } else {
     let {valid, formatted, parsed} = this.formatAndValidate(this.value);
 
-    this.$emit('update:value', formatted);
-    this.$emit('update:parsed', parsed);
-    this.$emit('change', formatted);
+    // Should only be pushed out if the value was changed by the formatter.
+    if (this.value !== formatted) {
+      this.$emit('update:value', formatted);
+      this.$emit('update:parsed', parsed);
+      this.$emit('change', formatted);
+    }
   }
 }
 

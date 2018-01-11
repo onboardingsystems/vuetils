@@ -43,19 +43,8 @@ function initialValue() {
 }
 
 function handleChange(e) {
-  if (_.isFunction(this.onChange)) {
-    this.onChange(e.target.checked);
-  } else {
-    this.$emit('update:value', e.target.checked);
-  }
-}
-
-function mounted() {
-  if (_.isFunction(this.onChange)) {
-    this.onChange(this.$refs.checkbox.checked);
-  } else {
-    this.$emit('update:value', this.$refs.checkbox.checked);
-  }
+  this.$emit('update:value', e.target.checked);
+  this.$emit('change', e.target.checked);
 }
 
 function initialId() {
@@ -77,7 +66,6 @@ function isEditable() {
 export default {
   name: "FeCheckbox",
   data,
-  mounted,
   methods: {
     handleChange
   },
@@ -130,10 +118,6 @@ export default {
       required: false,
       type: Boolean,
       default: false
-    },
-    onChange: {
-      required: false,
-      type: Function
     },
     editable: {
       required: false,

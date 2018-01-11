@@ -34734,9 +34734,14 @@ function mounted() {
         _formatted = _formatAndValidate2.formatted,
         _parsed = _formatAndValidate2.parsed;
 
-    this.$emit('update:value', _formatted);
-    this.$emit('update:parsed', _parsed);
-    this.$emit('change', _formatted);
+    // Should only be pushed out if the value was changed by the formatter.
+
+
+    if (this.value !== _formatted) {
+      this.$emit('update:value', _formatted);
+      this.$emit('update:parsed', _parsed);
+      this.$emit('change', _formatted);
+    }
   }
 }
 
@@ -36364,9 +36369,14 @@ function mounted() {
         _formatted = _formatAndValidate2.formatted,
         _parsed = _formatAndValidate2.parsed;
 
-    this.$emit('update:value', _formatted);
-    this.$emit('update:parsed', _parsed);
-    this.$emit('change', _formatted);
+    // Should only be pushed out if the value was changed by the formatter.
+
+
+    if (this.value !== _formatted) {
+      this.$emit('update:value', _formatted);
+      this.$emit('update:parsed', _parsed);
+      this.$emit('change', _formatted);
+    }
   }
 }
 
@@ -37736,19 +37746,8 @@ function initialValue() {
 }
 
 function handleChange(e) {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-    this.onChange(e.target.checked);
-  } else {
-    this.$emit('update:value', e.target.checked);
-  }
-}
-
-function mounted() {
-  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
-    this.onChange(this.$refs.checkbox.checked);
-  } else {
-    this.$emit('update:value', this.$refs.checkbox.checked);
-  }
+  this.$emit('update:value', e.target.checked);
+  this.$emit('change', e.target.checked);
 }
 
 function initialId() {
@@ -37770,7 +37769,6 @@ function isEditable() {
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "FeCheckbox",
   data: data,
-  mounted: mounted,
   methods: {
     handleChange: handleChange
   },
@@ -37825,10 +37823,6 @@ function isEditable() {
       required: false,
       type: Boolean,
       default: false
-    },
-    onChange: {
-      required: false,
-      type: Function
     },
     editable: {
       required: false,
