@@ -41576,7 +41576,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, ".fe-file-select{margin-bottom:0}.fe-file-select:hover{cursor:pointer}.fe-file-select input[type=file]{position:absolute;left:-9999px}", ""]);
+exports.push([module.i, ".fe-file-select:hover{cursor:pointer}.fe-file-select input[type=file]{position:absolute;left:-9999px}", ""]);
 
 // exports
 
