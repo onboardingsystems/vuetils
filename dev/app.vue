@@ -17,6 +17,7 @@
         <fe-textarea label="Job History" :required="true" v-model="jobHistory" placeholder="Stuff you did..." rows="6" />
 
         <fe-selection label="Choose a color" v-model="color" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" :required="true" />
+        <fe-selection label="Choose a color (with placeholder)" v-model="color2" placeholder="Please Select" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" :required="true" />
 
         <fe-number label="Current Age" :required="true" v-model="currentAge" placeholder="24" />
         <fe-phone label="Home Number" :required="true" v-model="phone" />
@@ -75,6 +76,7 @@ function data() {
     showTestModal: false,
     editable: true,
     color: "blue",
+    color2: null,
     ordinal: null,
     openTime: null,
     startDate: null,

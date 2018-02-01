@@ -44,7 +44,6 @@ export default {
 
 <style lang="sass">
   .fe-file-select {
-    margin-bottom: 0;
 
     &:hover {
       cursor: pointer;
