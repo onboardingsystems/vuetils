@@ -26,6 +26,7 @@
         <fe-state label="US State Code" :required="true" v-model="state" />
         <fe-zipcode label="Zip Code" :required="true" v-model="zipcode" />
         <fe-currency label="Cost" :required="true" v-model="cost" />
+        <fe-currency label="(Preformat Event) Cost" :required="true" v-model="formattedCode" @formatted="(newValue) => preformatted('formattedCode', newValue)" initial-format-event />
         <fe-dollars label="Rent" :required="true" v-model="rent" />
         <fe-percent label="Sales Tax" :required="true" v-model="salesTax" :parsed.sync="parsedSalesTax" />
         <fe-date label="Start Date" :required="false" v-model="startDate" :parsed.sync="parsedStartDate" />
@@ -99,7 +100,8 @@ function data() {
     name: null,
     address: null,
     iAgree: false,
-    formName: null
+    formName: null,
+    formattedCode: "1.9"
   };
 }
 
@@ -108,11 +110,17 @@ function onSubmit() {
   console.log(this.name);
 }
 
+function preformatted(key, value) {
+  this[key] = value;
+  console.log("Preformatted " + value);
+}
+
 export default {
   name: 'Playground',
   data,
   methods: {
     onSubmit,
+    preformatted,
     action: function() {console.log('Clicked Delete')},
     confirm: function() {console.log('Confirmed')},
     log: function(entry) {console.log(entry)}

@@ -34727,11 +34727,15 @@ function mounted() {
         parsed = _formatAndValidate.parsed,
         formatted = _formatAndValidate.formatted;
 
-    this.$emit('update:value', formatted);
-    this.$emit('input', formatted);
-    this.$emit('update:parsed', parsed);
-    this.$emit('parsed', parsed);
-    this.$emit('change', formatted);
+    if (this.initialFormatEvent) {
+      this.$emit('formatted', formatted);
+    } else {
+      this.$emit('input', formatted);
+      this.$emit('update:value', formatted);
+      this.$emit('update:parsed', parsed);
+      this.$emit('parsed', parsed);
+      this.$emit('change', formatted);
+    }
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
@@ -34742,11 +34746,15 @@ function mounted() {
 
 
     if (this.value !== _formatted) {
-      this.$emit('update:value', _formatted);
-      this.$emit('input', _formatted);
-      this.$emit('update:parsed', _parsed);
-      this.$emit('parsed', _parsed);
-      this.$emit('change', _formatted);
+      if (this.initialFormatEvent) {
+        this.$emit('formatted', _formatted);
+      } else {
+        this.$emit('update:value', _formatted);
+        this.$emit('input', _formatted);
+        this.$emit('update:parsed', _parsed);
+        this.$emit('parsed', _parsed);
+        this.$emit('change', _formatted);
+      }
     }
   }
 }
@@ -34867,6 +34875,11 @@ function isEditable() {
       required: false,
       type: Boolean,
       default: true
+    },
+    initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -39544,6 +39557,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -39620,6 +39635,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -39644,11 +39664,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required,
       "type": "text",
       "customValidator": _vm.customValidator,
-      "editable": _vm.editable
+      "editable": _vm.editable,
+      "initialFormatEvent": _vm.initialFormatEvent
     },
     on: {
       "input": _vm.updated,
-      "update:parsed": _vm.parsed
+      "parsed": _vm.parsed,
+      "formatted": function (newValue) { return _vm.$emit('formatted', newValue); }
     }
   })
 },staticRenderFns: []}
@@ -39934,6 +39956,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 
 
@@ -40010,6 +40034,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -40034,11 +40063,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "required": _vm.required,
       "type": "text",
       "customValidator": _vm.customValidator,
-      "editable": _vm.editable
+      "editable": _vm.editable,
+      "initialFormatEvent": _vm.initialFormatEvent
     },
     on: {
       "input": _vm.updated,
-      "update:parsed": _vm.parsed
+      "parsed": _vm.parsed,
+      "formatted": function (newValue) { return _vm.$emit('formatted', newValue); }
     }
   })
 },staticRenderFns: []}

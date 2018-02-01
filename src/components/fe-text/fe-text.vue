@@ -94,21 +94,30 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
-    this.$emit('update:value', formatted);
-    this.$emit('input', formatted);
-    this.$emit('update:parsed', parsed);
-    this.$emit('parsed', parsed);
-    this.$emit('change', formatted);
+
+    if (this.initialFormatEvent) {
+      this.$emit('formatted', formatted);
+    } else {
+      this.$emit('input', formatted);
+      this.$emit('update:value', formatted);
+      this.$emit('update:parsed', parsed);
+      this.$emit('parsed', parsed);
+      this.$emit('change', formatted);
+    }
   } else {
     let {valid, formatted, parsed} = this.formatAndValidate(this.value);
 
     // Should only be pushed out if the value was changed by the formatter.
     if (this.value !== formatted) {
-      this.$emit('update:value', formatted);
-      this.$emit('input', formatted);
-      this.$emit('update:parsed', parsed);
-      this.$emit('parsed', parsed);
-      this.$emit('change', formatted);
+      if (this.initialFormatEvent) {
+        this.$emit('formatted', formatted);
+      } else {
+        this.$emit('update:value', formatted);
+        this.$emit('input', formatted);
+        this.$emit('update:parsed', parsed);
+        this.$emit('parsed', parsed);
+        this.$emit('change', formatted);
+      }
     }
   }
 }
@@ -225,6 +234,11 @@ export default {
       required: false,
       type: Boolean,
       default: true
+    },
+    initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 }

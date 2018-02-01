@@ -7,8 +7,10 @@
            :required="required"    type="text"
            :customValidator="customValidator"
            @input="updated"
-           @update:parsed="parsed"
+           @parsed="parsed"
+           @formatted="(newValue) => $emit('formatted', newValue)"
            :editable="editable"
+           :initialFormatEvent="initialFormatEvent"
            />
 </template>
 
@@ -84,6 +86,11 @@ export default {
       required: false,
       type: Boolean,
       default: true
+    },
+    initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 }
