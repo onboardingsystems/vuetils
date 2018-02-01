@@ -6,7 +6,7 @@
            :label="label"          :hint="hint"
            :required="required"    type="text"
            :customValidator="customValidator"
-           @update:value="updated"
+           @input="updated"
            @update:parsed="parsed"
            :editable="editable"
            />
@@ -19,12 +19,14 @@ export default {
   name: "FePhone",
   methods: {
     formatter: (type) => Formatters[type],
-    updated: function(value) { this.$emit('update:value', value) },
-    parsed: function(value) { this.$emit('update:parsed', value) }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
+    updated: function(value) {
+      this.$emit('update:value', value);
+      this.$emit('input', value);
+    },
+    parsed: function(value) {
+      this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
+    }
   },
   props: {
     value: {

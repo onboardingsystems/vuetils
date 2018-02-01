@@ -65,12 +65,14 @@ function mounted() {
     var {valid: valid, parsed: parsed, formatted: formatted} = this.formatAndValidate(this.defaultValue)
     if(valid) {
       this.$emit('update:value', formatted);
+      this.$emit('input', formatted);
       this.$emit('change', formatted);
     }
   } else {
     var {valid: valid, formatted: formatted} = this.formatAndValidate(this.value)
     if(valid) {
       this.$emit('update:value', formatted);
+      this.$emit('input', formatted);
       this.$emit('change', formatted);
     }
   }
@@ -119,6 +121,7 @@ function handleChange(e) {
   this.internalErrors = [];
   let result = this.formatAndValidate(e.target.value);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
   this.$emit('change', result.formatted);
 }
 
@@ -170,10 +173,6 @@ export default {
   },
   computed: {
     groupClasses, initialId, combinedErrors, isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {

@@ -44,6 +44,7 @@ function initialValue() {
 
 function handleChange(e) {
   this.$emit('update:value', e.target.checked);
+  this.$emit('input', e.target.checked);
   this.$emit('change', e.target.checked);
 }
 
@@ -71,10 +72,6 @@ export default {
   },
   computed: {
     classes, initialValue, initialId, isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {

@@ -64,7 +64,9 @@ function formatAndValidate(value) {
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('parsed', result.parsed);
   this.$emit('change', result.formatted);
 }
 
@@ -93,7 +95,9 @@ function mounted() {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
     this.$emit('update:value', formatted);
+    this.$emit('input', formatted);
     this.$emit('update:parsed', parsed);
+    this.$emit('parsed', parsed);
     this.$emit('change', formatted);
   } else {
     let {valid, formatted, parsed} = this.formatAndValidate(this.value);
@@ -101,7 +105,9 @@ function mounted() {
     // Should only be pushed out if the value was changed by the formatter.
     if (this.value !== formatted) {
       this.$emit('update:value', formatted);
+      this.$emit('input', formatted);
       this.$emit('update:parsed', parsed);
+      this.$emit('parsed', parsed);
       this.$emit('change', formatted);
     }
   }
@@ -152,10 +158,6 @@ export default {
   computed: {
     classes, initialValue, combinedErrors, initialId,
     isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {

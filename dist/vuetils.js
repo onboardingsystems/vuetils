@@ -34694,7 +34694,9 @@ function formatAndValidate(value) {
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('parsed', result.parsed);
   this.$emit('change', result.formatted);
 }
 
@@ -34726,7 +34728,9 @@ function mounted() {
         formatted = _formatAndValidate.formatted;
 
     this.$emit('update:value', formatted);
+    this.$emit('input', formatted);
     this.$emit('update:parsed', parsed);
+    this.$emit('parsed', parsed);
     this.$emit('change', formatted);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
@@ -34739,7 +34743,9 @@ function mounted() {
 
     if (this.value !== _formatted) {
       this.$emit('update:value', _formatted);
+      this.$emit('input', _formatted);
       this.$emit('update:parsed', _parsed);
+      this.$emit('parsed', _parsed);
       this.$emit('change', _formatted);
     }
   }
@@ -34792,10 +34798,6 @@ function isEditable() {
   computed: {
     classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId,
     isEditable: isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -36329,7 +36331,9 @@ function initialId() {
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('parsed', result.parsed);
   this.$emit('change', result.formatted);
 }
 
@@ -36361,7 +36365,9 @@ function mounted() {
         formatted = _formatAndValidate.formatted;
 
     this.$emit('update:value', formatted);
+    this.$emit('input', formatted);
     this.$emit('update:parsed', parsed);
+    this.$emit('parsed', parsed);
     this.$emit('change', formatted);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
@@ -36374,7 +36380,9 @@ function mounted() {
 
     if (this.value !== _formatted) {
       this.$emit('update:value', _formatted);
+      this.$emit('input', _formatted);
       this.$emit('update:parsed', _parsed);
+      this.$emit('parsed', _parsed);
       this.$emit('change', _formatted);
     }
   }
@@ -36418,10 +36426,6 @@ function isEditable() {
   },
   computed: {
     classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId, isEditable: isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -37002,15 +37006,17 @@ function anyErrors() {
 }
 
 function onFirstNameChanged(value) {
-  var _$emit;
+  var _$emit, _$emit2;
 
   this.$emit('update:value', (_$emit = {}, _defineProperty(_$emit, this.firstNameAttr, value), _defineProperty(_$emit, this.lastNameAttr, this.valueFor(this.lastNameAttr)), _$emit));
+  this.$emit('input', (_$emit2 = {}, _defineProperty(_$emit2, this.firstNameAttr, value), _defineProperty(_$emit2, this.lastNameAttr, this.valueFor(this.lastNameAttr)), _$emit2));
 }
 
 function onLastNameChanged(value) {
-  var _$emit2;
+  var _$emit3, _$emit4;
 
-  this.$emit('update:value', (_$emit2 = {}, _defineProperty(_$emit2, this.firstNameAttr, this.valueFor(this.firstNameAttr)), _defineProperty(_$emit2, this.lastNameAttr, value), _$emit2));
+  this.$emit('update:value', (_$emit3 = {}, _defineProperty(_$emit3, this.firstNameAttr, this.valueFor(this.firstNameAttr)), _defineProperty(_$emit3, this.lastNameAttr, value), _$emit3));
+  this.$emit('input', (_$emit4 = {}, _defineProperty(_$emit4, this.firstNameAttr, this.valueFor(this.firstNameAttr)), _defineProperty(_$emit4, this.lastNameAttr, value), _$emit4));
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -37029,10 +37035,6 @@ function onLastNameChanged(value) {
   },
   computed: {
     classes: classes, combinedErrors: combinedErrors
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -37131,7 +37133,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.onFirstNameChanged,
+      "input": _vm.onFirstNameChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.firstNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.firstNameAttr, result); }
     }
@@ -37149,7 +37151,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.onLastNameChanged,
+      "input": _vm.onLastNameChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.lastNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.lastNameAttr, result); }
     }
@@ -37408,6 +37410,7 @@ function valueUpdated(attribute, newValue) {
 
   value[attribute] = newValue;
   this.$emit('update:value', value);
+  this.$emit('input', value);
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -37437,10 +37440,6 @@ function valueUpdated(attribute, newValue) {
   },
   computed: {
     classes: classes, combinedErrors: combinedErrors
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -37558,7 +37557,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.streetCustomValidator
     },
     on: {
-      "update:value": _vm.streetChanged,
+      "input": _vm.streetChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.streetNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.streetNameAttr, result); }
     }
@@ -37580,7 +37579,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.cityCustomValidator
     },
     on: {
-      "update:value": _vm.cityChanged,
+      "input": _vm.cityChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.cityNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.cityNameAttr, result); }
     }
@@ -37598,7 +37597,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.stateCustomValidator
     },
     on: {
-      "update:value": _vm.stateChanged,
+      "input": _vm.stateChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.stateNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.stateNameAttr, result); }
     }
@@ -37616,7 +37615,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.zipCustomValidator
     },
     on: {
-      "update:value": _vm.zipChanged,
+      "input": _vm.zipChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.zipNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.zipNameAttr, result); }
     }
@@ -37747,6 +37746,7 @@ function initialValue() {
 
 function handleChange(e) {
   this.$emit('update:value', e.target.checked);
+  this.$emit('input', e.target.checked);
   this.$emit('change', e.target.checked);
 }
 
@@ -37774,10 +37774,6 @@ function isEditable() {
   },
   computed: {
     classes: classes, initialValue: initialValue, initialId: initialId, isEditable: isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -38017,6 +38013,7 @@ function mounted() {
 
     if (valid) {
       this.$emit('update:value', formatted);
+      this.$emit('input', formatted);
       this.$emit('change', formatted);
     }
   } else {
@@ -38026,6 +38023,7 @@ function mounted() {
 
     if (valid) {
       this.$emit('update:value', formatted);
+      this.$emit('input', formatted);
       this.$emit('change', formatted);
     }
   }
@@ -38074,6 +38072,7 @@ function handleChange(e) {
   this.internalErrors = [];
   var result = this.formatAndValidate(e.target.value);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
   this.$emit('change', result.formatted);
 }
 
@@ -38127,10 +38126,6 @@ function isEditable() {
   },
   computed: {
     groupClasses: groupClasses, initialId: initialId, combinedErrors: combinedErrors, isEditable: isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -38390,14 +38385,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -38484,7 +38477,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -38587,14 +38580,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -38681,7 +38672,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -38784,14 +38775,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -38878,7 +38867,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -38981,14 +38970,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -39075,7 +39062,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39178,14 +39165,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -39272,7 +39257,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39375,14 +39360,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -39469,7 +39452,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39572,14 +39555,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -39666,7 +39647,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39769,14 +39750,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -39863,7 +39842,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39966,14 +39945,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -40060,7 +40037,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -40167,14 +40144,12 @@ function dateFormatter(value) {
     dateFormatter: dateFormatter,
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -40266,7 +40241,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -40369,14 +40344,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -40463,7 +40436,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -40566,14 +40539,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
+      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
+      this.$emit('parsed', value);
     }
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
@@ -40660,7 +40631,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "update:value": _vm.updated,
+      "input": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -41368,6 +41339,7 @@ function created() {
   // Otherwise nothing will be set if the select box does not change the value.
   if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isNil(this.value)) {
     this.$emit('update:value', __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value);
+    this.$emit('input', __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value);
   }
 
   this.$emit('change', { valid: true, parsed: __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value, formatted: __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value });
@@ -41379,6 +41351,7 @@ function handleChange(_ref) {
   var currentSelected = target.options[target.selectedIndex].value;
   this.$emit('change', { valid: true, parsed: currentSelected, formatted: currentSelected });
   this.$emit('update:value', currentSelected);
+  this.$emit('input', currentSelected);
 }
 
 function handleBlur() {
@@ -41434,10 +41407,6 @@ function anyErrors() {
   },
   computed: {
     classes: classes, initialId: initialId, combinedErrors: combinedErrors
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     id: {
@@ -41576,7 +41545,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, ".fe-file-select{margin-bottom:0}.fe-file-select:hover{cursor:pointer}.fe-file-select input[type=file]{position:absolute;left:-9999px}", ""]);
+exports.push([module.i, ".fe-file-select{margin-bottom:0}.fe-file-select:hover{cursor:pointer}.fe-file-select input[type=file]{display:none}", ""]);
 
 // exports
 
@@ -41612,6 +41581,7 @@ function classes() {
 function handleFileSelected() {
   if (this.$refs.file.files.length > 0) {
     this.$emit('fileselect', this.$refs.file.files[0]);
+    this.$emit('select', this.$refs.file.files[0]);
     this.$refs.file.value = '';
   }
 }

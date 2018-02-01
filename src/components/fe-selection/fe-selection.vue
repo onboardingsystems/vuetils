@@ -25,6 +25,7 @@ function created() {
   // Otherwise nothing will be set if the select box does not change the value.
   if (_.isNil(this.value)) {
     this.$emit('update:value', _.first(this.options).value);
+    this.$emit('input', _.first(this.options).value);
   }
 
   this.$emit('change', {valid: true, parsed: _.first(this.options).value, formatted: _.first(this.options).value});
@@ -34,6 +35,7 @@ function handleChange({target}) {
   let currentSelected = target.options[target.selectedIndex].value;
   this.$emit('change', {valid: true, parsed: currentSelected, formatted: currentSelected});
   this.$emit('update:value', currentSelected);
+  this.$emit('input', currentSelected);
 }
 
 function handleBlur() {
@@ -88,10 +90,6 @@ export default {
   },
   computed: {
     classes, initialId, combinedErrors
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     id: {
