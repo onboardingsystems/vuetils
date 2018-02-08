@@ -38253,11 +38253,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('fe-label', {
     staticClass: "control-label",
     attrs: {
+      "text": _vm.label,
       "hint": _vm.hint,
       "htmlFor": _vm.id,
       "required": _vm.required
     }
-  }, [_vm._v(_vm._s(_vm.label))]), _vm._v(" "), _vm._l((_vm.options), function(option) {
+  }), _vm._v(" "), _vm._l((_vm.options), function(option) {
     return _c('div', {
       key: option.value,
       staticClass: "radio"

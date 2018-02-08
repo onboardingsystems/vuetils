@@ -1,6 +1,6 @@
 <template>
     <div v-if="direction === 'vertical'" :class="groupClasses" :id="id">
-      <fe-label class="control-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
+      <fe-label :text="label" class="control-label" :hint="hint" :htmlFor="id" :required="required" />
       <div class="radio" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option)}">
           <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
