@@ -38539,7 +38539,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -38755,7 +38755,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -38971,7 +38971,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39187,7 +39187,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39403,7 +39403,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39619,7 +39619,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39842,7 +39842,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable,
       "initialFormatEvent": _vm.initialFormatEvent
@@ -40060,7 +40060,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -40283,7 +40283,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable,
       "initialFormatEvent": _vm.initialFormatEvent
@@ -40510,7 +40510,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -40726,7 +40726,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -40942,7 +40942,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "type": "text",
       "right-align": _vm.rightAlign,
       "tabindex": _vm.tabindex,
-      "no-tab": _vm.no - _vm.tab,
+      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },

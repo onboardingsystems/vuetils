@@ -7,7 +7,7 @@
            :required="required"    type="text"
            :right-align="rightAlign"
            :tabindex="tabindex"
-           :no-tab="no-tab"
+           :no-tab="noTab"
            :customValidator="customValidator"
            @input="updated"
            @parsed="parsed"
