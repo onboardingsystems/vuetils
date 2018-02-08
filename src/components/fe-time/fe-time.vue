@@ -5,6 +5,9 @@
            :autofocus="autofocus"  :placeholder="placeholder"
            :label="label"          :hint="hint"
            :required="required"    type="text"
+           :right-align="rightAlign"
+           :tabindex="tabindex"
+           :no-tab="no-tab"
            :customValidator="customValidator"
            @input="updated"
            @update:parsed="parsed"
@@ -84,6 +87,21 @@ export default {
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 }

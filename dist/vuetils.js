@@ -34641,6 +34641,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -34805,7 +34811,13 @@ function isEditable() {
   },
   computed: {
     classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId,
-    isEditable: isEditable
+    isEditable: isEditable,
+    tabableIndex: function tabableIndex() {
+      return this.noTab ? "-1" : this.tabindex;
+    },
+    inputStyleSettings: function inputStyleSettings() {
+      return { 'text-align': this.rightAlign ? "right" : "left" };
+    }
   },
   props: {
     value: {
@@ -34877,6 +34889,21 @@ function isEditable() {
       default: true
     },
     initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
       required: false,
       type: Boolean,
       default: false
@@ -36165,21 +36192,25 @@ return numeral;
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    class: _vm.classes
+    class: _vm.classes,
+    style: (_vm.inputStyleSettings)
   }, [_c('fe-label', {
     attrs: {
       "text": _vm.label,
       "hint": _vm.hint,
       "htmlFor": _vm.initialId,
-      "required": _vm.required
+      "required": _vm.required,
+      "right-align": _vm.rightAlign
     }
   }), _vm._v(" "), (_vm.isEditable) ? _c('input', {
     staticClass: "form-control fe-text",
+    style: (_vm.inputStyleSettings),
     attrs: {
       "id": _vm.initialId,
       "type": _vm.type,
       "placeholder": _vm.placeholder,
-      "autofocus": _vm.autofocus
+      "autofocus": _vm.autofocus,
+      "tabindex": _vm.tabableIndex
     },
     domProps: {
       "value": _vm.value
@@ -36188,7 +36219,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "change": _vm.handleChange,
       "blur": _vm.handleBlur
     }
-  }) : _vm._e(), _vm._v(" "), (!_vm.isEditable) ? _c('pre', [_vm._v(_vm._s(_vm.value))]) : _vm._e(), _vm._v(" "), _c('fe-error', {
+  }) : _vm._e(), _vm._v(" "), (!_vm.isEditable) ? _c('pre', {
+    style: (_vm.inputStyleSettings)
+  }, [_vm._v(_vm._s(_vm.value))]) : _vm._e(), _vm._v(" "), _c('fe-error', {
     attrs: {
       "errors": _vm.combinedErrors
     }
@@ -38387,6 +38420,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -38463,6 +38499,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -38486,6 +38537,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -38582,6 +38636,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -38658,6 +38715,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -38681,6 +38753,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -38777,6 +38852,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -38853,6 +38931,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -38876,6 +38969,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -38972,6 +39068,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -39048,6 +39147,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -39071,6 +39185,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39167,6 +39284,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -39243,6 +39363,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -39266,6 +39401,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39362,6 +39500,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -39438,6 +39579,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -39461,6 +39617,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39559,6 +39718,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -39640,6 +39802,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: false
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -39663,6 +39840,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable,
       "initialFormatEvent": _vm.initialFormatEvent
@@ -39761,6 +39941,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -39837,6 +40020,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -39860,6 +40058,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -39958,6 +40159,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -40039,6 +40243,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: false
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -40062,6 +40281,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable,
       "initialFormatEvent": _vm.initialFormatEvent
@@ -40146,6 +40368,9 @@ exports.push([module.i, "", ""]);
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils_formatters__ = __webpack_require__(4);
+//
+//
+//
 //
 //
 //
@@ -40245,6 +40470,21 @@ function dateFormatter(value) {
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -40268,6 +40508,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -40364,6 +40607,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -40440,6 +40686,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -40463,6 +40724,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
@@ -40559,6 +40823,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 
 
@@ -40635,6 +40902,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 });
@@ -40658,6 +40940,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
+      "right-align": _vm.rightAlign,
+      "tabindex": _vm.tabindex,
+      "no-tab": _vm.no - _vm.tab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },

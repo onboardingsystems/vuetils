@@ -1,11 +1,17 @@
 <template>
-  <div :class="classes">
-    <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
-    <input v-if="isEditable" :id="initialId" class="form-control fe-text" :type="type" :value="value"
+  <div :class="classes" :style="inputStyleSettings">
+    <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" :right-align="rightAlign" />
+    <input v-if="isEditable"
+      :id="initialId"
+      class="form-control fe-text"
+      :type="type" :value="value"
       :placeholder="placeholder"
+      :autofocus="autofocus"
+      :tabindex="tabableIndex"
+      :style="inputStyleSettings"
       @change="handleChange" @blur="handleBlur"
-      :autofocus="autofocus" />
-    <pre v-if="!isEditable">{{value}}</pre>
+    />
+    <pre v-if="!isEditable" :style="inputStyleSettings">{{value}}</pre>
     <fe-error :errors="combinedErrors" />
   </div>
 </template>
@@ -166,7 +172,9 @@ export default {
   },
   computed: {
     classes, initialValue, combinedErrors, initialId,
-    isEditable
+    isEditable,
+    tabableIndex() {return this.noTab ? "-1" : this.tabindex},
+    inputStyleSettings() {return {'text-align': this.rightAlign ? "right" : "left"}}
   },
   props: {
     value: {
@@ -236,6 +244,21 @@ export default {
       default: true
     },
     initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
       required: false,
       type: Boolean,
       default: false

@@ -11,7 +11,7 @@
     <h2>Form Builder</h2>
     <fe-checkbox v-model="editable">Fields are editable</fe-checkbox>
 
-    <div class="col-xs-6">
+    <div class="col-xs-12">
       <fe-form @submit="onSubmit" :editable="editable" >
         <fe-text label="Username" :required="true" v-model="username" placeholder="joe, notjoe, ect." />
         <fe-textarea label="Job History" :required="true" v-model="jobHistory" placeholder="Stuff you did..." rows="6" />
@@ -47,6 +47,26 @@
                         />
 
         <fe-submit value="Next" className="btn-success" />
+      </fe-form>
+    </div>
+
+    <div>&nbsp;</div>
+    <h2>Right Aligned Components</h2>
+    <div class="col-xs-12">
+      <fe-form :editable="editable">
+        <fe-text label="Username" :required="true" v-model="username" placeholder="joe, notjoe, ect." right-align no-tab />
+        <fe-number label="Current Age" :required="true" v-model="currentAge" placeholder="24" right-align />
+        <fe-phone label="Home Number" :required="true" v-model="phone" right-align />
+        <fe-email label="Email Address" :required="true" v-model="email" right-align />
+        <fe-ssn label="Social Security Number" :required="true" v-model="ssn" right-align />
+        <fe-state label="US State Code" :required="true" v-model="state" right-align />
+        <fe-zipcode label="Zip Code" :required="true" v-model="zipcode" right-align />
+        <fe-currency label="Cost" :required="true" v-model="cost" right-align />
+        <fe-dollars label="Rent" :required="true" v-model="rent" right-align />
+        <fe-percent label="Sales Tax" :required="true" v-model="salesTax" :parsed.sync="parsedSalesTax" right-align />
+        <fe-date label="Start Date" :required="false" v-model="startDate" :parsed.sync="parsedStartDate"  right-align/>
+        <fe-time label="Open Time" :required="true" v-model="openTime" right-align />
+        <fe-ordinal label="Ordinal" :required="true" v-model="ordinal" right-align />
       </fe-form>
     </div>
 
