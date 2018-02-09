@@ -27,6 +27,7 @@ function data() {
 function classes() {
   return cx({
     "checkbox": true,
+    "selected": this.value,
     "has-error":  !_.isEmpty(this.errors)
   });
 }

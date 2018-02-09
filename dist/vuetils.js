@@ -37775,6 +37775,7 @@ function data() {
 function classes() {
   return __WEBPACK_IMPORTED_MODULE_1_classnames___default()({
     "checkbox": true,
+    "selected": this.value,
     "has-error": !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.errors)
   });
 }
