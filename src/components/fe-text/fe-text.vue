@@ -3,7 +3,8 @@
     <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
     <input v-if="isEditable" :id="initialId" class="form-control fe-text" :type="type" :value="value"
       :placeholder="placeholder"
-      @change="handleChange" @blur="handleBlur" />
+      @change="handleChange" @blur="handleBlur"
+      :autofocus="autofocus" />
     <pre v-if="!isEditable">{{value}}</pre>
     <fe-error :errors="combinedErrors" />
   </div>
@@ -12,6 +13,7 @@
 <script>
 import _ from 'lodash';
 import Formatters from '../../utils/formatters';
+import cx from 'classnames';
 
 function data() {
   return {
@@ -21,10 +23,11 @@ function data() {
 }
 
 function classes() {
-  return {
+  return cx({
     "form-group": true,
-    "has-error":  !_.isEmpty(this.anyErrors())
-  };
+    "has-error":  !_.isEmpty(this.anyErrors()),
+    [ this.className ]: _.isString(this.className)
+  });
 }
 
 function format(value) {
@@ -59,19 +62,22 @@ function formatAndValidate(value) {
 }
 
 function handleChange(e) {
-  this.internalErrors = [];
-  let result = this.formatAndValidate(e.target.value);
-  this.internalErrors = result.errors;
-
+  var result = this.formatAndValidate(e.target.value);
   this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
   this.$emit('update:parsed', result.parsed);
 }
 
-function handleBlur(e) {
+function handleBlur() {
   this.internalErrors = [];
-  let result = this.formatAndValidate(e.target.value);
-  this.internalErrors = result.errors;
+  let result = this.formatAndValidate(this.value);
+
+  if (_.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result)
+    return result.errors;
+  } else {
+    this.internalErrors = result.errors;
+  }
 }
 
 function mounted() {
@@ -166,9 +172,13 @@ export default {
     formatter: {
       requied: false,
       type: Function,
-      default: Formatters.string
+      default: Formatters.stringFormatter
     },
     id: {
+      required: false,
+      type: String
+    },
+    className: {
       required: false,
       type: String
     },
