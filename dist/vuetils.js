@@ -33683,9 +33683,11 @@ return zhTw;
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["formatter"] = formatter;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__components__ = __webpack_require__(124);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_formatters__ = __webpack_require__(4);
 
-// import Formatters from './utils/formatters';
+
 
 function Vuetils(Vue) {
   var Vuetils = __WEBPACK_IMPORTED_MODULE_0__components__["Vuetils"];
@@ -33701,11 +33703,11 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 /* harmony default export */ __webpack_exports__["default"] = (Vuetils);
 
-// // Used to access a formatter.
-// // formatter('phone')('8011234567);
-// export function formatter(formatterName) {
-//   return Formatters[formatterName];
-// }
+// Used to access a formatter.
+// formatter('phone')('8011234567);
+function formatter(formatterName) {
+  return __WEBPACK_IMPORTED_MODULE_1__utils_formatters__["a" /* default */][formatterName];
+}
 
 /***/ }),
 /* 124 */
