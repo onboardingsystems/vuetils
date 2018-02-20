@@ -83,7 +83,7 @@ function classes() {
 function executeFocus() {
   if (this.focus && !this.gotFocused) {
 
-    Vue.nextTick(() => {
+    this.$nextTick(() => {
       this.$refs.inputElement.focus();
     });
 

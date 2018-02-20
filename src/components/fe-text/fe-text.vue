@@ -17,7 +17,6 @@
 
 <script>
 import _ from 'lodash';
-import Vue from 'vue';
 import Formatters from '../../utils/formatters';
 
 function data() {
@@ -131,7 +130,7 @@ function mounted() {
 function executeFocus() {
   if (this.focus && !this.gotFocused) {
 
-    Vue.nextTick(() => {
+    this.$nextTick(() => {
       this.$refs.inputElement.focus();
     });
 
