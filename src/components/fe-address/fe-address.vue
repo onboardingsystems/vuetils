@@ -5,7 +5,7 @@
     <fe-compound-layout layout="full">
       <fe-text :id="id" ref="street"
         :value="valueFor(streetNameAttr)"
-        @update:value="streetChanged"
+        @input="streetChanged"
         :required="required" :formatter="formatter('stringFormatter')"
         placeholder="Address"
         :class="classesFor(streetNameAttr, 'address-line-1')"
@@ -18,7 +18,7 @@
         <div class="flex-grow-shrink">
           <fe-text ref="city"
             :value="valueFor(cityNameAttr)"
-            @update:value="cityChanged"
+            @input="cityChanged"
             :required="required" :formatter="formatter('stringFormatter')"
             placeholder="City"
             :class="classesFor(cityNameAttr, 'address-city')"
@@ -30,7 +30,7 @@
         <div class="flex-static">
           <fe-text ref="state"
             :value="valueFor(stateNameAttr)"
-            @update:value="stateChanged"
+            @input="stateChanged"
             :required="required" :formatter="formatter('stateFormatter')"
             placeholder="ST"
             :class="classesFor(stateNameAttr, 'fe-address-state state')"
@@ -42,7 +42,7 @@
         <div class="flex-static">
           <fe-text ref="zip"
             :value="valueFor(zipNameAttr)"
-            @update:value="zipChanged"
+            @input="zipChanged"
             :required="required" :formatter="formatter('zipcodeFormatter')"
             placeholder="Zip"
             :class="classesFor(zipNameAttr, 'fe-address-zipcode zipcode')"
@@ -164,6 +164,7 @@ function valueUpdated(attribute, newValue) {
 
   value[attribute] = newValue;
   this.$emit('update:value', value);
+  this.$emit('input', value);
 }
 
 export default {
@@ -181,10 +182,6 @@ export default {
   },
   computed: {
     classes, combinedErrors
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {

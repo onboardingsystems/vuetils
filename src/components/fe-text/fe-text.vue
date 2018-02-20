@@ -1,22 +1,30 @@
 <template>
-  <div :class="classes">
-    <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
-    <input v-if="isEditable" :id="initialId" class="form-control fe-text" :type="type" :value="value"
+  <div :class="classes" :style="inputStyleSettings">
+    <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" :right-align="rightAlign" />
+    <input v-if="isEditable" ref="inputElement"
+      :id="initialId"
+      class="form-control fe-text"
+      :type="type" :value="value"
       :placeholder="placeholder"
-      @change="handleChange" @blur="handleBlur" />
-    <pre v-if="!isEditable">{{value}}</pre>
+      :tabindex="tabableIndex"
+      :style="inputStyleSettings"
+      @change="handleChange" @blur="handleBlur"
+    />
+    <pre v-if="!isEditable" :style="inputStyleSettings">{{value}}</pre>
     <fe-error :errors="combinedErrors" />
   </div>
 </template>
 
 <script>
 import _ from 'lodash';
+import Vue from 'vue';
 import Formatters from '../../utils/formatters';
 
 function data() {
   return {
     internalErrors: [],
-    formEditable: null
+    formEditable: null,
+    gotFocused: false
   };
 }
 
@@ -65,13 +73,17 @@ function handleChange(e) {
 
   this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('parsed', result.parsed);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur(e) {
   this.internalErrors = [];
   let result = this.formatAndValidate(e.target.value);
   this.internalErrors = result.errors;
+  this.$emit('blur', result);
 }
 
 function mounted() {
@@ -86,15 +98,44 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
-    this.$emit('change', formatted);
-    this.$emit('update:value', formatted);
-    this.$emit('update:parsed', parsed);
+
+    if (this.initialFormatEvent) {
+      this.$emit('formatted', formatted);
+    } else {
+      this.$emit('input', formatted);
+      this.$emit('update:value', formatted);
+      this.$emit('update:parsed', parsed);
+      this.$emit('parsed', parsed);
+      this.$emit('change', formatted);
+    }
   } else {
     let {valid, formatted, parsed} = this.formatAndValidate(this.value);
 
-    this.$emit('change', formatted);
-    this.$emit('update:value', formatted);
-    this.$emit('update:parsed', parsed);
+    // Should only be pushed out if the value was changed by the formatter.
+    if (this.value !== formatted) {
+      if (this.initialFormatEvent) {
+        this.$emit('formatted', formatted);
+      } else {
+        this.$emit('update:value', formatted);
+        this.$emit('input', formatted);
+        this.$emit('update:parsed', parsed);
+        this.$emit('parsed', parsed);
+        this.$emit('change', formatted);
+      }
+    }
+  }
+
+  this.executeFocus();
+}
+
+function executeFocus() {
+  if (this.focus && !this.gotFocused) {
+
+    Vue.nextTick(() => {
+      this.$refs.inputElement.focus();
+    });
+
+    this.gotFocused = true;
   }
 }
 
@@ -112,7 +153,7 @@ function combinedErrors() {
 
 function anyErrors(checkForErrors = false) {
   if (checkForErrors) {
-    this.handleBlur();
+    this.handleBlur({target: {value: this.value}});
   }
 
   let externalErrors = this.errors || [];
@@ -138,15 +179,23 @@ export default {
   data,
   mounted,
   methods: {
-    handleBlur, handleChange, anyErrors, formatAndValidate, format
+    handleBlur, handleChange, anyErrors, formatAndValidate, format,
+    executeFocus
   },
   computed: {
     classes, initialValue, combinedErrors, initialId,
-    isEditable
+    isEditable,
+    tabableIndex() {return this.noTab ? "-1" : this.tabindex},
+    inputStyleSettings() {return {'text-align': this.rightAlign ? "right" : "left"}}
   },
-  model: {
-    prop: 'value',
-    event: 'update:value'
+  watch: {
+    focus(newValue) {
+      if (!newValue) {
+        this.gotFocused = false;
+      }
+
+      this.executeFocus();
+    }
   },
   props: {
     value: {
@@ -172,7 +221,7 @@ export default {
       required: false,
       type: String
     },
-    autofocus: {
+    focus: {
       required: false,
       type: Boolean,
       default: false
@@ -210,11 +259,27 @@ export default {
       required: false,
       type: Boolean,
       default: true
+    },
+    initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 }
 </script>
-
-<style>
-
-</style>
