@@ -24,14 +24,12 @@
 </template>
 
 <script>
-import cx from 'classnames';
 
 function classes() {
-  return cx({
+  return {
     "modal": true,
-    "fade":  true,
-    [ this.className ]: _.isString(this.className)
-  });
+    "fade":  true
+  };
 }
 
 function mounted() {
@@ -76,10 +74,6 @@ export default {
       required: false,
       type: String,
       default: 'dialog'
-    },
-    className: {
-      required: false,
-      type: String
     },
     closeButton: {
       required: false,

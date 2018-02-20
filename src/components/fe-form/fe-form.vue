@@ -6,19 +6,11 @@
 
 <script>
 import _ from 'lodash';
-import cx from 'classnames';
 
 function data() {
   return {
     validatableComponents: []
   }
-}
-
-function classes() {
-  return cx({
-    "form": true,
-    [ this.className ]: _.isString(this.className)
-  });
 }
 
 function mounted() {
@@ -91,14 +83,7 @@ export default {
   methods: {
     onSubmit
   },
-  computed: {
-    classes
-  },
   props: {
-    className: {
-      required: false,
-      type: String
-    },
     editable: {
       required: false,
       type: Boolean,

@@ -4,6 +4,7 @@
     <fe-compound-layout layout="inline">
       <div class="flex-grow-shrink">
         <fe-text :id="id" ref="firstNameField"
+          noerrors
           :value="valueFor(firstNameAttr)"
           @input="onFirstNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
@@ -11,12 +12,13 @@
           :class="classesFor(firstNameAttr, 'name-first')"
           @change="value => onChangeEvent(firstNameAttr, value)"
           @blur="result => onBlurEvent(firstNameAttr, result)"
-          :autofocus="autofocus"
+          :focus="focus"
           :custom-validator="firstNameCustomValidator"
           :editable="editable" />
       </div>
       <div class="flex-grow-shrink">
         <fe-text ref="lastNameField"
+          noerrors
           :value="valueFor(lastNameAttr)"
           @input="onLastNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
@@ -35,7 +37,6 @@
 <script>
 import Formatters from '../../utils/formatters';
 import _ from 'lodash';
-import cx from 'classnames';
 
 function data() {
   return {
@@ -45,19 +46,18 @@ function data() {
 }
 
 function classes() {
-  return cx({
+  return {
     'form-group': true,
     'has-child-error': !_.isEmpty(this.anyErrors()),
-    "has-error": !_.isEmpty(this.anyErrors()),
-    [ this.className ]: _.isString(this.className)
-  });
+    "has-error": !_.isEmpty(this.anyErrors())
+  };
 }
 
 function classesFor(attr, classes = "") {
-  return cx({
+  return {
     [classes]: _.isString(classes),
     "has-error": !_.isEmpty(this.anyErrors())
-  });
+  };
 }
 
 function combinedErrors() {
@@ -188,11 +188,7 @@ export default {
       required: false,
       type: String
     },
-    className: {
-      required: false,
-      type: String
-    },
-    autofocus: {
+    focus: {
       required: false,
       type: Boolean,
       default: false
