@@ -4892,12 +4892,9 @@ function applyToTag (styleElement, obj) {
 /* unused harmony export dateFormatter */
 /* unused harmony export timeFormatter */
 /* unused harmony export ordinalFormatter */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_moment__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_numeral__ = __webpack_require__(166);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_numeral___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_numeral__);
-
-
+var _ = __webpack_require__(5);
+var moment = __webpack_require__(0);
+var numeral = __webpack_require__(166);
 
 // ########
 //
@@ -4919,7 +4916,7 @@ function parseDate(date) {
   // accepting "Dec 2014" as a date in Firefox. NOTE: This is not "strict"
   // formatting, so a "/" is also allowed as well as not full 2 digit months
   // or days, and with or without a comma.
-  return __WEBPACK_IMPORTED_MODULE_0_moment___default()(date, [
+  return moment(date, [
   // dates
   'MMDDYYYY', 'MMM YYYY', 'MMM DD YYYY', 'M-D-YYYY', 'YYYY-M-D',
   // date times
@@ -5228,7 +5225,7 @@ function numberFormatter(value) {
 
   if (_.isEmpty(val.parsed)) return val;
 
-  var numObj = __WEBPACK_IMPORTED_MODULE_1_numeral___default()(_.trim(val.parsed.replace(/[$\s,]/g, '')));
+  var numObj = numeral(_.trim(val.parsed.replace(/[$\s,]/g, '')));
   var parsed = numObj.value();
 
   // TODO: numeraljs does not throw errors.... we might want to think about
@@ -5261,7 +5258,7 @@ function currencyFormatter(value) {
 
   // remove '$', spaces and ','.
   // Using numeral, convert to a number.
-  var numObj = __WEBPACK_IMPORTED_MODULE_1_numeral___default()(_.trim(val.parsed.replace(/[$\s,]/g, '')));
+  var numObj = numeral(_.trim(val.parsed.replace(/[$\s,]/g, '')));
   var parsed = numObj.value();
 
   // TODO: numeraljs does not throw errors.... we might want to think about
@@ -5299,7 +5296,7 @@ function percentFormatter(value) {
 
   // remove '%', spaces and ','.
   // Using numeral, convert to a number.
-  var numObj = __WEBPACK_IMPORTED_MODULE_1_numeral___default()(_.trim(val.parsed.replace(/[$\s,%]/g, '')));
+  var numObj = numeral(_.trim(val.parsed.replace(/[$\s,%]/g, '')));
   var parsed = numObj.value();
 
   // TODO: numeraljs does not throw errors.... we might want to think about
@@ -5390,7 +5387,7 @@ function timeFormatter(value) {
     };
   }
 
-  var temp = __WEBPACK_IMPORTED_MODULE_0_moment___default()(val.parsed, ["hh:mm:ss a", "YYYY-MM-DDTHH:mm:ssZ"]);
+  var temp = moment(val.parsed, ["hh:mm:ss a", "YYYY-MM-DDTHH:mm:ssZ"]);
   var valid = temp.isValid();
 
   if (valid) {

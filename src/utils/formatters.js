@@ -1,5 +1,6 @@
-import moment from 'moment';
-import numeral from 'numeral';
+const _       = require('lodash')
+const moment  = require('moment')
+const numeral = require('numeral')
 
 // ########
 //
