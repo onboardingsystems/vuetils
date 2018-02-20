@@ -1,5 +1,5 @@
 import * as components from './components';
-import Formatters from './utils/formatters';
+// import Formatters from './utils/formatters';
 
 function Vuetils(Vue) {
   const Vuetils = components.Vuetils;
@@ -15,8 +15,8 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 export default Vuetils;
 
-// Used to access a formatter.
-// formatter('phone')('8011234567);
-export function formatter(formatterName) {
-  return Formatters[formatterName];
-}
+// // Used to access a formatter.
+// // formatter('phone')('8011234567);
+// export function formatter(formatterName) {
+//   return Formatters[formatterName];
+// }
