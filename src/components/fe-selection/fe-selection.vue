@@ -2,7 +2,6 @@
     <div :class="classes">
       <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
       <select class="form-control" :id="initialId" :autofocus="autofocus" @change="handleChange" @blur="handleBlur">
-        <option v-if="placeholder !== null && value === null" disabled selected>{{placeholder}}</option>
         <option v-for="option in options" :key="option.value"
                 :value="option.value" :selected="value === option.value">{{option.name}}</option>
       </select>
@@ -12,7 +11,6 @@
 
 <script>
 import cx from 'classnames';
-import Formatters from '../../utils/formatters';
 import _ from 'lodash';
 
 function data() {
@@ -25,9 +23,8 @@ function data() {
 function created() {
   // Push the default selected value back out to the parent component data.
   // Otherwise nothing will be set if the select box does not change the value.
-  if (_.isNil(this.placeholder) && _.isNil(this.value)) {
+  if (_.isNil(this.value)) {
     this.$emit('update:value', _.first(this.options).value);
-    this.$emit('input', _.first(this.options).value);
   }
 
   this.$emit('change', {valid: true, parsed: _.first(this.options).value, formatted: _.first(this.options).value});
@@ -37,40 +34,15 @@ function handleChange({target}) {
   let currentSelected = target.options[target.selectedIndex].value;
   this.$emit('change', {valid: true, parsed: currentSelected, formatted: currentSelected});
   this.$emit('update:value', currentSelected);
-  this.$emit('input', currentSelected);
-  this.internalErrors = [];
 }
 
 function handleBlur() {
   this.internalErrors = [];
-  let result = this.formatAndValidate(this.value);
 
   if (_.isFunction(this.$listeners.blur)) {
     this.$emit('blur', result)
     return result.errors;
-  } else {
-    this.internalErrors = result.errors;
   }
-}
-
-function formatAndValidate(value) {
-  let formatResult = this.format(value);
-  // run the customValidator if there is one.  Modify the formatResults if
-  // there are errors.
-  if (_.isFunction(this.customValidator)) {
-    let customErrors = this.customValidator(formatResult.formatted);
-    if (!_.isEmpty(customErrors)) {
-      formatResult.valid = false;
-      formatResult.parsed = null;
-      formatResult.errors = _.concat(formatResult.errors, customErrors);
-    }
-  }
-
-  return formatResult;
-}
-
-function format(value) {
-  return this.formatter(value, {required: this.required});
 }
 
 function classes() {
@@ -110,13 +82,16 @@ function anyErrors(checkForErrors = false) {
 
 export default {
   name: 'FeSelection',
-  data,
   created,
   methods: {
-    handleChange, handleBlur, anyErrors, format, formatAndValidate
+    handleChange, handleBlur, anyErrors
   },
   computed: {
     classes, initialId, combinedErrors
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     id: {
@@ -146,20 +121,6 @@ export default {
       required: false,
       type: Boolean,
       default: false
-    },
-    placeholder: {
-      required: false,
-      type: String,
-      default: null
-    },
-    customValidator: {
-      required: false,
-      type: Function
-    },
-    formatter: {
-      requied: false,
-      type: Function,
-      default: Formatters.stringFormatter
     },
     errors: {
       required: false,

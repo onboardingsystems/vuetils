@@ -34641,12 +34641,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 
 
@@ -34699,11 +34693,9 @@ function formatAndValidate(value) {
 
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('update:value', result.formatted);
-  this.$emit('input', result.formatted);
-  this.$emit('update:parsed', result.parsed);
-  this.$emit('parsed', result.parsed);
   this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
+  this.$emit('update:parsed', result.parsed);
 }
 
 function handleBlur() {
@@ -34733,35 +34725,18 @@ function mounted() {
         parsed = _formatAndValidate.parsed,
         formatted = _formatAndValidate.formatted;
 
-    if (this.initialFormatEvent) {
-      this.$emit('formatted', formatted);
-    } else {
-      this.$emit('input', formatted);
-      this.$emit('update:value', formatted);
-      this.$emit('update:parsed', parsed);
-      this.$emit('parsed', parsed);
-      this.$emit('change', formatted);
-    }
+    this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
+    this.$emit('update:parsed', parsed);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
         _formatted = _formatAndValidate2.formatted,
         _parsed = _formatAndValidate2.parsed;
 
-    // Should only be pushed out if the value was changed by the formatter.
-
-
-    if (this.value !== _formatted) {
-      if (this.initialFormatEvent) {
-        this.$emit('formatted', _formatted);
-      } else {
-        this.$emit('update:value', _formatted);
-        this.$emit('input', _formatted);
-        this.$emit('update:parsed', _parsed);
-        this.$emit('parsed', _parsed);
-        this.$emit('change', _formatted);
-      }
-    }
+    this.$emit('change', _formatted);
+    this.$emit('update:value', _formatted);
+    this.$emit('update:parsed', _parsed);
   }
 }
 
@@ -34811,13 +34786,11 @@ function isEditable() {
   },
   computed: {
     classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId,
-    isEditable: isEditable,
-    tabableIndex: function tabableIndex() {
-      return this.noTab ? "-1" : this.tabindex;
-    },
-    inputStyleSettings: function inputStyleSettings() {
-      return { 'text-align': this.rightAlign ? "right" : "left" };
-    }
+    isEditable: isEditable
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -34887,26 +34860,6 @@ function isEditable() {
       required: false,
       type: Boolean,
       default: true
-    },
-    initialFormatEvent: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -36192,25 +36145,21 @@ return numeral;
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
-    class: _vm.classes,
-    style: (_vm.inputStyleSettings)
+    class: _vm.classes
   }, [_c('fe-label', {
     attrs: {
       "text": _vm.label,
       "hint": _vm.hint,
       "htmlFor": _vm.initialId,
-      "required": _vm.required,
-      "right-align": _vm.rightAlign
+      "required": _vm.required
     }
   }), _vm._v(" "), (_vm.isEditable) ? _c('input', {
     staticClass: "form-control fe-text",
-    style: (_vm.inputStyleSettings),
     attrs: {
       "id": _vm.initialId,
       "type": _vm.type,
       "placeholder": _vm.placeholder,
-      "autofocus": _vm.autofocus,
-      "tabindex": _vm.tabableIndex
+      "autofocus": _vm.autofocus
     },
     domProps: {
       "value": _vm.value
@@ -36219,9 +36168,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "change": _vm.handleChange,
       "blur": _vm.handleBlur
     }
-  }) : _vm._e(), _vm._v(" "), (!_vm.isEditable) ? _c('pre', {
-    style: (_vm.inputStyleSettings)
-  }, [_vm._v(_vm._s(_vm.value))]) : _vm._e(), _vm._v(" "), _c('fe-error', {
+  }) : _vm._e(), _vm._v(" "), (!_vm.isEditable) ? _c('pre', [_vm._v(_vm._s(_vm.value))]) : _vm._e(), _vm._v(" "), _c('fe-error', {
     attrs: {
       "errors": _vm.combinedErrors
     }
@@ -36376,11 +36323,9 @@ function initialId() {
 
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('update:value', result.formatted);
-  this.$emit('input', result.formatted);
-  this.$emit('update:parsed', result.parsed);
-  this.$emit('parsed', result.parsed);
   this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
+  this.$emit('update:parsed', result.parsed);
 }
 
 function handleBlur() {
@@ -36410,27 +36355,18 @@ function mounted() {
         parsed = _formatAndValidate.parsed,
         formatted = _formatAndValidate.formatted;
 
-    this.$emit('update:value', formatted);
-    this.$emit('input', formatted);
-    this.$emit('update:parsed', parsed);
-    this.$emit('parsed', parsed);
     this.$emit('change', formatted);
+    this.$emit('update:value', formatted);
+    this.$emit('update:parsed', parsed);
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
         _valid = _formatAndValidate2.valid,
         _formatted = _formatAndValidate2.formatted,
         _parsed = _formatAndValidate2.parsed;
 
-    // Should only be pushed out if the value was changed by the formatter.
-
-
-    if (this.value !== _formatted) {
-      this.$emit('update:value', _formatted);
-      this.$emit('input', _formatted);
-      this.$emit('update:parsed', _parsed);
-      this.$emit('parsed', _parsed);
-      this.$emit('change', _formatted);
-    }
+    this.$emit('change', _formatted);
+    this.$emit('update:value', _formatted);
+    this.$emit('update:parsed', _parsed);
   }
 }
 
@@ -36472,6 +36408,10 @@ function isEditable() {
   },
   computed: {
     classes: classes, initialValue: initialValue, combinedErrors: combinedErrors, initialId: initialId, isEditable: isEditable
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -37052,17 +36992,15 @@ function anyErrors() {
 }
 
 function onFirstNameChanged(value) {
-  var _$emit, _$emit2;
+  var _$emit;
 
   this.$emit('update:value', (_$emit = {}, _defineProperty(_$emit, this.firstNameAttr, value), _defineProperty(_$emit, this.lastNameAttr, this.valueFor(this.lastNameAttr)), _$emit));
-  this.$emit('input', (_$emit2 = {}, _defineProperty(_$emit2, this.firstNameAttr, value), _defineProperty(_$emit2, this.lastNameAttr, this.valueFor(this.lastNameAttr)), _$emit2));
 }
 
 function onLastNameChanged(value) {
-  var _$emit3, _$emit4;
+  var _$emit2;
 
-  this.$emit('update:value', (_$emit3 = {}, _defineProperty(_$emit3, this.firstNameAttr, this.valueFor(this.firstNameAttr)), _defineProperty(_$emit3, this.lastNameAttr, value), _$emit3));
-  this.$emit('input', (_$emit4 = {}, _defineProperty(_$emit4, this.firstNameAttr, this.valueFor(this.firstNameAttr)), _defineProperty(_$emit4, this.lastNameAttr, value), _$emit4));
+  this.$emit('update:value', (_$emit2 = {}, _defineProperty(_$emit2, this.firstNameAttr, this.valueFor(this.firstNameAttr)), _defineProperty(_$emit2, this.lastNameAttr, value), _$emit2));
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -37081,6 +37019,10 @@ function onLastNameChanged(value) {
   },
   computed: {
     classes: classes, combinedErrors: combinedErrors
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -37179,7 +37121,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.onFirstNameChanged,
+      "update:value": _vm.onFirstNameChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.firstNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.firstNameAttr, result); }
     }
@@ -37197,7 +37139,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.onLastNameChanged,
+      "update:value": _vm.onLastNameChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.lastNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.lastNameAttr, result); }
     }
@@ -37456,7 +37398,6 @@ function valueUpdated(attribute, newValue) {
 
   value[attribute] = newValue;
   this.$emit('update:value', value);
-  this.$emit('input', value);
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -37486,6 +37427,10 @@ function valueUpdated(attribute, newValue) {
   },
   computed: {
     classes: classes, combinedErrors: combinedErrors
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -37603,7 +37548,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.streetCustomValidator
     },
     on: {
-      "input": _vm.streetChanged,
+      "update:value": _vm.streetChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.streetNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.streetNameAttr, result); }
     }
@@ -37625,7 +37570,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.cityCustomValidator
     },
     on: {
-      "input": _vm.cityChanged,
+      "update:value": _vm.cityChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.cityNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.cityNameAttr, result); }
     }
@@ -37643,7 +37588,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.stateCustomValidator
     },
     on: {
-      "input": _vm.stateChanged,
+      "update:value": _vm.stateChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.stateNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.stateNameAttr, result); }
     }
@@ -37661,7 +37606,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "custom-validator": _vm.zipCustomValidator
     },
     on: {
-      "input": _vm.zipChanged,
+      "update:value": _vm.zipChanged,
       "change": function (value) { return _vm.onChangeEvent(_vm.zipNameAttr, value); },
       "blur": function (result) { return _vm.onBlurEvent(_vm.zipNameAttr, result); }
     }
@@ -37775,7 +37720,6 @@ function data() {
 function classes() {
   return __WEBPACK_IMPORTED_MODULE_1_classnames___default()({
     "checkbox": true,
-    "selected": this.value,
     "has-error": !__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isEmpty(this.errors)
   });
 }
@@ -37792,9 +37736,19 @@ function initialValue() {
 }
 
 function handleChange(e) {
-  this.$emit('update:value', e.target.checked);
-  this.$emit('input', e.target.checked);
-  this.$emit('change', e.target.checked);
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
+    this.onChange(e.target.checked);
+  } else {
+    this.$emit('update:value', e.target.checked);
+  }
+}
+
+function mounted() {
+  if (__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.isFunction(this.onChange)) {
+    this.onChange(this.$refs.checkbox.checked);
+  } else {
+    this.$emit('update:value', this.$refs.checkbox.checked);
+  }
 }
 
 function initialId() {
@@ -37816,11 +37770,16 @@ function isEditable() {
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "FeCheckbox",
   data: data,
+  mounted: mounted,
   methods: {
     handleChange: handleChange
   },
   computed: {
     classes: classes, initialValue: initialValue, initialId: initialId, isEditable: isEditable
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -37866,6 +37825,10 @@ function isEditable() {
       required: false,
       type: Boolean,
       default: false
+    },
+    onChange: {
+      required: false,
+      type: Function
     },
     editable: {
       required: false,
@@ -38059,9 +38022,8 @@ function mounted() {
         formatted = _formatAndValidate.formatted;
 
     if (valid) {
-      this.$emit('update:value', formatted);
-      this.$emit('input', formatted);
       this.$emit('change', formatted);
+      this.$emit('update:value', formatted);
     }
   } else {
     var _formatAndValidate2 = this.formatAndValidate(this.value),
@@ -38069,9 +38031,8 @@ function mounted() {
         formatted = _formatAndValidate2.formatted;
 
     if (valid) {
-      this.$emit('update:value', formatted);
-      this.$emit('input', formatted);
       this.$emit('change', formatted);
+      this.$emit('update:value', formatted);
     }
   }
 }
@@ -38118,9 +38079,8 @@ function formatAndValidate(value) {
 function handleChange(e) {
   this.internalErrors = [];
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('update:value', result.formatted);
-  this.$emit('input', result.formatted);
   this.$emit('change', result.formatted);
+  this.$emit('update:value', result.formatted);
 }
 
 function handleBlur() {
@@ -38173,6 +38133,10 @@ function isEditable() {
   },
   computed: {
     groupClasses: groupClasses, initialId: initialId, combinedErrors: combinedErrors, isEditable: isEditable
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -38254,12 +38218,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('fe-label', {
     staticClass: "control-label",
     attrs: {
-      "text": _vm.label,
       "hint": _vm.hint,
       "htmlFor": _vm.id,
       "required": _vm.required
     }
-  }), _vm._v(" "), _vm._l((_vm.options), function(option) {
+  }, [_vm._v(_vm._s(_vm.label))]), _vm._v(" "), _vm._l((_vm.options), function(option) {
     return _c('div', {
       key: option.value,
       staticClass: "radio"
@@ -38422,9 +38385,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -38436,12 +38396,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -38501,21 +38463,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -38539,14 +38486,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -38638,9 +38582,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -38652,12 +38593,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -38717,21 +38660,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -38755,14 +38683,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -38854,9 +38779,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -38868,12 +38790,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -38933,21 +38857,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -38971,14 +38880,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39070,9 +38976,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -39084,12 +38987,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -39149,21 +39054,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -39187,14 +39077,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39286,9 +39173,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -39300,12 +39184,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -39365,21 +39251,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -39403,14 +39274,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39502,9 +39370,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -39516,12 +39381,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -39581,21 +39448,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -39619,14 +39471,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -39718,11 +39567,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 
@@ -39734,12 +39578,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -39799,26 +39645,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    initialFormatEvent: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -39842,17 +39668,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
-      "editable": _vm.editable,
-      "initialFormatEvent": _vm.initialFormatEvent
+      "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
-      "parsed": _vm.parsed,
-      "formatted": function (newValue) { return _vm.$emit('formatted', newValue); }
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
     }
   })
 },staticRenderFns: []}
@@ -39943,9 +39764,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -39957,12 +39775,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -40022,21 +39842,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -40060,14 +39865,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -40159,11 +39961,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 
@@ -40175,12 +39972,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -40240,26 +40039,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    initialFormatEvent: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -40283,17 +40062,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
-      "editable": _vm.editable,
-      "initialFormatEvent": _vm.initialFormatEvent
+      "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
-      "parsed": _vm.parsed,
-      "formatted": function (newValue) { return _vm.$emit('formatted', newValue); }
+      "update:value": _vm.updated,
+      "update:parsed": _vm.parsed
     }
   })
 },staticRenderFns: []}
@@ -40384,9 +40158,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -40402,12 +40173,14 @@ function dateFormatter(value) {
     dateFormatter: dateFormatter,
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -40472,21 +40245,6 @@ function dateFormatter(value) {
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -40510,14 +40268,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -40609,9 +40364,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -40623,12 +40375,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -40688,21 +40442,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -40726,14 +40465,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -40825,9 +40561,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
 
 
 
@@ -40839,12 +40572,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     updated: function updated(value) {
       this.$emit('update:value', value);
-      this.$emit('input', value);
     },
     parsed: function parsed(value) {
       this.$emit('update:parsed', value);
-      this.$emit('parsed', value);
     }
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -40904,21 +40639,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       required: false,
       type: Boolean,
       default: true
-    },
-    tabindex: {
-      required: false,
-      type: [String, Number],
-      default: "0"
-    },
-    noTab: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
     }
   }
 });
@@ -40942,14 +40662,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "hint": _vm.hint,
       "required": _vm.required,
       "type": "text",
-      "right-align": _vm.rightAlign,
-      "tabindex": _vm.tabindex,
-      "no-tab": _vm.noTab,
       "customValidator": _vm.customValidator,
       "editable": _vm.editable
     },
     on: {
-      "input": _vm.updated,
+      "update:value": _vm.updated,
       "update:parsed": _vm.parsed
     }
   })
@@ -41626,9 +41343,8 @@ exports.push([module.i, "", ""]);
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils_formatters__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -41642,8 +41358,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-
 
 
 
@@ -41658,12 +41372,11 @@ function data() {
 function created() {
   // Push the default selected value back out to the parent component data.
   // Otherwise nothing will be set if the select box does not change the value.
-  if (__WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isNil(this.placeholder) && __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isNil(this.value)) {
-    this.$emit('update:value', __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.first(this.options).value);
-    this.$emit('input', __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.first(this.options).value);
+  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isNil(this.value)) {
+    this.$emit('update:value', __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value);
   }
 
-  this.$emit('change', { valid: true, parsed: __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.first(this.options).value, formatted: __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.first(this.options).value });
+  this.$emit('change', { valid: true, parsed: __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value, formatted: __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.first(this.options).value });
 }
 
 function handleChange(_ref) {
@@ -41672,52 +41385,27 @@ function handleChange(_ref) {
   var currentSelected = target.options[target.selectedIndex].value;
   this.$emit('change', { valid: true, parsed: currentSelected, formatted: currentSelected });
   this.$emit('update:value', currentSelected);
-  this.$emit('input', currentSelected);
-  this.internalErrors = [];
 }
 
 function handleBlur() {
   this.internalErrors = [];
-  var result = this.formatAndValidate(this.value);
 
-  if (__WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isFunction(this.$listeners.blur)) {
+  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isFunction(this.$listeners.blur)) {
     this.$emit('blur', result);
     return result.errors;
-  } else {
-    this.internalErrors = result.errors;
   }
-}
-
-function formatAndValidate(value) {
-  var formatResult = this.format(value);
-  // run the customValidator if there is one.  Modify the formatResults if
-  // there are errors.
-  if (__WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isFunction(this.customValidator)) {
-    var customErrors = this.customValidator(formatResult.formatted);
-    if (!__WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isEmpty(customErrors)) {
-      formatResult.valid = false;
-      formatResult.parsed = null;
-      formatResult.errors = __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.concat(formatResult.errors, customErrors);
-    }
-  }
-
-  return formatResult;
-}
-
-function format(value) {
-  return this.formatter(value, { required: this.required });
 }
 
 function classes() {
   return __WEBPACK_IMPORTED_MODULE_0_classnames___default()(_defineProperty({
     "form-group": true,
-    "has-error": !__WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isEmpty(this.anyErrors())
-  }, this.className, __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isString(this.className)));
+    "has-error": !__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isEmpty(this.anyErrors())
+  }, this.className, __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isString(this.className)));
 }
 
 function initialId() {
-  if (__WEBPACK_IMPORTED_MODULE_2_lodash___default.a.isEmpty(this.id)) {
-    return __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.uniqueId('selection_');
+  if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isEmpty(this.id)) {
+    return __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.uniqueId('selection_');
   }
 
   return this.id;
@@ -41746,13 +41434,16 @@ function anyErrors() {
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'FeSelection',
-  data: data,
   created: created,
   methods: {
-    handleChange: handleChange, handleBlur: handleBlur, anyErrors: anyErrors, format: format, formatAndValidate: formatAndValidate
+    handleChange: handleChange, handleBlur: handleBlur, anyErrors: anyErrors
   },
   computed: {
     classes: classes, initialId: initialId, combinedErrors: combinedErrors
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     id: {
@@ -41782,20 +41473,6 @@ function anyErrors() {
       required: false,
       type: Boolean,
       default: false
-    },
-    placeholder: {
-      required: false,
-      type: String,
-      default: null
-    },
-    customValidator: {
-      required: false,
-      type: Function
-    },
-    formatter: {
-      requied: false,
-      type: Function,
-      default: __WEBPACK_IMPORTED_MODULE_1__utils_formatters__["a" /* default */].stringFormatter
     },
     errors: {
       required: false,
@@ -41831,12 +41508,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "change": _vm.handleChange,
       "blur": _vm.handleBlur
     }
-  }, [(_vm.placeholder !== null && _vm.value === null) ? _c('option', {
-    attrs: {
-      "disabled": "",
-      "selected": ""
-    }
-  }, [_vm._v(_vm._s(_vm.placeholder))]) : _vm._e(), _vm._v(" "), _vm._l((_vm.options), function(option) {
+  }, _vm._l((_vm.options), function(option) {
     return _c('option', {
       key: option.value,
       domProps: {
@@ -41844,7 +41516,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "selected": _vm.value === option.value
       }
     }, [_vm._v(_vm._s(option.name))])
-  })], 2), _vm._v(" "), _c('fe-error', {
+  })), _vm._v(" "), _c('fe-error', {
     attrs: {
       "errors": _vm.combinedErrors
     }
@@ -41910,7 +41582,7 @@ exports = module.exports = __webpack_require__(1)();
 
 
 // module
-exports.push([module.i, ".fe-file-select:hover{cursor:pointer}.fe-file-select input[type=file]{display:none}", ""]);
+exports.push([module.i, ".fe-file-select{margin-bottom:0}.fe-file-select:hover{cursor:pointer}.fe-file-select input[type=file]{position:absolute;left:-9999px}", ""]);
 
 // exports
 
@@ -41946,7 +41618,6 @@ function classes() {
 function handleFileSelected() {
   if (this.$refs.file.files.length > 0) {
     this.$emit('fileselect', this.$refs.file.files[0]);
-    this.$emit('select', this.$refs.file.files[0]);
     this.$refs.file.value = '';
   }
 }
