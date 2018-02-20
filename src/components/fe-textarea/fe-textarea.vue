@@ -170,7 +170,7 @@ export default {
     formatter: {
       requied: false,
       type: Function,
-      default: Formatters.requiredFormatter
+      default: Formatters.required
     },
     id: {
       required: false,
