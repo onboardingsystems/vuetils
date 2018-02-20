@@ -1,11 +1,17 @@
 <template>
-  <div :class="classes">
-    <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
-    <input v-if="isEditable" :id="initialId" class="form-control fe-text" :type="type" :value="value"
+  <div :class="classes" :style="inputStyleSettings">
+    <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" :right-align="rightAlign" />
+    <input v-if="isEditable"
+      :id="initialId"
+      class="form-control fe-text"
+      :type="type" :value="value"
       :placeholder="placeholder"
+      :autofocus="autofocus"
+      :tabindex="tabableIndex"
+      :style="inputStyleSettings"
       @change="handleChange" @blur="handleBlur"
-      :autofocus="autofocus" />
-    <pre v-if="!isEditable">{{value}}</pre>
+    />
+    <pre v-if="!isEditable" :style="inputStyleSettings">{{value}}</pre>
     <fe-error :errors="combinedErrors" />
   </div>
 </template>
@@ -63,9 +69,11 @@ function formatAndValidate(value) {
 
 function handleChange(e) {
   var result = this.formatAndValidate(e.target.value);
-  this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
   this.$emit('update:parsed', result.parsed);
+  this.$emit('parsed', result.parsed);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur() {
@@ -92,15 +100,31 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     let {valid, parsed, formatted} = this.formatAndValidate(this.defaultValue);
 
-    this.$emit('change', formatted);
-    this.$emit('update:value', formatted);
-    this.$emit('update:parsed', parsed);
+
+    if (this.initialFormatEvent) {
+      this.$emit('formatted', formatted);
+    } else {
+      this.$emit('input', formatted);
+      this.$emit('update:value', formatted);
+      this.$emit('update:parsed', parsed);
+      this.$emit('parsed', parsed);
+      this.$emit('change', formatted);
+    }
   } else {
     let {valid, formatted, parsed} = this.formatAndValidate(this.value);
 
-    this.$emit('change', formatted);
-    this.$emit('update:value', formatted);
-    this.$emit('update:parsed', parsed);
+    // Should only be pushed out if the value was changed by the formatter.
+    if (this.value !== formatted) {
+      if (this.initialFormatEvent) {
+        this.$emit('formatted', formatted);
+      } else {
+        this.$emit('update:value', formatted);
+        this.$emit('input', formatted);
+        this.$emit('update:parsed', parsed);
+        this.$emit('parsed', parsed);
+        this.$emit('change', formatted);
+      }
+    }
   }
 }
 
@@ -148,11 +172,9 @@ export default {
   },
   computed: {
     classes, initialValue, combinedErrors, initialId,
-    isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
+    isEditable,
+    tabableIndex() {return this.noTab ? "-1" : this.tabindex},
+    inputStyleSettings() {return {'text-align': this.rightAlign ? "right" : "left"}}
   },
   props: {
     value: {
@@ -220,6 +242,26 @@ export default {
       required: false,
       type: Boolean,
       default: true
+    },
+    initialFormatEvent: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    tabindex: {
+      required: false,
+      type: [String, Number],
+      default: "0"
+    },
+    noTab: {
+      required: false,
+      type: Boolean,
+      default: false
+    },
+    rightAlign: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   }
 }

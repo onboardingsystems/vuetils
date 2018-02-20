@@ -20,6 +20,7 @@ function classes() {
 function handleFileSelected() {
   if (this.$refs.file.files.length > 0) {
     this.$emit('fileselect', this.$refs.file.files[0]);
+    this.$emit('select', this.$refs.file.files[0]);
     this.$refs.file.value = '';
   }
 }
@@ -43,15 +44,13 @@ export default {
 
 <style lang="sass">
   .fe-file-select {
-    margin-bottom: 0;
 
     &:hover {
       cursor: pointer;
     }
 
     input[type=file] {
-      position: absolute;
-      left: -9999px;
+      display: none;
     }
   }
 </style>
