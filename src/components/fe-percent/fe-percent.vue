@@ -1,8 +1,8 @@
 <template>
   <fe-text :value="value"          :defaultValue="defaultValue"
-           :errors="errors"        :formatter="formatter('percentFormatter')"
-           :id="id"                :className="className"
-           :autofocus="autofocus"  :placeholder="placeholder"
+           :errors="errors"        :formatter="formatter('percent')"
+           :id="id"
+           :focus="focus"          :placeholder="placeholder"
            :label="label"          :hint="hint"
            :required="required"    type="text"
            :right-align="rightAlign"
@@ -52,11 +52,7 @@ export default {
       required: false,
       type: String
     },
-    className: {
-      required: false,
-      type: String
-    },
-    autofocus: {
+    focus: {
       required: false,
       type: Boolean,
       default: false

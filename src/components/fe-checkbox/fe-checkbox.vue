@@ -1,5 +1,5 @@
 <template>
-  <div :class="className">
+  <div>
     <div :class="classes">
       <label class="control-label">
         <input type="checkbox" ref="checkbox" :id="initialId" :checked="initialValue" @change="handleChange" :disabled="!isEditable" />
@@ -16,7 +16,6 @@
 
 <script>
 import _ from 'lodash';
-import cx from 'classnames';
 
 function data() {
   return {
@@ -25,11 +24,11 @@ function data() {
 }
 
 function classes() {
-  return cx({
+  return {
     "checkbox": true,
     "selected": this.value,
     "has-error":  !_.isEmpty(this.errors)
-  });
+  };
 }
 
 // having a value of null can be bad for our controlled inputs, even if for a
@@ -93,15 +92,6 @@ export default {
       required: false,
       type: String
     },
-    className: {
-      required: false,
-      type: String
-    },
-    autofocus: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
     label: {
       required: false,
       type: String,
@@ -125,7 +115,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

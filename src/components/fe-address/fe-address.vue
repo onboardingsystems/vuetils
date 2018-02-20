@@ -4,6 +4,7 @@
     <fe-hint :hint="hint" />
     <fe-compound-layout layout="full">
       <fe-text :id="id" ref="street"
+        noerrors
         :value="valueFor(streetNameAttr)"
         @input="streetChanged"
         :required="required" :formatter="formatter('stringFormatter')"
@@ -12,11 +13,12 @@
         @change="value => onChangeEvent(streetNameAttr, value)"
         @blur="result => onBlurEvent(streetNameAttr, result)"
         :editable="editable"
-        :autofocus="autofocus" :custom-validator="streetCustomValidator" />
+        :focus="focus" :custom-validator="streetCustomValidator" />
 
       <fe-compound-layout  layout="inline">
         <div class="flex-grow-shrink">
           <fe-text ref="city"
+            noerrors
             :value="valueFor(cityNameAttr)"
             @input="cityChanged"
             :required="required" :formatter="formatter('stringFormatter')"
@@ -29,6 +31,7 @@
         </div>
         <div class="flex-static">
           <fe-text ref="state"
+            noerrors
             :value="valueFor(stateNameAttr)"
             @input="stateChanged"
             :required="required" :formatter="formatter('stateFormatter')"
@@ -41,6 +44,7 @@
         </div>
         <div class="flex-static">
           <fe-text ref="zip"
+            noerrors
             :value="valueFor(zipNameAttr)"
             @input="zipChanged"
             :required="required" :formatter="formatter('zipcodeFormatter')"
@@ -60,7 +64,6 @@
 <script>
 import Formatters from '../../utils/formatters';
 import _ from 'lodash';
-import cx from 'classnames';
 
 function data() {
   return {
@@ -69,20 +72,19 @@ function data() {
 }
 
 function classes() {
-  return cx({
+  return {
     'fe-address-us': true,
     'form-group': true,
     'has-child-error': !_.isEmpty(this.anyErrors()),
-    "has-error": !_.isEmpty(this.anyErrors()),
-    [this.className]: _.isString(this.className)
-  });
+    "has-error": !_.isEmpty(this.anyErrors())
+  };
 }
 
 function classesFor(attr, classes = "") {
-  return cx({
+  return {
     [classes]: _.isString(classes),
     "has-error": !_.isEmpty(this.anyErrors())
-  });
+  };
 }
 
 function onChangeEvent(attribute, value) {
@@ -231,11 +233,7 @@ export default {
       required: false,
       type: String
     },
-    className: {
-      required: false,
-      type: String
-    },
-    autofocus: {
+    focus: {
       required: false,
       type: Boolean,
       default: false
