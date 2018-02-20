@@ -148,10 +148,6 @@ function initialId() {
 }
 
 function combinedErrors() {
-  if (this.noerrors) {
-    return [];
-  }
-
   return this.anyErrors();
 }
 
@@ -280,11 +276,6 @@ export default {
       default: false
     },
     rightAlign: {
-      required: false,
-      type: Boolean,
-      default: false
-    },
-    noerrors: {
       required: false,
       type: Boolean,
       default: false

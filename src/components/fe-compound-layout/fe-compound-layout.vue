@@ -7,15 +7,16 @@
 </template>
 
 <script>
+import cx from 'classnames';
 
 function classes() {
-  return {
+  return cx({
     'compound-field': true,
     'form-group': true,
     'layout-full':   this.layout === 'full',
     'layout-inline': this.layout === 'inline',
     [ this.className ]: _.isString(this.className)
-  };
+  });
 }
 
 export default {

@@ -2,7 +2,7 @@
   <div :class="classes">
     <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
     <textarea v-if="isEditable" :id="initialId" class="form-control fe-text-area" :rows="rows" :value="value"
-      :placeholder="placeholder" @change="handleChange" @blur="handleBlur" />
+      :placeholder="placeholder" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
     <pre v-if="!isEditable">{{value}}</pre>
     <fe-error :errors="combinedErrors" />
   </div>
@@ -11,6 +11,7 @@
 <script>
 import _ from 'lodash';
 import Formatters from '../../utils/formatters';
+import cx from 'classnames';
 
 function data() {
   return {
@@ -20,10 +21,11 @@ function data() {
 }
 
 function classes() {
-  return {
+  return cx({
     "form-group": true,
-    "has-error":  !_.isEmpty(this.anyErrors())
-  };
+    "has-error":  !_.isEmpty(this.anyErrors()),
+    [ this.className ]: _.isString(this.className)
+  });
 }
 
 function format(value) {
@@ -66,10 +68,7 @@ function initialId() {
 }
 
 function handleChange(e) {
-  this.internalErrors = [];
-  let result = this.formatAndValidate(e.target.value);
-  this.internalErrors = result.errors;
-
+  var result = this.formatAndValidate(e.target.value);
   this.$emit('update:value', result.formatted);
   this.$emit('input', result.formatted);
   this.$emit('update:parsed', result.parsed);
@@ -77,11 +76,16 @@ function handleChange(e) {
   this.$emit('change', result.formatted);
 }
 
-function handleBlur(e) {
+function handleBlur() {
   this.internalErrors = [];
-  let result = this.formatAndValidate(e.target.value);
-  this.internalErrors = result.errors;
-  this.$emit('blur', result);
+  let result = this.formatAndValidate(this.value);
+
+  if (_.isFunction(this.$listeners.blur)) {
+    this.$emit('blur', result)
+    return result.errors;
+  } else {
+    this.internalErrors = result.errors;
+  }
 }
 
 function mounted() {
@@ -121,7 +125,7 @@ function combinedErrors() {
 
 function anyErrors(checkForErrors = false) {
   if (checkForErrors) {
-    this.handleBlur({target: {value: this.value}});
+    this.handleBlur();
   }
 
   let externalErrors = this.errors || [];
@@ -141,6 +145,7 @@ function isEditable() {
 
   return this.formEditable;
 }
+
 
 export default {
   name: "FeTextarea",
@@ -175,6 +180,15 @@ export default {
     id: {
       required: false,
       type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
     },
     placeholder: {
       required: false,

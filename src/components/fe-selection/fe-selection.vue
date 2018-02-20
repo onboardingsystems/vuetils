@@ -1,7 +1,7 @@
 <template>
     <div :class="classes">
       <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
-      <select key="inputElement" class="form-control" :id="initialId" @change="handleChange" @blur="handleBlur">
+      <select class="form-control" :id="initialId" :autofocus="autofocus" @change="handleChange" @blur="handleBlur">
         <option v-if="placeholder !== null && value === null" disabled selected>{{placeholder}}</option>
         <option v-for="option in options" :key="option.value"
                 :value="option.value" :selected="value === option.value">{{option.name}}</option>
@@ -11,14 +11,14 @@
 </template>
 
 <script>
+import cx from 'classnames';
 import Formatters from '../../utils/formatters';
 import _ from 'lodash';
 
 function data() {
   return {
     internalErrors: [],
-    formEditable: null,
-    gotFocus: false
+    formEditable: null
   }
 }
 
@@ -74,21 +74,11 @@ function format(value) {
 }
 
 function classes() {
-  return {
+  return cx({
     "form-group": true,
-    "has-error":  !_.isEmpty(this.anyErrors())
-  };
-}
-
-function executeFocus() {
-  if (this.focus && !this.gotFocused) {
-
-    Vue.nextTick(() => {
-      this.$refs.inputElement.focus();
-    });
-
-    this.gotFocused = true;
-  }
+    "has-error":  !_.isEmpty(this.anyErrors()),
+    [ this.className ]: _.isString(this.className)
+  });
 }
 
 function initialId() {
@@ -122,22 +112,11 @@ export default {
   name: 'FeSelection',
   data,
   created,
-  mounted() {this.executeFocus()},
   methods: {
-    handleChange, handleBlur, anyErrors, format, formatAndValidate,
-    executeFocus
+    handleChange, handleBlur, anyErrors, format, formatAndValidate
   },
   computed: {
     classes, initialId, combinedErrors
-  },
-  watch: {
-    focus(newValue) {
-      if (!newValue) {
-        this.gotFocused = false;
-      }
-
-      this.executeFocus();
-    }
   },
   props: {
     id: {
@@ -163,7 +142,7 @@ export default {
       required: true,
       type: Array
     },
-    focus: {
+    autofocus: {
       required: false,
       type: Boolean,
       default: false
@@ -180,7 +159,7 @@ export default {
     formatter: {
       requied: false,
       type: Function,
-      default: Formatters.string
+      default: Formatters.stringFormatter
     },
     errors: {
       required: false,

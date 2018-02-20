@@ -1,8 +1,8 @@
 <template>
   <fe-text :value="value"          :defaultValue="defaultValue"
            :errors="errors"        :formatter="dateFormatter"
-           :id="id"
-           :focus="focus"          :placeholder="placeholder"
+           :id="id"                :className="className"
+           :autofocus="autofocus"  :placeholder="placeholder"
            :label="label"          :hint="hint"
            :required="required"    type="text"
            :right-align="rightAlign"
@@ -19,7 +19,7 @@
 import Formatters from '../../utils/formatters';
 
 function dateFormatter(value, opt = {}) {
-  return Formatters.date(value, _.merge({}, opt, {format: this.format}));
+  return Formatters.dateFormatter(value, _.merge({}, opt, {format: this.format}));
 }
 
 export default {
@@ -59,7 +59,11 @@ export default {
       required: false,
       type: String
     },
-    focus: {
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
       required: false,
       type: Boolean,
       default: false

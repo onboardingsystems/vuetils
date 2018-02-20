@@ -3,7 +3,7 @@
       <fe-label :text="label" class="control-label" :hint="hint" :htmlFor="id" :required="required" />
       <div class="radio" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option)}">
-          <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" />
+          <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
           {{option.name}}
         </label>
       </div>
@@ -13,7 +13,7 @@
       <fe-label class="control-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
       <div class="radio" style="display: inline-block" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option), 'disabled': option['disabled'] === true}" style="margin-left: 10px;">
-          <input type="radio" :disabled="!isEditable || option['disabled']" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" />
+          <input type="radio" :disabled="!isEditable || option['disabled']" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
           {{option.name}}
         </label>
       </div>
@@ -23,6 +23,7 @@
 
 <script>
 import _ from 'lodash';
+import cx from 'classnames';
 
 function data() {
   return {
@@ -32,10 +33,11 @@ function data() {
 }
 
 function groupClasses() {
-  return {
+  return cx({
     "form-group": true,
-    "has-error":  !_.isEmpty(this.anyErrors())
-  };
+    "has-error":  !_.isEmpty(this.anyErrors()),
+    [this.className]: _.isString(this.className)
+  });
 }
 
 function isChecked(option) {
@@ -200,6 +202,15 @@ export default {
     id: {
       required: false,
       type: String
+    },
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
+      required: false,
+      type: Boolean,
+      default: false
     },
     label: {
       required: false,

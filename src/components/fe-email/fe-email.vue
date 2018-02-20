@@ -1,8 +1,8 @@
 <template>
   <fe-text :value="value"          :defaultValue="defaultValue"
-           :errors="errors"        :formatter="formatter('email')"
-           :id="id"
-           :focus="focus"          :placeholder="placeholder"
+           :errors="errors"        :formatter="formatter('emailFormatter')"
+           :id="id"                :className="className"
+           :autofocus="autofocus"  :placeholder="placeholder"
            :label="label"          :hint="hint"
            :required="required"    type="text"
            :right-align="rightAlign"
@@ -50,7 +50,11 @@ export default {
       required: false,
       type: String
     },
-    focus: {
+    className: {
+      required: false,
+      type: String
+    },
+    autofocus: {
       required: false,
       type: Boolean,
       default: false

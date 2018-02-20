@@ -13,7 +13,7 @@
 
     <div class="col-xs-12">
       <fe-form @submit="onSubmit" :editable="editable" >
-        <fe-text label="Username" required focus v-model="username" placeholder="joe, notjoe, ect." />
+        <fe-text label="Username" :required="true" v-model="username" placeholder="joe, notjoe, ect." />
         <fe-textarea label="Job History" :required="true" v-model="jobHistory" placeholder="Stuff you did..." rows="6" />
 
         <fe-selection label="Choose a color" v-model="color" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" :required="true" />
@@ -50,7 +50,7 @@
                         :options="[{value: '42', name: 'I have no label', disabled: true}, {value: '43', name: 'I still don\'t have a label'}]"
                         />
 
-        <fe-submit value="Next" class="btn-success" />
+        <fe-submit value="Next" className="btn-success" />
       </fe-form>
     </div>
 

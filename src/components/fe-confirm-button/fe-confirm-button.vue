@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import cx from 'classnames';
 import _ from 'lodash';
 
 function data() {
@@ -18,13 +19,13 @@ function data() {
 
 function classes() {
   if (this.$slot !== undefined) {
-    return {};
+    return cx({});
   } else {
-    return {
+    return cx({
       'btn': true,
       'btn-default': !this.confirm,
       'btn-danger': this.confirm
-    };
+    });
   }
 }
 
