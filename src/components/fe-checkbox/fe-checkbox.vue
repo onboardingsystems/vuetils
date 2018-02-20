@@ -27,7 +27,6 @@ function data() {
 function classes() {
   return cx({
     "checkbox": true,
-    "selected": this.value,
     "has-error":  !_.isEmpty(this.errors)
   });
 }
@@ -44,9 +43,19 @@ function initialValue() {
 }
 
 function handleChange(e) {
-  this.$emit('update:value', e.target.checked);
-  this.$emit('input', e.target.checked);
-  this.$emit('change', e.target.checked);
+  if (_.isFunction(this.onChange)) {
+    this.onChange(e.target.checked);
+  } else {
+    this.$emit('update:value', e.target.checked);
+  }
+}
+
+function mounted() {
+  if (_.isFunction(this.onChange)) {
+    this.onChange(this.$refs.checkbox.checked);
+  } else {
+    this.$emit('update:value', this.$refs.checkbox.checked);
+  }
 }
 
 function initialId() {
@@ -68,11 +77,16 @@ function isEditable() {
 export default {
   name: "FeCheckbox",
   data,
+  mounted,
   methods: {
     handleChange
   },
   computed: {
     classes, initialValue, initialId, isEditable
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
@@ -116,6 +130,10 @@ export default {
       required: false,
       type: Boolean,
       default: false
+    },
+    onChange: {
+      required: false,
+      type: Function
     },
     editable: {
       required: false,

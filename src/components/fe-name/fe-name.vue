@@ -5,7 +5,7 @@
       <div class="flex-grow-shrink">
         <fe-text :id="id" ref="firstNameField"
           :value="valueFor(firstNameAttr)"
-          @input="onFirstNameChanged"
+          @update:value="onFirstNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
           placeholder="First"
           :class="classesFor(firstNameAttr, 'name-first')"
@@ -18,7 +18,7 @@
       <div class="flex-grow-shrink">
         <fe-text ref="lastNameField"
           :value="valueFor(lastNameAttr)"
-          @input="onLastNameChanged"
+          @update:value="onLastNameChanged"
           :required="required" :formatter="formatter('stringFormatter')"
           placeholder="Last"
           :className="classesFor(lastNameAttr, 'name-last')"
@@ -120,18 +120,10 @@ function onFirstNameChanged(value) {
     [this.firstNameAttr]: value,
     [this.lastNameAttr]: this.valueFor(this.lastNameAttr)
   });
-  this.$emit('input', {
-    [this.firstNameAttr]: value,
-    [this.lastNameAttr]: this.valueFor(this.lastNameAttr)
-  });
 }
 
 function onLastNameChanged(value) {
   this.$emit('update:value', {
-    [this.firstNameAttr]: this.valueFor(this.firstNameAttr),
-    [this.lastNameAttr]: value
-  });
-  this.$emit('input', {
     [this.firstNameAttr]: this.valueFor(this.firstNameAttr),
     [this.lastNameAttr]: value
   });
@@ -149,6 +141,10 @@ export default {
   },
   computed: {
     classes, combinedErrors
+  },
+  model: {
+    prop: 'value',
+    event: 'update:value'
   },
   props: {
     value: {
