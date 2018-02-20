@@ -11,12 +11,13 @@
     <h2>Form Builder</h2>
     <fe-checkbox v-model="editable">Fields are editable</fe-checkbox>
 
-    <div class="col-xs-6">
+    <div class="col-xs-12">
       <fe-form @submit="onSubmit" :editable="editable" >
         <fe-text label="Username" :required="true" v-model="username" placeholder="joe, notjoe, ect." />
         <fe-textarea label="Job History" :required="true" v-model="jobHistory" placeholder="Stuff you did..." rows="6" />
 
         <fe-selection label="Choose a color" v-model="color" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" :required="true" />
+        <fe-selection label="Choose a color (with placeholder)" v-model="color2" placeholder="Please Select" :options="[{value: 'red', name: 'Red'}, { value: 'blue', name: 'Blue'}]" :required="true" />
 
         <fe-number label="Current Age" :required="true" v-model="currentAge" placeholder="24" />
         <fe-phone label="Home Number" :required="true" v-model="phone" />
@@ -25,6 +26,7 @@
         <fe-state label="US State Code" :required="true" v-model="state" />
         <fe-zipcode label="Zip Code" :required="true" v-model="zipcode" />
         <fe-currency label="Cost" :required="true" v-model="cost" />
+        <fe-currency label="(Preformat Event) Cost" :required="true" v-model="formattedCode" @formatted="(newValue) => preformatted('formattedCode', newValue)" initial-format-event />
         <fe-dollars label="Rent" :required="true" v-model="rent" />
         <fe-percent label="Sales Tax" :required="true" v-model="salesTax" :parsed.sync="parsedSalesTax" />
         <fe-date label="Start Date" :required="false" v-model="startDate" :parsed.sync="parsedStartDate" />
@@ -34,7 +36,7 @@
 
         <fe-name v-model="name" :required="true" />
         <fe-address v-model="address" :required="true"  />
-        <fe-checkbox v-model="iAgree" :required="true" >I agree</fe-checkbox>
+        <fe-checkbox v-model="iAgree" :required="true">I agree</fe-checkbox>
 
         <fe-radio-group label="Options to Select" v-model="optionValue" :required="true"
                         :options="[{value: '42', name: 'Choose Me'}, {value: '43', name: 'Don\'t Choose Me'}]"
@@ -43,8 +45,32 @@
         <fe-radio-group label="Options to Select (Horizontal)" v-model="optionValue" direction="horizontal"
                         :options="[{value: '42', name: 'Choose Me', disabled: true}, {value: '43', name: 'Don\'t Choose Me'}]"
                         />
+        <hr />
+        <fe-radio-group v-model="optionValue"
+                        :options="[{value: '42', name: 'I have no label', disabled: true}, {value: '43', name: 'I still don\'t have a label'}]"
+                        />
 
         <fe-submit value="Next" className="btn-success" />
+      </fe-form>
+    </div>
+
+    <div>&nbsp;</div>
+    <h2>Right Aligned Components</h2>
+    <div class="col-xs-12">
+      <fe-form :editable="editable">
+        <fe-text label="Username" :required="true" v-model="username" placeholder="joe, notjoe, ect." right-align no-tab />
+        <fe-number label="Current Age" :required="true" v-model="currentAge" placeholder="24" right-align />
+        <fe-phone label="Home Number" :required="true" v-model="phone" right-align />
+        <fe-email label="Email Address" :required="true" v-model="email" right-align />
+        <fe-ssn label="Social Security Number" :required="true" v-model="ssn" right-align />
+        <fe-state label="US State Code" :required="true" v-model="state" right-align />
+        <fe-zipcode label="Zip Code" :required="true" v-model="zipcode" right-align />
+        <fe-currency label="Cost" :required="true" v-model="cost" right-align />
+        <fe-dollars label="Rent" :required="true" v-model="rent" right-align />
+        <fe-percent label="Sales Tax" :required="true" v-model="salesTax" :parsed.sync="parsedSalesTax" right-align />
+        <fe-date label="Start Date" :required="false" v-model="startDate" :parsed.sync="parsedStartDate"  right-align/>
+        <fe-time label="Open Time" :required="true" v-model="openTime" right-align />
+        <fe-ordinal label="Ordinal" :required="true" v-model="ordinal" right-align />
       </fe-form>
     </div>
 
@@ -75,6 +101,7 @@ function data() {
     showTestModal: false,
     editable: true,
     color: "blue",
+    color2: null,
     ordinal: null,
     openTime: null,
     startDate: null,
@@ -97,7 +124,8 @@ function data() {
     name: null,
     address: null,
     iAgree: false,
-    formName: null
+    formName: null,
+    formattedCode: "1.9"
   };
 }
 
@@ -106,11 +134,17 @@ function onSubmit() {
   console.log(this.name);
 }
 
+function preformatted(key, value) {
+  this[key] = value;
+  console.log("Preformatted " + value);
+}
+
 export default {
   name: 'Playground',
   data,
   methods: {
     onSubmit,
+    preformatted,
     action: function() {console.log('Clicked Delete')},
     confirm: function() {console.log('Confirmed')},
     log: function(entry) {console.log(entry)}

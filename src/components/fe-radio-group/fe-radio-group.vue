@@ -1,6 +1,6 @@
 <template>
     <div v-if="direction === 'vertical'" :class="groupClasses" :id="id">
-      <fe-label class="control-label" :hint="hint" :htmlFor="id" :required="required">{{label}}</fe-label>
+      <fe-label :text="label" class="control-label" :hint="hint" :htmlFor="id" :required="required" />
       <div class="radio" v-for="option in options" :key="option.value">
         <label :class="{'radio-label': true, 'checked': isChecked(option)}">
           <input type="radio" :disabled="!isEditable" :name="initialId" :value="option.value" :checked="isChecked(option)" @change="handleChange" @blur="handleBlur" :autofocus="autofocus" />
@@ -64,14 +64,16 @@ function mounted() {
   if (_.isNil(this.value) && !_.isNil(this.defaultValue)) {
     var {valid: valid, parsed: parsed, formatted: formatted} = this.formatAndValidate(this.defaultValue)
     if(valid) {
-      this.$emit('change', formatted);
       this.$emit('update:value', formatted);
+      this.$emit('input', formatted);
+      this.$emit('change', formatted);
     }
   } else {
     var {valid: valid, formatted: formatted} = this.formatAndValidate(this.value)
     if(valid) {
-      this.$emit('change', formatted);
       this.$emit('update:value', formatted);
+      this.$emit('input', formatted);
+      this.$emit('change', formatted);
     }
   }
 }
@@ -118,8 +120,9 @@ function formatAndValidate(value) {
 function handleChange(e) {
   this.internalErrors = [];
   let result = this.formatAndValidate(e.target.value);
-  this.$emit('change', result.formatted);
   this.$emit('update:value', result.formatted);
+  this.$emit('input', result.formatted);
+  this.$emit('change', result.formatted);
 }
 
 function handleBlur() {
@@ -170,10 +173,6 @@ export default {
   },
   computed: {
     groupClasses, initialId, combinedErrors, isEditable
-  },
-  model: {
-    prop: 'value',
-    event: 'update:value'
   },
   props: {
     value: {
