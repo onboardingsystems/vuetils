@@ -2,6 +2,7 @@
   <div :class="classes" :style="inputStyleSettings">
     <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" :right-align="rightAlign" />
     <input v-if="isEditable" ref="inputElement"
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
       :id="initialId"
       class="form-control fe-text"
       :type="type" :value="value"
