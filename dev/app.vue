@@ -102,7 +102,7 @@ function data() {
     editable: true,
     color: "blue",
     color2: null,
-    ordinal: null,
+    ordinal: 5,
     openTime: null,
     startDate: null,
     parsedStartDate: null,

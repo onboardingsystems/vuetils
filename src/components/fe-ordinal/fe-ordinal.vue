@@ -34,11 +34,11 @@ export default {
   props: {
     value: {
       required: false,
-      type: String
+      type: [String, Number]
     },
     defaultValue: {
       required: false,
-      type: String,
+      type: [String, Number],
       default: ''
     },
     errors: {
