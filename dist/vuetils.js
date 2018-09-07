@@ -41523,11 +41523,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   props: {
     value: {
       required: false,
-      type: String
+      type: [String, Number]
     },
     defaultValue: {
       required: false,
-      type: String,
+      type: [String, Number],
       default: ''
     },
     errors: {
