@@ -7,7 +7,7 @@
         noerrors
         :value="valueFor(streetNameAttr)"
         @input="streetChanged"
-        :required="required" :formatter="formatter('stringFormatter')"
+        :required="required" :formatter="formatter('string')"
         placeholder="Address"
         :class="classesFor(streetNameAttr, 'address-line-1')"
         @change="value => onChangeEvent(streetNameAttr, value)"
@@ -21,7 +21,7 @@
             noerrors
             :value="valueFor(cityNameAttr)"
             @input="cityChanged"
-            :required="required" :formatter="formatter('stringFormatter')"
+            :required="required" :formatter="formatter('string')"
             placeholder="City"
             :class="classesFor(cityNameAttr, 'address-city')"
             @change="value => onChangeEvent(cityNameAttr, value)"
@@ -34,7 +34,7 @@
             noerrors
             :value="valueFor(stateNameAttr)"
             @input="stateChanged"
-            :required="required" :formatter="formatter('stateFormatter')"
+            :required="required" :formatter="formatter('state')"
             placeholder="ST"
             :class="classesFor(stateNameAttr, 'fe-address-state state')"
             @change="value => onChangeEvent(stateNameAttr, value)"
@@ -47,7 +47,7 @@
             noerrors
             :value="valueFor(zipNameAttr)"
             @input="zipChanged"
-            :required="required" :formatter="formatter('zipcodeFormatter')"
+            :required="required" :formatter="formatter('zipcode')"
             placeholder="Zip"
             :class="classesFor(zipNameAttr, 'fe-address-zipcode zipcode')"
             @change="value => onChangeEvent(zipNameAttr, value)"
