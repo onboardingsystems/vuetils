@@ -38383,7 +38383,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "noerrors": "",
       "value": _vm.valueFor(_vm.streetNameAttr),
       "required": _vm.required,
-      "formatter": _vm.formatter('stringFormatter'),
+      "formatter": _vm.formatter('string'),
       "placeholder": "Address",
       "editable": _vm.editable,
       "focus": _vm.focus,
@@ -38407,7 +38407,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "noerrors": "",
       "value": _vm.valueFor(_vm.cityNameAttr),
       "required": _vm.required,
-      "formatter": _vm.formatter('stringFormatter'),
+      "formatter": _vm.formatter('string'),
       "placeholder": "City",
       "editable": _vm.editable,
       "custom-validator": _vm.cityCustomValidator
@@ -38426,7 +38426,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "noerrors": "",
       "value": _vm.valueFor(_vm.stateNameAttr),
       "required": _vm.required,
-      "formatter": _vm.formatter('stateFormatter'),
+      "formatter": _vm.formatter('state'),
       "placeholder": "ST",
       "editable": _vm.editable,
       "custom-validator": _vm.stateCustomValidator
@@ -38445,7 +38445,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "noerrors": "",
       "value": _vm.valueFor(_vm.zipNameAttr),
       "required": _vm.required,
-      "formatter": _vm.formatter('zipcodeFormatter'),
+      "formatter": _vm.formatter('zipcode'),
       "placeholder": "Zip",
       "editable": _vm.editable,
       "custom-validator": _vm.zipCustomValidator
