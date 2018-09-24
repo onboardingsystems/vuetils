@@ -1,7 +1,7 @@
 <template>
     <div :class="classes">
       <fe-label :text="label" :hint="hint" :htmlFor="initialId" :required="required" />
-      <select key="inputElement" class="form-control" :id="initialId" @change="handleChange" @blur="handleBlur">
+      <select key="inputElement" class="form-control" :id="initialId" @change="handleChange" @blur="handleBlur" :disabled="!isEditable">
         <option v-if="placeholder !== null && value === null" disabled selected>{{placeholder}}</option>
         <option v-for="option in options" :key="option.value"
                 :value="option.value" :selected="value === option.value">{{option.name}}</option>
@@ -128,7 +128,14 @@ export default {
     executeFocus
   },
   computed: {
-    classes, initialId, combinedErrors
+    classes, initialId, combinedErrors,
+    isEditable() {
+      if (_.isNil(this.formEditable)) {
+        return this.editable
+      }
+
+      return this.formEditable
+    }
   },
   watch: {
     focus(newValue) {
@@ -176,6 +183,11 @@ export default {
     customValidator: {
       required: false,
       type: Function
+    },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
     },
     formatter: {
       requied: false,

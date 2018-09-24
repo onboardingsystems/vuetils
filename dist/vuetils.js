@@ -42432,7 +42432,14 @@ function anyErrors() {
     executeFocus: executeFocus
   },
   computed: {
-    classes: classes, initialId: initialId, combinedErrors: combinedErrors
+    classes: classes, initialId: initialId, combinedErrors: combinedErrors,
+    isEditable: function isEditable() {
+      if (__WEBPACK_IMPORTED_MODULE_1_lodash___default.a.isNil(this.formEditable)) {
+        return this.editable;
+      }
+
+      return this.formEditable;
+    }
   },
   watch: {
     focus: function focus(newValue) {
@@ -42481,6 +42488,11 @@ function anyErrors() {
       required: false,
       type: Function
     },
+    editable: {
+      required: false,
+      type: Boolean,
+      default: true
+    },
     formatter: {
       requied: false,
       type: Function,
@@ -42514,7 +42526,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     key: "inputElement",
     staticClass: "form-control",
     attrs: {
-      "id": _vm.initialId
+      "id": _vm.initialId,
+      "disabled": !_vm.isEditable
     },
     on: {
       "change": _vm.handleChange,
