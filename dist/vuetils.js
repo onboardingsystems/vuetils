@@ -5269,7 +5269,7 @@ function numberFormatter(value) {
   var errors = [];
   var val = stringFormatter(value, options);
 
-  if (_.isEmpty(val.parsed)) return val;
+  if (_.isEmpty(val.parsed)) return null;
 
   var numObj = __WEBPACK_IMPORTED_MODULE_1_numeral___default()(_.trim(val.parsed.replace(/[$\s,]/g, '')));
   var parsed = numObj.value();
