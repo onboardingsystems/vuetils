@@ -2,6 +2,12 @@
 
 A set of reusable Vue.js components.
 
+## Developing
+
+Running `npm run-script dev` opens 2 tabs. The first is all of the components on
+a page that is helpful for testing. The 2nd is a "foamtree" showing the
+breakdown of the contents of the package.
+
 ## Releasing
 
 This is a versioned/tagged package.
