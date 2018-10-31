@@ -22,4 +22,5 @@ To release a new version:
 
 ## Breaking changes
 
+- 1.5.9 - revert changes in 1.5.8
 - 1.5.8 - changes number formatter to return `null` instead of `""` empty string.
