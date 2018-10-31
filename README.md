@@ -20,6 +20,12 @@ To release a new version:
 4. Push the code `git push`
 5. Push the tag `git push origin v1.x`
 
+
+Notes on deleting tags (in the case they were wrong or need to be fixed).
+
+- `git push --delete origin tagname` - delete a remote tag
+- `git tag --delete tagname` - to delete a local tag
+
 ## Breaking changes
 
 - 1.5.9 - revert changes in 1.5.8
