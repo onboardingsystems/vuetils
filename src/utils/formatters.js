@@ -312,7 +312,7 @@ export function numberFormatter(value, options = {}) {
   let errors = [];
   let val = stringFormatter(value, options);
 
-  if (_.isEmpty(val.parsed)) return null;
+  if (_.isEmpty(val.parsed)) return val;
 
   let numObj = numeral(_.trim(val.parsed.replace(/[$\s,]/g, '')));
   let parsed = numObj.value();
